@@ -203,3 +203,35 @@ export async function getAccountFungibles(
   });
   return Object.fromEntries(res.items.map((i) => [i.resource_address, i.amount]));
 }
+
+/** All keys of a KeyValueStore (drains cursor pages). Returns string keys + newest update state version. */
+export async function getKeyValueStoreKeys(
+  address: string,
+): Promise<{ keys: string[]; lastUpdatedStateVersion: number | null }> {
+  const keys: string[] = [];
+  let last: number | null = null;
+  let cursor: string | undefined;
+  for (let i = 0; i < 20; i++) {
+    const res = await gatewayPost<{
+      next_cursor?: string;
+      items: { key: { programmatic_json: ProgrammaticField }; last_updated_at_state_version: number }[];
+    }>('/state/key-value-store/keys', {
+      key_value_store_address: address,
+      limit_per_page: 100,
+      ...(cursor ? { cursor } : {}),
+    });
+    for (const it of res.items) {
+      keys.push(String(it.key.programmatic_json.value));
+      last = Math.max(last ?? 0, it.last_updated_at_state_version);
+    }
+    if (!res.next_cursor) break;
+    cursor = res.next_cursor;
+  }
+  return { keys, lastUpdatedStateVersion: last };
+}
+
+/** Approximate wall-clock time of a state version (first tx at/after it). */
+export async function stateVersionToTime(stateVersion: number): Promise<string | null> {
+  const res = await streamTransactions({ fromStateVersion: stateVersion, order: 'Asc', limit: 1 });
+  return res.items[0]?.round_timestamp ?? null;
+}

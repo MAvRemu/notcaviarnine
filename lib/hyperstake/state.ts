@@ -2,7 +2,9 @@ import { ADDRESSES, RESOURCES } from '@/lib/radix/config';
 import {
   field,
   getEntityDetails,
+  getKeyValueStoreKeys,
   previewManifest,
+  stateVersionToTime,
   streamTransactions,
 } from '@/lib/radix/gateway';
 import { getInfoManifest } from './manifests';
@@ -40,6 +42,13 @@ export type PoolState = {
   lsuPoolValidatorCount: number;
   lsuPoolValidatorPointer: number;
   requireActiveSet: boolean;
+  /** LSU resources currently on the owner-maintained allowlist */
+  allowlistCount: number | null;
+  /** distinct validator LSU resources the LSU Pool actually holds (balance > 0) */
+  lsuPoolHeldCount: number | null;
+  /** LSU resources held by the pool but NOT on the allowlist */
+  heldNotAllowlisted: number | null;
+  allowlistLastUpdatedAt: string | null;
 };
 
 export function toPoolParams(s: PoolState): PoolParams {
@@ -93,6 +102,26 @@ export async function fetchPoolState(): Promise<PoolState> {
   const lsuFields = byAddr[ADDRESSES.lsuPool]?.details?.state?.fields;
   const tvFields = byAddr[ADDRESSES.lsuTokenValidator]?.details?.state?.fields;
 
+  // Allowlist vs. what the pool actually holds (best-effort; never fail the snapshot on this).
+  const held = (byAddr[ADDRESSES.lsuPool]?.fungible_resources?.items ?? [])
+    .filter((f) => Number(f.amount ?? '0') > 0)
+    .map((f) => f.resource_address);
+  let allowlistCount: number | null = null,
+    heldNotAllowlisted: number | null = null,
+    allowlistLastUpdatedAt: string | null = null;
+  try {
+    const kvs = field(tvFields, 'active_set');
+    if (kvs) {
+      const { keys, lastUpdatedStateVersion } = await getKeyValueStoreKeys(kvs);
+      const set = new Set(keys);
+      allowlistCount = keys.length;
+      heldNotAllowlisted = held.filter((r) => !set.has(r)).length;
+      if (lastUpdatedStateVersion) allowlistLastUpdatedAt = await stateVersionToTime(lastUpdatedStateVersion);
+    }
+  } catch (e) {
+    console.warn('[hyperstake] allowlist read failed', e);
+  }
+
   const tvl = params.reserveY + dMul(params.reserveX, params.oraclePrice);
   const premium = dDiv(price, params.oraclePrice) - E18;
 
@@ -120,5 +149,9 @@ export async function fetchPoolState(): Promise<PoolState> {
     lsuPoolValidatorCount: Number(field(lsuFields, 'validator_counter') ?? 0),
     lsuPoolValidatorPointer: Number(field(lsuFields, 'validator_pointer') ?? 0),
     requireActiveSet: field(tvFields, 'require_active') === 'true',
+    allowlistCount,
+    lsuPoolHeldCount: held.length,
+    heldNotAllowlisted,
+    allowlistLastUpdatedAt,
   };
 }

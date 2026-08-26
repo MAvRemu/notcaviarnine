@@ -24,8 +24,15 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
           </Item>
           <Item tone={s?.requireActiveSet ? 'warn' : 'ok'} title="LSU active-set allowlist" href={dashboardUrl(ADDRESSES.lsuTokenValidator)}>
             The LSU Pool only accepts LSUs on an allowlist (<code>require_active = {s ? String(s.requireActiveSet) : '…'}</code>) that
-            only the <b>C9 Admin Badge</b> can update. Unmaintained, it drifts from the live validator set. It does not affect swaps or
-            HLP, but it is the biggest long-term dependency.
+            only the <b>C9 Admin Badge</b> can update.
+            {s?.allowlistCount != null && (
+              <>
+                {' '}Today: <b>{s.allowlistCount} allowlisted</b> vs <b>{s.lsuPoolHeldCount} validator LSUs held</b> by the pool
+                {s.heldNotAllowlisted ? ` — ${s.heldNotAllowlisted} held but no longer addable` : ''}; last updated{' '}
+                <b>{s.allowlistLastUpdatedAt ? timeAgo(s.allowlistLastUpdatedAt) : '—'}</b>.
+              </>
+            )}{' '}
+            It does not affect swaps or HLP, but it is the biggest long-term dependency.
           </Item>
           <Item tone="warn" title="Owner badge (C9 Admin Badge)" href={dashboardUrl(ADDRESSES.c9AdminBadge)}>
             Controls fees, the allowlist and roles. Held by CaviarNine. A handover to the Radix Accountability Council was requested
