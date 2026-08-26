@@ -9,16 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@radixdlt/radix-dapp-toolkit": "^2.3.0",
+    "@vercel/analytics": "^2.0.1",
+    "decimal.js": "^10.6.0",
+    "drizzle-orm": "^0.45.2",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@radixdlt/radix-engine-toolkit": "^1.0.6",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }
