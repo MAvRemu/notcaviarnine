@@ -41,7 +41,7 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
       tone: allowTone,
       title: 'Validator list',
       metric: s?.allowlistCount != null ? `${s.allowlistCount} of ${s.lsuPoolHeldCount}` : '—',
-      metricSub: s?.allowlistLastUpdatedAt ? `validators approved · updated ${timeAgo(s.allowlistLastUpdatedAt)}` : 'validators approved',
+      metricSub: s?.allowlistLastUpdatedAt ? `validators approved · last updated ${new Date(s.allowlistLastUpdatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}` : 'validators approved',
       text:
         drift > 0
           ? `New stake can only enter through validators CaviarNine approved. ${drift} validators already in the pool are no longer on that list. Only CaviarNine can update it. Existing positions, swaps and HLP are unaffected.`
@@ -162,7 +162,7 @@ function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
     <g key={`${x1}-${y1}-${x2}-${y2}`}>
       <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={stroke[tone]} strokeWidth={1.5} markerEnd="url(#arrow)" />
       {label && (
-        <text x={(x1 + x2) / 2} y={y1 === y2 ? y1 - 8 : (y1 + y2) / 2 + 4} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>
+        <text x={(x1 + x2) / 2} y={y1 === y2 ? y1 - 10 : (y1 + y2) / 2 + 4} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>
           {label}
         </text>
       )}
@@ -179,7 +179,7 @@ function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
       {box(20, 30, 180, 'Your wallet', 'you sign every step', 'ok')}
       {arrow(200, 58, 260, 58, 'uses')}
       {box(260, 30, 200, 'This website', 'open source · no custody', 'ok')}
-      {arrow(460, 58, 520, 58, 'sends a swap to')}
+      {arrow(460, 58, 520, 58, 'swaps in')}
       {box(520, 30, 200, 'HyperStake pool', 'LSULP ⇄ XRD · open to all', 'ok')}
       {arrow(720, 58, 780, 58, 'holds')}
       {box(780, 30, 160, 'LSULP + XRD', 'the real reserves', 'ok')}
@@ -189,7 +189,7 @@ function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
       {box(520, 150, 200, 'CaviarNine staking pool', 'sets the LSULP value', oracle)}
       {arrow(520, 178, 460, 178, 'gated by', allow)}
       {box(260, 150, 200, 'Approved validators', 'list maintained by owner', allow)}
-      {arrow(260, 178, 200, 178, 'controlled by', 'watch')}
+      {arrow(260, 178, 200, 178, 'owned by', 'watch')}
       {box(20, 150, 180, 'CaviarNine admin key', 'handover pending', 'watch', true)}
     </svg>
   );
