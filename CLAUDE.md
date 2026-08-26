@@ -30,3 +30,13 @@ npx tsx scripts/verify-math.mts   # must print "✓ EXACT" and "N/N exact" — r
 - `.env.local` — Vercel-managed (`vercel env pull` **overwrites it**). Public `NEXT_PUBLIC_*` + `DATABASE_URL`.
 - `.env.admin.local` — dApp-definition admin key (backup in `~/.config/notcaviarnine/dapp-admin.env`). Local scripts only.
   dApp definition account: `account_rdx128uzjf2yykk23z0yvenydh32k8svkxuzqaecvhmz4czyu9h7leqr0q`.
+
+## Visual identity ("control room") — follow everywhere
+
+- Ground near-black `--bg #0b0b0b`, surfaces `--card/--bg-deep`, type cream `--ink #f6f2e8`, muted `--muted`, hairlines `--line`.
+- **One accent**: yellow `#e9b400` — for primary actions (solid yellow pill, black text), active tabs, "watch" states, the highlighted
+  word in headlines. Never introduce a second accent. Green `--ok` / red `--danger` only for status semantics.
+- Every number is mono (`.num`), tabular. Section eyebrows are `.label` (11px tracked uppercase). Headlines `.display` (Geist 700, tight).
+- Cards: `.card` (1px hairline, r-18). Inputs: `.field` (focus ring = accent). Buttons: `.btn` / `.btn-ghost`.
+- The only inversion is `.inverted` (cream block, black type) — used once per page as a deliberate gesture (landing quote).
+- Plain language over protocol jargon in all user-facing copy; no identifiers like `require_active` on the site.

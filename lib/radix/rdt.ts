@@ -24,8 +24,8 @@ export function getRdt(): Promise<Rdt> {
       applicationVersion: '0.1.0',
     });
     rdt.walletApi.setRequestData(DataRequestBuilder.accounts().atLeast(1));
-    rdt.buttonApi.setTheme('black');
-    rdt.buttonApi.setMode('light');
+    rdt.buttonApi.setTheme('white-with-outline');
+    rdt.buttonApi.setMode('dark');
     instance = rdt;
     return rdt;
   });

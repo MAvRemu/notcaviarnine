@@ -26,7 +26,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
             <div className="flex items-center gap-6">
               <Wordmark />
-              <span className="hidden rounded-full bg-bg-deep px-2.5 py-1 text-xs font-semibold sm:inline">HyperStake</span>
+              <span className="pill hidden sm:inline-flex">HyperStake</span>
             </div>
             <div className="flex items-center gap-3">
               <Link href="/#status" className="hidden text-sm text-muted hover:text-ink md:inline">Status</Link>

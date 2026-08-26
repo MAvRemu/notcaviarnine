@@ -12,7 +12,7 @@ export type TxState =
 export function TxStatus({ state, onDismiss }: { state: TxState; onDismiss: () => void }) {
   if (state.phase === 'idle') return null;
   const tone =
-    state.phase === 'done' ? 'border-ok/40 bg-ok/5' : state.phase === 'error' ? 'border-danger/40 bg-danger/5' : 'border-line bg-bg';
+    state.phase === 'done' ? 'border-ok/40 bg-ok/10' : state.phase === 'error' ? 'border-danger/40 bg-danger/10' : 'border-accent/40 bg-accent/10';
   return (
     <div className={`flex items-start justify-between gap-3 rounded-xl border px-3 py-2 text-sm ${tone}`} role="status">
       <div>

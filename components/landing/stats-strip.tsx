@@ -13,7 +13,7 @@ export function StatsStrip({ snap }: { snap: PoolSnapshot | null }) {
     { k: 'HLP supply', v: s ? fmt(s.hlpSupply, { dp: 0, compact: true }) : '—' },
   ];
   return (
-    <section className="hairline border-y bg-bg-deep/60">
+    <section className="hairline border-y">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-6 px-6 py-8 md:grid-cols-3 lg:grid-cols-6">
         {items.map((i) => (
           <div key={i.k}>

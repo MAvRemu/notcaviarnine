@@ -46,7 +46,7 @@ export function RemoveLiquidityPanel() {
       <TokenInput label="HLP to redeem" symbol="HLP" value={hlp} onChange={setHlp} balance={balances?.HLP ?? null} />
       <div className="flex gap-2">
         {[25, 50, 75, 100].map((p) => (
-          <button key={p} type="button" onClick={() => setPct(p)} disabled={!balances} className="flex-1 rounded-full border border-line py-1 text-xs font-semibold hover:bg-ink hover:text-bg disabled:opacity-40">
+          <button key={p} type="button" onClick={() => setPct(p)} disabled={!balances} className="flex-1 rounded-full border border-line py-1 text-xs font-semibold hover:border-accent hover:text-accent disabled:opacity-40">
             {p}%
           </button>
         ))}
@@ -61,7 +61,7 @@ export function RemoveLiquidityPanel() {
       <button className="btn w-full" disabled={!canSubmit} onClick={submit}>
         {!account ? 'Connect wallet to remove liquidity' : insufficient ? 'Insufficient HLP' : tx.phase === 'signing' ? 'Waiting for wallet…' : tx.phase === 'previewing' ? 'Simulating…' : 'Remove liquidity'}
       </button>
-      <p className="text-xs text-muted">Redeeming HLP returns your pro-rata share of both reserves directly from the native pool. No fee on removal.</p>
+      <p className="text-xs text-muted">Returns your share of both reserves. No fee on removal.</p>
     </div>
   );
 }

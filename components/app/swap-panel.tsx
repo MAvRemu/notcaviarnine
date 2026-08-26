@@ -67,7 +67,7 @@ export function SwapPanel() {
     <div className="space-y-3">
       <TokenInput label="You pay" symbol={from} value={amount} onChange={setAmount} balance={balance} />
       <div className="flex justify-center">
-        <button type="button" onClick={flip} className="rounded-full border border-line bg-card px-3 py-1 text-xs font-semibold hover:bg-ink hover:text-bg" aria-label="Flip direction">
+        <button type="button" onClick={flip} className="rounded-full border border-line bg-card px-3 py-1 text-xs font-semibold hover:border-accent hover:text-accent" aria-label="Flip direction">
           ↓↑ flip
         </button>
       </div>
@@ -81,9 +81,9 @@ export function SwapPanel() {
       />
 
       <div className="space-y-1 rounded-2xl border border-line px-4 py-3 text-sm">
-        <Row k="Pool price" v={params ? `${fmt(snapshot?.state.price ?? '0', { dp: 6 })} XRD / LSULP` : '—'} />
-        <Row k="NAV (oracle)" v={params ? `${fmt(nav, { dp: 6 })} XRD / LSULP` : '—'} />
-        <Row k="Your effective price" v={quote && quote.effectivePrice > 0n ? `${fmt(quote.effectivePrice, { dp: 6 })} XRD / LSULP` : '—'} />
+        <Row k="Mid price (before fee)" v={params ? `${fmt(snapshot?.state.price ?? '0', { dp: 6 })} XRD / LSULP` : '—'} />
+        <Row k="NAV (fair value)" v={params ? `${fmt(nav, { dp: 6 })} XRD / LSULP` : '—'} />
+        <Row k="Your price (fee + size impact)" v={quote && quote.effectivePrice > 0n ? `${fmt(quote.effectivePrice, { dp: 6 })} XRD / LSULP` : '—'} />
         <Row k="vs NAV" v={vsNav !== null ? pct(vsNav) : '—'} tone={vsNav !== null ? (from === 'XRD' ? (vsNav < 0n ? 'ok' : 'warn') : vsNav > 0n ? 'ok' : 'warn') : undefined} />
         <Row k={`Fee (${params ? pct(params.fee, 2, false) : '—'})`} v={quote ? `${fmt(quote.fee, { dp: 6 })} ${from}` : '—'} />
         <Row k="Minimum received" v={quote ? `${fmt(minOut, { dp: 6 })} ${to}` : '—'} />
@@ -96,10 +96,6 @@ export function SwapPanel() {
       <button className="btn w-full" disabled={!canSubmit} onClick={submit}>
         {!account ? 'Connect wallet to swap' : insufficient ? `Insufficient ${from}` : tx.phase === 'signing' ? 'Waiting for wallet…' : tx.phase === 'previewing' ? 'Simulating…' : `Swap ${from} → ${to}`}
       </button>
-      <p className="text-xs text-muted">
-        Swapping XRD → LSULP is an instant stake into the LSU Pool basket; LSULP → XRD is an instant unstake (no 7-day wait). Output is
-        enforced on-ledger: the transaction fails if you would receive less than the minimum.
-      </p>
     </div>
   );
 }

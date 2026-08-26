@@ -59,8 +59,9 @@ export default async function Home() {
 
         <StatusSection snap={snap} />
 
-        <section className="mx-auto max-w-6xl px-6 py-20">
-          <div className="card grid gap-8 p-8 md:grid-cols-[1fr_1.2fr] md:p-12">
+        <section className="inverted">
+          <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
             <div>
               <div className="label mb-3">In their words</div>
               <h2 className="display text-3xl md:text-4xl">&ldquo;Anyone can build and run their own front end.&rdquo;</h2>
@@ -69,7 +70,7 @@ export default async function Home() {
                 <a className="underline underline-offset-2" href={LINKS.c9Announcement} target="_blank" rel="noreferrer">Telegram, 21 Aug 2026 ↗</a>
               </p>
             </div>
-            <blockquote className="space-y-3 border-l-2 border-accent pl-5 text-sm text-ink-soft">
+            <blockquote className="space-y-3 border-l-2 border-accent pl-5 text-base text-ink-soft">
               <p>&ldquo;We are not switching the DEX off. The smart contracts stay live on ledger. What changes is our website.&rdquo;</p>
               <p>&ldquo;Anyone can build and run their own front end to any of the components, today or in a year. That&apos;s the point of self-custodial DeFi and it&apos;s why we built it this way.&rdquo;</p>
             </blockquote>
@@ -77,6 +78,7 @@ export default async function Home() {
           <p className="mt-6 text-sm text-muted">
             Thank you, Oliver, Chris and the CaviarNine team, for five years of building on Radix and for open-sourcing the contracts.
           </p>
+          </div>
         </section>
       </main>
       <SiteFooter />

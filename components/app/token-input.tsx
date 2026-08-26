@@ -24,7 +24,7 @@ export function TokenInput({
 }) {
   const t = TOKENS[symbol];
   return (
-    <div className="rounded-2xl border border-line bg-bg px-4 py-3">
+    <div className="field px-4 py-3">
       <div className="flex items-center justify-between">
         <span className="label">{label}</span>
         {balance !== undefined && balance !== null && (
@@ -36,7 +36,7 @@ export function TokenInput({
             title="Use full balance"
           >
             Balance <span className="num">{fmt(balance, { dp: 4 })}</span>
-            {!readOnly && onChange && <span className="ml-1 font-semibold text-ink">MAX</span>}
+            {!readOnly && onChange && <span className="ml-1 font-semibold text-accent">MAX</span>}
           </button>
         )}
       </div>

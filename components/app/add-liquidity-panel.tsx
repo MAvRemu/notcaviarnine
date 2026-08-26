@@ -66,10 +66,7 @@ export function AddLiquidityPanel() {
       <button className="btn w-full" disabled={!canSubmit} onClick={submit}>
         {!account ? 'Connect wallet to add liquidity' : insufficient ? 'Insufficient balance' : tx.phase === 'signing' ? 'Waiting for wallet…' : tx.phase === 'previewing' ? 'Simulating…' : 'Add liquidity'}
       </button>
-      <p className="text-xs text-muted">
-        You receive HLP, a pool unit representing your pro-rata share of both reserves. LPs earn 80% of the 0.1% swap fee; 10% goes to
-        CaviarNine&apos;s fee vaults and 10% to their treasury — set on-ledger, not by this site.
-      </p>
+      <p className="text-xs text-muted">HLP is your share of both reserves; it earns 80% of every swap fee.</p>
     </div>
   );
 }

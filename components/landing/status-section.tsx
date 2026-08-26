@@ -3,8 +3,8 @@ import { minutesSince, timeAgo } from '@/lib/format';
 import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
 
 type Tone = 'ok' | 'watch' | 'muted';
-const dot: Record<Tone, string> = { ok: 'bg-ok', watch: 'bg-accent', muted: 'bg-line' };
-const stroke: Record<Tone, string> = { ok: '#2f7a4f', watch: '#e9b400', muted: '#4a4a4a' };
+const dot: Record<Tone, string> = { ok: 'dot-ok', watch: 'dot-warn', muted: 'dot-muted' };
+const stroke: Record<Tone, string> = { ok: '#3fae6a', watch: '#e9b400', muted: '#4a4844' };
 
 export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
   const s = snap?.state;
@@ -75,23 +75,23 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
   ];
 
   return (
-    <section id="status" className="bg-ink text-bg">
+    <section id="status" className="hairline border-y bg-bg-deep/60">
       <div className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <div className="label mb-3 !text-bg/50">Status · who keeps what running</div>
+            <div className="label mb-3">Status · who keeps what running</div>
             <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine</h2>
-            <p className="mt-4 max-w-2xl text-bg/70">
+            <p className="mt-4 max-w-2xl text-ink-soft">
               The website was the easy part. This is the whole chain behind a swap, what&apos;s healthy, and what we&apos;re watching.
             </p>
           </div>
-          <div className="flex items-center gap-3 rounded-full border border-bg/15 px-4 py-2 text-sm">
-            <span className="dot bg-ok" />
+          <div className="flex items-center gap-3 rounded-full border border-line px-4 py-2 text-sm">
+            <span className="dot dot-ok" />
             <span>Operational</span>
-            <span className="text-bg/40">·</span>
-            <span className="dot bg-accent" />
+            <span className="text-muted">·</span>
+            <span className="dot dot-warn" />
             <span>{watchCount} to watch</span>
-            {s && <span className="num ml-2 text-xs text-bg/40">live · {timeAgo(s.fetchedAt)}</span>}
+            {s && <span className="num ml-2 text-xs text-muted">live · {timeAgo(s.fetchedAt)}</span>}
           </div>
         </div>
 
@@ -101,14 +101,14 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
         </div>
 
         {/* Readouts */}
-        <div className="mt-12 divide-y divide-bg/10 border-y border-bg/10">
+        <div className="mt-12 divide-y divide-line border-y border-line">
           {rows.map((r) => (
             <a
               key={r.title}
               href={r.href}
               target="_blank"
               rel="noreferrer"
-              className="group grid gap-3 py-5 transition-colors hover:bg-bg/5 md:grid-cols-[220px_260px_1fr_auto] md:items-baseline md:gap-6"
+              className="group grid gap-3 py-5 transition-colors hover:bg-bg-deep md:grid-cols-[220px_260px_1fr_auto] md:items-baseline md:gap-6"
             >
               <div className="flex items-center gap-3 font-semibold">
                 <span className={`dot ${dot[r.tone]}`} />
@@ -116,10 +116,10 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
               </div>
               <div>
                 <div className="num text-2xl leading-none">{r.metric}</div>
-                {r.metricSub && <div className="mt-1 text-xs text-bg/50">{r.metricSub}</div>}
+                {r.metricSub && <div className="mt-1 text-xs text-muted">{r.metricSub}</div>}
               </div>
-              <p className="text-sm text-bg/70">{r.text}</p>
-              <span className="text-xs text-bg/40 group-hover:text-accent">verify ↗</span>
+              <p className="text-sm text-ink-soft">{r.text}</p>
+              <span className="text-xs text-muted group-hover:text-accent">verify ↗</span>
             </a>
           ))}
         </div>
@@ -138,9 +138,9 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
 
 function Milestone({ when, what, tone }: { when: string; what: string; tone?: Tone }) {
   return (
-    <li className="border-l border-bg/15 pl-4">
-      <div className={`num text-xs ${tone === 'watch' ? 'text-accent' : tone === 'ok' ? 'text-ok' : 'text-bg/50'}`}>{when}</div>
-      <div className="mt-1 text-bg/80">{what}</div>
+    <li className="border-l border-line pl-4">
+      <div className={`num text-xs ${tone === 'watch' ? 'text-accent' : tone === 'ok' ? 'text-ok' : 'text-muted'}`}>{when}</div>
+      <div className="mt-1 text-ink-soft">{what}</div>
     </li>
   );
 }

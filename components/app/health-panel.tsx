@@ -3,63 +3,118 @@
 import { usePool } from './pool-context';
 import { fmt, minutesSince, pct, timeAgo } from '@/lib/format';
 import { ADDRESSES, dashboardUrl } from '@/lib/radix/config';
-import { toAtto } from '@/lib/hyperstake/math';
+import { dMul, toAtto, E18 } from '@/lib/hyperstake/math';
 
 export function HealthPanel() {
   const { snapshot, error } = usePool();
   const s = snapshot?.state;
   const stats = snapshot?.stats;
   const oracleAge = minutesSince(s?.lsuPoolLastTxAt);
-  const oracleTone = oracleAge === null ? 'muted' : oracleAge < 60 ? 'ok' : oracleAge < 360 ? 'warn' : 'danger';
+  const oracleTone = oracleAge === null ? 'muted' : oracleAge < 180 ? 'ok' : 'warn';
   const prem = s ? toAtto(s.premiumToNav) : 0n;
-  const inRange = s ? prem <= 0n && prem >= toAtto(s.lowerOffset) - 10n ** 18n : false;
+
+  // Where the price sits inside the range (0 = lower bound, 1 = upper bound).
+  let pos = 0.5;
+  if (s) {
+    const lo = Number(s.rangeLower), hi = Number(s.rangeUpper), p = Number(s.price);
+    pos = Math.min(1, Math.max(0, (p - lo) / (hi - lo)));
+  }
+  // Reserve balance: XRD share of TVL.
+  const xrdShare = s ? Number(dMul(toAtto(s.reserveXrd), E18) * 100n / toAtto(s.tvlXrd)) / 100 : 50;
+  const feesXrd = stats ? fmt(stats.liquidityFeesXrd, { dp: 0 }) : null;
 
   return (
     <div className="card p-5">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <div className="label">Pool health</div>
-        {s && <span className="num text-[11px] text-muted">state v{s.ledgerStateVersion.toLocaleString()} · {timeAgo(s.fetchedAt)}</span>}
+        {s && <span className="num text-[11px] text-muted">live · {timeAgo(s.fetchedAt)}</span>}
       </div>
-      {error && <div className="mb-2 text-xs text-danger">Live data unavailable: {error}</div>}
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-        <Stat k="LSULP NAV" v={s ? `${fmt(s.nav, { dp: 6 })} XRD` : undefined} />
-        <Stat k="Pool price" v={s ? `${fmt(s.price, { dp: 6 })} XRD` : undefined} />
-        <Stat k="vs NAV" v={s ? pct(s.premiumToNav) : undefined} tone={s ? (prem < 0n ? 'ok' : 'warn') : undefined} sub={s ? (prem < 0n ? 'LSULP trades at a discount → cheap instant stake' : 'LSULP at/above NAV') : undefined} />
-        <Stat k="Range" v={s ? `${fmt(s.rangeLower, { dp: 4 })} – ${fmt(s.rangeUpper, { dp: 4 })}` : undefined} sub={s ? `${pct(toAtto(s.lowerOffset) - 10n ** 18n, 1)} to ${pct(toAtto(s.upperOffset) - 10n ** 18n, 1)} of NAV · ${inRange ? 'in range' : 'at edge'}` : undefined} />
-        <Stat k="XRD liquidity" v={s ? `${fmt(s.reserveXrd, { dp: 0 })} XRD` : undefined} />
-        <Stat k="LSULP liquidity" v={s ? `${fmt(s.reserveLsulp, { dp: 0 })} LSULP` : undefined} />
-        <Stat k="TVL" v={s ? `${fmt(s.tvlXrd, { dp: 0 })} XRD` : undefined} />
-        <Stat k="HLP supply" v={s ? fmt(s.hlpSupply, { dp: 0 }) : undefined} />
-        <Stat k="LP fee APR (7d, realised)" v={stats ? (stats.aprLp ? pct(stats.aprLp, 2, false) : '—') : undefined} sub={stats ? `${stats.swaps} swaps · ${fmt(stats.liquidityFeesXrd, { dp: 0 })} XRD fees over ${(stats.coveredHours / 24).toFixed(1)}d` : undefined} />
-        <Stat k="7d volume" v={stats ? `${fmt(stats.volumeXrd, { dp: 0, compact: true })} XRD` : undefined} />
-      </dl>
+      {error && <div className="mb-3 text-xs text-danger">Live data unavailable: {error}</div>}
 
-      <div className="mt-4 space-y-2 border-t border-line pt-4 text-xs">
-        <div className="label mb-1">Dependencies</div>
-        <Dep tone={oracleTone} title="Price feed" text={s ? `LSULP value last refreshed ${timeAgo(s.lsuPoolLastTxAt)}. It refreshes whenever CaviarNine’s staking pool is used; anyone can trigger it.` : '…'} href={dashboardUrl(ADDRESSES.lsuPool)} />
-        <Dep tone={s?.requireActiveSet ? 'warn' : 'ok'} title="Validator list" text={s ? (s.requireActiveSet ? `${s.allowlistCount ?? '—'} of ${s.lsuPoolHeldCount ?? '—'} validators approved${s.heldNotAllowlisted ? ` (${s.heldNotAllowlisted} in the pool but no longer approved)` : ''}; last updated ${timeAgo(s.allowlistLastUpdatedAt)}. Only CaviarNine can change it. Swaps and HLP are unaffected.` : 'No approval list — nothing to maintain.') : '…'} href={dashboardUrl(ADDRESSES.lsuTokenValidator)} />
-        <Dep tone="ok" title="Access" text="The pool is open to everyone on the ledger; no permission from CaviarNine is needed to use it." href={dashboardUrl(ADDRESSES.hyperStake)} />
+      {/* Hero: price vs NAV with range bar */}
+      <div className="field p-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="label">LSULP price vs fair value</div>
+            <div className={`num mt-1 text-4xl leading-none ${prem < 0n ? 'text-ok' : 'text-accent'}`}>{s ? pct(s.premiumToNav) : <span className="skeleton">−0.00%</span>}</div>
+            <div className="mt-1 text-xs text-muted">{s ? (prem < 0n ? 'Discount — instant staking is cheaper than NAV' : 'At or above NAV') : ''}</div>
+          </div>
+          <div className="text-right">
+            <div className="label">Pool · NAV</div>
+            <div className="num mt-1 text-sm">{s ? `${fmt(s.price, { dp: 4 })} · ${fmt(s.nav, { dp: 4 })}` : '—'}</div>
+            <div className="text-[11px] text-muted">XRD per LSULP</div>
+          </div>
+        </div>
+        <div className="mt-4">
+          <div className="relative h-2 rounded-full bg-line">
+            <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-ok/60 to-accent/60" style={{ width: `${pos * 100}%` }} />
+            <div className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-bg bg-ink shadow" style={{ left: `${pos * 100}%` }} />
+          </div>
+          <div className="num mt-2 flex justify-between text-[11px] text-muted">
+            <span>{s ? `${fmt(s.rangeLower, { dp: 4 })} · −1.5%` : ''}</span>
+            <span>trading range</span>
+            <span>{s ? `${fmt(s.rangeUpper, { dp: 4 })} · NAV` : ''}</span>
+          </div>
+        </div>
       </div>
+
+      {/* Reserves */}
+      <div className="mt-4">
+        <div className="flex items-baseline justify-between">
+          <div className="label">Reserves</div>
+          <div className="num text-sm">{s ? `${fmt(s.tvlXrd, { dp: 0 })} XRD` : '—'} <span className="text-muted">TVL</span></div>
+        </div>
+        <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-line">
+          <div className="bg-ink" style={{ width: `${xrdShare}%` }} />
+          <div className="bg-accent" style={{ width: `${100 - xrdShare}%` }} />
+        </div>
+        <div className="num mt-2 flex justify-between text-[11px] text-muted">
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-ink" />{s ? `${fmt(s.reserveXrd, { dp: 0 })} XRD` : '—'} · {xrdShare.toFixed(0)}%</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-accent" />{s ? `${fmt(s.reserveLsulp, { dp: 0 })} LSULP` : '—'} · {(100 - xrdShare).toFixed(0)}%</span>
+        </div>
+      </div>
+
+      {/* Tiles */}
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <Tile k="LP fee APR · 7d" v={stats ? (stats.aprLp ? pct(stats.aprLp, 2, false) : '—') : undefined} sub={stats ? `realised · ${stats.swaps} swaps` : undefined} accent />
+        <Tile k="Fees to LPs · 7d" v={feesXrd ? `${feesXrd} XRD` : undefined} sub={stats ? `${fmt(stats.volumeXrd, { dp: 0, compact: true })} XRD volume` : undefined} />
+        <Tile k="HLP" v={s ? fmt(s.hlpSupply, { dp: 0, compact: true }) : undefined} sub={s ? `1 HLP ≈ ${fmt(s.hlpValueXrd, { dp: 3 })} XRD` : undefined} />
+      </div>
+
+      {/* Dependencies — compact, collapsible */}
+      <details className="mt-4 border-t border-line pt-3 text-xs">
+        <summary className="flex items-center justify-between text-muted hover:text-ink">
+          <span className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5"><span className={`dot dot-${oracleTone}`} />price feed {s ? timeAgo(s.lsuPoolLastTxAt) : ''}</span>
+            <span className="flex items-center gap-1.5"><span className={`dot ${s?.requireActiveSet ? 'dot-warn' : 'dot-ok'}`} />validators {s?.allowlistCount != null ? `${s.allowlistCount}/${s.lsuPoolHeldCount}` : ''}</span>
+            <span className="flex items-center gap-1.5"><span className="dot dot-ok" />open access</span>
+          </span>
+          <span className="label !text-[10px]">details</span>
+        </summary>
+        <div className="mt-3 space-y-2 text-muted">
+          <Dep href={dashboardUrl(ADDRESSES.lsuPool)} title="Price feed" text={s ? `LSULP value last refreshed ${timeAgo(s.lsuPoolLastTxAt)}. It refreshes whenever CaviarNine’s staking pool is used; anyone can trigger it.` : '…'} />
+          <Dep href={dashboardUrl(ADDRESSES.lsuTokenValidator)} title="Validator list" text={s ? (s.requireActiveSet ? `${s.allowlistCount ?? '—'} of ${s.lsuPoolHeldCount ?? '—'} validators approved${s.heldNotAllowlisted ? ` (${s.heldNotAllowlisted} in the pool but no longer approved)` : ''}; last updated ${timeAgo(s.allowlistLastUpdatedAt)}. Only CaviarNine can change it. Swaps and HLP are unaffected.` : 'No approval list — nothing to maintain.') : '…'} />
+          <Dep href={dashboardUrl(ADDRESSES.hyperStake)} title="Access" text="The pool is open to everyone on the ledger; no permission from CaviarNine is needed." />
+        </div>
+      </details>
     </div>
   );
 }
 
-function Stat({ k, v, sub, tone }: { k: string; v?: string; sub?: string; tone?: 'ok' | 'warn' }) {
+function Tile({ k, v, sub, accent }: { k: string; v?: string; sub?: string; accent?: boolean }) {
   return (
-    <div>
-      <dt className="text-[11px] uppercase tracking-wider text-muted">{k}</dt>
-      <dd className={`num ${v === undefined ? 'skeleton inline-block w-20' : ''} ${tone === 'ok' ? 'text-ok' : tone === 'warn' ? 'text-warn' : ''}`}>{v ?? '0'}</dd>
-      {sub && <dd className="text-[11px] text-muted">{sub}</dd>}
+    <div className="rounded-xl border border-line p-3">
+      <div className="label !text-[10px]">{k}</div>
+      <div className={`num mt-1 text-xl leading-none ${accent ? 'text-accent' : ''} ${v === undefined ? 'skeleton inline-block w-16' : ''}`}>{v ?? '0'}</div>
+      {sub && <div className="mt-1 text-[11px] text-muted">{sub}</div>}
     </div>
   );
 }
 
-function Dep({ tone, title, text, href }: { tone: 'ok' | 'warn' | 'danger' | 'muted'; title: string; text: string; href: string }) {
-  const c = tone === 'ok' ? 'bg-ok' : tone === 'warn' ? 'bg-warn' : tone === 'danger' ? 'bg-danger' : 'bg-line';
+function Dep({ href, title, text }: { href: string; title: string; text: string }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="flex gap-2 rounded-lg px-1 py-1 hover:bg-bg-deep">
-      <span className={`dot mt-1.5 shrink-0 ${c}`} />
-      <span><span className="font-semibold">{title}</span> — <span className="text-muted">{text}</span></span>
+    <a href={href} target="_blank" rel="noreferrer" className="block rounded-lg px-1 py-1 hover:bg-bg-deep hover:text-ink-soft">
+      <span className="font-semibold text-ink-soft">{title}</span> — {text}
     </a>
   );
 }
