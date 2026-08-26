@@ -3,7 +3,7 @@
 import { usePool } from './pool-context';
 import { fmt, minutesSince, pct, timeAgo } from '@/lib/format';
 import { ADDRESSES, dashboardUrl } from '@/lib/radix/config';
-import { dMul, toAtto, E18 } from '@/lib/hyperstake/math';
+import { toAtto } from '@/lib/hyperstake/math';
 
 export function HealthPanel() {
   const { snapshot, error } = usePool();
@@ -20,7 +20,7 @@ export function HealthPanel() {
     pos = Math.min(1, Math.max(0, (p - lo) / (hi - lo)));
   }
   // Reserve balance: XRD share of TVL.
-  const xrdShare = s ? Number(dMul(toAtto(s.reserveXrd), E18) * 100n / toAtto(s.tvlXrd)) / 100 : 50;
+  const xrdShare = s && toAtto(s.tvlXrd) > 0n ? Number((toAtto(s.reserveXrd) * 10000n) / toAtto(s.tvlXrd)) / 100 : 50;
   const feesXrd = stats ? fmt(stats.liquidityFeesXrd, { dp: 0 }) : null;
 
   return (
