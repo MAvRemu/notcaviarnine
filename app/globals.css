@@ -4,7 +4,6 @@
  * Not CaviarNine — visual identity ("control room").
  * Near-black ground · cream type · ONE yellow accent for actions/attention ·
  * mono for every number · hairline cream borders · tracked uppercase labels.
- * The only inversion is a deliberate cream block (.inverted) used once per page.
  */
 :root {
   --bg: #0b0b0b;
@@ -50,9 +49,6 @@ body {
 }
 ::selection { background: var(--accent); color: #0b0b0b; }
 
-/* The one inversion: cream block with black type. */
-.inverted { --bg: #f6f2e8; --bg-deep: #ece7d9; --ink: #0b0b0b; --ink-soft: #2c2c2c; --muted: #6d6961; --line: #d9d2c2; --card: #fffdf8; background: var(--bg); color: var(--ink); }
-
 .display { font-weight: 700; letter-spacing: -0.035em; line-height: 1.0; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
@@ -74,7 +70,6 @@ body {
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover { background: var(--ink); color: #0b0b0b; border-color: var(--ink); box-shadow: none; }
 .btn-accent { background: var(--accent); color: #0b0b0b; border-color: var(--accent); }
-.inverted .btn:hover, .inverted .btn-ghost:hover { background: #0b0b0b; color: #f6f2e8; border-color: #0b0b0b; }
 
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
 .hairline { border-color: var(--line); }

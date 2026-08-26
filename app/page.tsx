@@ -59,9 +59,9 @@ export default async function Home() {
 
         <StatusSection snap={snap} />
 
-        <section className="inverted">
+        <section>
           <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
+          <div className="card grid gap-8 p-8 md:grid-cols-[1fr_1.2fr] md:p-12">
             <div>
               <div className="label mb-3">In their words</div>
               <h2 className="display text-3xl md:text-4xl">&ldquo;Anyone can build and run their own front end.&rdquo;</h2>

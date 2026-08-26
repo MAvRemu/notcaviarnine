@@ -38,5 +38,5 @@ npx tsx scripts/verify-math.mts   # must print "✓ EXACT" and "N/N exact" — r
   word in headlines. Never introduce a second accent. Green `--ok` / red `--danger` only for status semantics.
 - Every number is mono (`.num`), tabular. Section eyebrows are `.label` (11px tracked uppercase). Headlines `.display` (Geist 700, tight).
 - Cards: `.card` (1px hairline, r-18). Inputs: `.field` (focus ring = accent). Buttons: `.btn` / `.btn-ghost`.
-- The only inversion is `.inverted` (cream block, black type) — used once per page as a deliberate gesture (landing quote).
+- No inverted/cream sections — the whole site stays on the dark ground (a cream block was tried and read as a mistake).
 - Plain language over protocol jargon in all user-facing copy; no identifiers like `require_active` on the site.
