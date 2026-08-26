@@ -43,7 +43,8 @@ export type ProgrammaticField = {
   kind: string;
   field_name?: string;
   type_name?: string;
-  value?: string;
+  /** string for most kinds; JSON boolean for Bool */
+  value?: string | boolean;
   variant_id?: string;
   fields?: ProgrammaticField[];
 };
@@ -100,8 +101,10 @@ export type StreamTransaction = {
 export const meta = (items: MetadataItem[] | undefined, key: string) =>
   items?.find((i) => i.key === key)?.value.typed.value;
 
-export const field = (fields: ProgrammaticField[] | undefined, name: string) =>
-  fields?.find((f) => f.field_name === name)?.value;
+export const field = (fields: ProgrammaticField[] | undefined, name: string): string | undefined => {
+  const v = fields?.find((f) => f.field_name === name)?.value;
+  return v === undefined ? undefined : String(v);
+};
 
 // ------------------------------------------------------------- endpoints
 

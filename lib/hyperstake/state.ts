@@ -72,7 +72,7 @@ export async function fetchPoolState(): Promise<PoolState> {
   // PoolInfo is a Tuple whose fields carry no names in the receipt output;
   // order is fixed by the Rust struct (see hyper_stake.rs::PoolInfo).
   const f = info.receipt.output![0].programmatic_json.fields!;
-  const v = (i: number) => f[i].value!;
+  const v = (i: number) => String(f[i].value);
   const params: PoolParams = {
     reserveX: toAtto(v(3)),
     reserveY: toAtto(v(4)),

@@ -12,7 +12,7 @@ const info = await previewManifest(
   `CALL_METHOD Address("${ADDRESSES.hyperStake}") "get_info";`,
 );
 const f = info.receipt.output![0].programmatic_json.fields!;
-const v = (i: number) => f[i].value!;
+const v = (i: number) => String(f[i].value);
 const p: PoolParams = {
   reserveX: toAtto(v(3)),
   reserveY: toAtto(v(4)),
