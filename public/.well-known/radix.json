@@ -1,0 +1,6 @@
+{
+  "dApps": [
+    { "dAppDefinitionAddress": "account_rdx128uzjf2yykk23z0yvenydh32k8svkxuzqaecvhmz4czyu9h7leqr0q" }
+  ],
+  "callbackPath": "/connect"
+}
