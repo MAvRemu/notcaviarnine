@@ -26,6 +26,7 @@ export function SiteFooter() {
           <Link className="block hover:underline" href="/app">Launch app</Link>
           <Link className="block hover:underline" href="/#status">Status</Link>
           <Link className="block hover:underline" href="/disclaimer">Disclaimer</Link>
+          <Link className="block hover:underline" href="/terms">Terms of Use</Link>
           <a className="block hover:underline" href={LINKS.frontendRepo} target="_blank" rel="noreferrer">Frontend source ↗</a>
         </div>
       </div>

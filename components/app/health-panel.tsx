@@ -36,9 +36,9 @@ export function HealthPanel() {
 
       <div className="mt-4 space-y-2 border-t border-line pt-4 text-xs">
         <div className="label mb-1">Dependencies</div>
-        <Dep tone={oracleTone} title="Oracle freshness" text={s ? `LSU Pool last touched ${timeAgo(s.lsuPoolLastTxAt)} · pointer ${s.lsuPoolValidatorPointer}/${s.lsuPoolValidatorCount} validators. Cached LSU prices advance 5 per LSU Pool transaction.` : '…'} href={dashboardUrl(ADDRESSES.lsuPool)} />
-        <Dep tone={s?.requireActiveSet ? 'warn' : 'ok'} title="LSU active-set allowlist" text={s ? (s.requireActiveSet ? `Enabled, owner-controlled (C9 Admin Badge).${s.allowlistCount != null ? ` ${s.allowlistCount} allowlisted vs ${s.lsuPoolHeldCount} held${s.heldNotAllowlisted ? ` (${s.heldNotAllowlisted} drifted)` : ''}, last updated ${timeAgo(s.allowlistLastUpdatedAt)}.` : ''} Handover pending.` : 'Disabled — no allowlist maintenance needed.') : '…'} href={dashboardUrl(ADDRESSES.lsuTokenValidator)} />
-        <Dep tone="ok" title="Swap / liquidity access" text="Both roles are AllowAll on-ledger: anyone can use the contracts without CaviarNine's website." href={dashboardUrl(ADDRESSES.hyperStake)} />
+        <Dep tone={oracleTone} title="Price feed" text={s ? `LSULP value last refreshed ${timeAgo(s.lsuPoolLastTxAt)}. It refreshes whenever CaviarNine’s staking pool is used; anyone can trigger it.` : '…'} href={dashboardUrl(ADDRESSES.lsuPool)} />
+        <Dep tone={s?.requireActiveSet ? 'warn' : 'ok'} title="Validator list" text={s ? (s.requireActiveSet ? `${s.allowlistCount ?? '—'} of ${s.lsuPoolHeldCount ?? '—'} validators approved${s.heldNotAllowlisted ? ` (${s.heldNotAllowlisted} in the pool but no longer approved)` : ''}; last updated ${timeAgo(s.allowlistLastUpdatedAt)}. Only CaviarNine can change it. Swaps and HLP are unaffected.` : 'No approval list — nothing to maintain.') : '…'} href={dashboardUrl(ADDRESSES.lsuTokenValidator)} />
+        <Dep tone="ok" title="Access" text="The pool is open to everyone on the ledger; no permission from CaviarNine is needed to use it." href={dashboardUrl(ADDRESSES.hyperStake)} />
       </div>
     </div>
   );

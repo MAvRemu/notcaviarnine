@@ -2,64 +2,195 @@ import type { PoolSnapshot } from '@/lib/pool-data';
 import { minutesSince, timeAgo } from '@/lib/format';
 import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
 
+type Tone = 'ok' | 'watch' | 'muted';
+const dot: Record<Tone, string> = { ok: 'bg-ok', watch: 'bg-accent', muted: 'bg-line' };
+const stroke: Record<Tone, string> = { ok: '#2f7a4f', watch: '#e9b400', muted: '#4a4a4a' };
+
 export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
   const s = snap?.state;
   const oracleMin = minutesSince(s?.lsuPoolLastTxAt);
+  const oracleTone: Tone = oracleMin === null ? 'muted' : oracleMin < 180 ? 'ok' : 'watch';
+  const allowTone: Tone = s?.requireActiveSet ? 'watch' : 'ok';
+  const drift = s?.heldNotAllowlisted ?? 0;
+  const watchCount = [oracleTone, allowTone, 'watch' /* owner key */].filter((t) => t === 'watch').length;
+
+  const rows: {
+    tone: Tone;
+    title: string;
+    metric: string;
+    metricSub?: string;
+    text: string;
+    href: string;
+  }[] = [
+    {
+      tone: 'ok',
+      title: 'Trading & liquidity',
+      metric: 'Open to everyone',
+      text: 'The pool is public on the ledger. No one — not CaviarNine, not us — can switch it off for you or gate who uses it.',
+      href: dashboardUrl(ADDRESSES.hyperStake),
+    },
+    {
+      tone: oracleTone,
+      title: 'Price feed',
+      metric: s ? timeAgo(s.lsuPoolLastTxAt) : '—',
+      metricSub: 'last refresh',
+      text: 'The LSULP value is refreshed every time someone uses CaviarNine’s staking pool. Anyone can trigger a refresh, so we can automate it if activity drops.',
+      href: dashboardUrl(ADDRESSES.lsuPool),
+    },
+    {
+      tone: allowTone,
+      title: 'Validator list',
+      metric: s?.allowlistCount != null ? `${s.allowlistCount} of ${s.lsuPoolHeldCount}` : '—',
+      metricSub: s?.allowlistLastUpdatedAt ? `validators approved · updated ${timeAgo(s.allowlistLastUpdatedAt)}` : 'validators approved',
+      text:
+        drift > 0
+          ? `New stake can only enter through validators CaviarNine approved. ${drift} validators already in the pool are no longer on that list. Only CaviarNine can update it. Existing positions, swaps and HLP are unaffected.`
+          : 'New stake can only enter through validators CaviarNine approved. Only CaviarNine can update the list. Existing positions, swaps and HLP are unaffected.',
+      href: dashboardUrl(ADDRESSES.lsuTokenValidator),
+    },
+    {
+      tone: 'watch',
+      title: 'Admin key',
+      metric: 'CaviarNine',
+      metricSub: 'handover pending',
+      text: 'The admin key sets fee splits and maintains the validator list. A transfer to the Radix Accountability Council was requested on 21 Aug 2026; CaviarNine is considering it.',
+      href: dashboardUrl(ADDRESSES.c9AdminBadge),
+    },
+    {
+      tone: 'ok',
+      title: 'Fees',
+      metric: '0.1%',
+      metricSub: '80% to LPs · 20% to CaviarNine',
+      text: 'The split is fixed in the contract. This website adds no fee and cannot change it.',
+      href: dashboardUrl(ADDRESSES.feeVaults),
+    },
+    {
+      tone: 'ok',
+      title: 'This website',
+      metric: 'Non-custodial',
+      metricSub: 'open source',
+      text: 'We never hold your funds or keys. Every action is a transaction you review and approve in your own Radix Wallet.',
+      href: LINKS.frontendRepo,
+    },
+  ];
+
   return (
-    <section id="status" className="hairline border-y bg-card">
+    <section id="status" className="bg-ink text-bg">
       <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="label mb-3">Status · who maintains what</div>
-        <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine, honestly</h2>
-        <p className="mt-4 max-w-3xl text-ink-soft">
-          The frontend is the easy part. This is what the protocol still needs, who controls it today, and where things stand.
-        </p>
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
-          <Item tone="ok" title="Swaps & liquidity" href={dashboardUrl(ADDRESSES.hyperStake)}>
-            Swap and liquidity roles are <b>AllowAll</b> on-ledger: nobody can switch the pool off for this site&apos;s users, and no
-            permission from CaviarNine is needed.
-          </Item>
-          <Item tone={oracleMin === null ? 'muted' : oracleMin < 60 ? 'ok' : oracleMin < 360 ? 'warn' : 'danger'} title="Oracle freshness" href={dashboardUrl(ADDRESSES.lsuPool)}>
-            LSULP is priced from the LSU Pool&apos;s <em>cached</em> validator valuations, refreshed by its transactions. Last one:{' '}
-            <b>{s ? timeAgo(s.lsuPoolLastTxAt) : '…'}</b>. Refreshing is public, so we can run a keeper if traffic ever dries up.
-          </Item>
-          <Item tone={s?.requireActiveSet ? 'warn' : 'ok'} title="LSU active-set allowlist" href={dashboardUrl(ADDRESSES.lsuTokenValidator)}>
-            The LSU Pool only accepts LSUs on an allowlist (<code>require_active = {s ? String(s.requireActiveSet) : '…'}</code>) that
-            only the <b>C9 Admin Badge</b> can update.
-            {s?.allowlistCount != null && (
-              <>
-                {' '}Today: <b>{s.allowlistCount} allowlisted</b> vs <b>{s.lsuPoolHeldCount} validator LSUs held</b> by the pool
-                {s.heldNotAllowlisted ? ` — ${s.heldNotAllowlisted} held but no longer addable` : ''}; last updated{' '}
-                <b>{s.allowlistLastUpdatedAt ? timeAgo(s.allowlistLastUpdatedAt) : '—'}</b>.
-              </>
-            )}{' '}
-            It does not affect swaps or HLP, but it is the biggest long-term dependency.
-          </Item>
-          <Item tone="warn" title="Owner badge (C9 Admin Badge)" href={dashboardUrl(ADDRESSES.c9AdminBadge)}>
-            Controls fees, the allowlist and roles. Held by CaviarNine. A handover to the Radix Accountability Council was requested
-            on 21 Aug 2026; CaviarNine will &ldquo;come back with a considered answer&rdquo;. <b>Pending.</b>
-          </Item>
-          <Item tone="ok" title="Fee destinations" href={dashboardUrl(ADDRESSES.feeVaults)}>
-            10% of swap fees go to CaviarNine&apos;s fee vaults and 10% to their treasury, encoded on-ledger. This site takes no fee.
-          </Item>
-          <Item tone="ok" title="This frontend" href={LINKS.frontendRepo}>
-            Open source, no accounts, no custody. Every action is a transaction you review and sign in your own wallet.
-            Contract source: <a className="underline" href={LINKS.hyperStakeSource} target="_blank" rel="noreferrer">caviarnine-scrypto</a>.
-          </Item>
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="label mb-3 !text-bg/50">Status · who keeps what running</div>
+            <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine</h2>
+            <p className="mt-4 max-w-2xl text-bg/70">
+              The website was the easy part. This is the whole chain behind a swap, what&apos;s healthy, and what we&apos;re watching.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 rounded-full border border-bg/15 px-4 py-2 text-sm">
+            <span className="dot bg-ok" />
+            <span>Operational</span>
+            <span className="text-bg/40">·</span>
+            <span className="dot bg-accent" />
+            <span>{watchCount} to watch</span>
+            {s && <span className="num ml-2 text-xs text-bg/40">live · {timeAgo(s.fetchedAt)}</span>}
+          </div>
         </div>
+
+        {/* Flow diagram */}
+        <div className="mt-12 overflow-x-auto">
+          <Flow oracle={oracleTone} allow={allowTone} />
+        </div>
+
+        {/* Readouts */}
+        <div className="mt-12 divide-y divide-bg/10 border-y border-bg/10">
+          {rows.map((r) => (
+            <a
+              key={r.title}
+              href={r.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group grid gap-3 py-5 transition-colors hover:bg-bg/5 md:grid-cols-[220px_260px_1fr_auto] md:items-baseline md:gap-6"
+            >
+              <div className="flex items-center gap-3 font-semibold">
+                <span className={`dot ${dot[r.tone]}`} />
+                {r.title}
+              </div>
+              <div>
+                <div className="num text-2xl leading-none">{r.metric}</div>
+                {r.metricSub && <div className="mt-1 text-xs text-bg/50">{r.metricSub}</div>}
+              </div>
+              <p className="text-sm text-bg/70">{r.text}</p>
+              <span className="text-xs text-bg/40 group-hover:text-accent">verify ↗</span>
+            </a>
+          ))}
+        </div>
+
+        {/* Timeline */}
+        <ol className="mt-12 grid gap-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <Milestone when="Apr 2025" what="HyperStake launched by CaviarNine" />
+          <Milestone when={s?.allowlistLastUpdatedAt ? new Date(s.allowlistLastUpdatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Oct 2025'} what="Validator list last updated" tone="watch" />
+          <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix; admin-key handover requested" />
+          <Milestone when="Aug 2026" what="Not CaviarNine goes live" tone="ok" />
+        </ol>
       </div>
     </section>
   );
 }
 
-function Item({ tone, title, href, children }: { tone: 'ok' | 'warn' | 'danger' | 'muted'; title: string; href: string; children: React.ReactNode }) {
-  const c = tone === 'ok' ? 'bg-ok' : tone === 'warn' ? 'bg-warn' : tone === 'danger' ? 'bg-danger' : 'bg-line';
+function Milestone({ when, what, tone }: { when: string; what: string; tone?: Tone }) {
   return (
-    <div className="rounded-2xl border border-line bg-bg p-5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 font-semibold"><span className={`dot ${c}`} />{title}</div>
-        <a className="text-xs text-muted hover:text-ink" href={href} target="_blank" rel="noreferrer">on ledger ↗</a>
-      </div>
-      <p className="mt-2 text-sm text-ink-soft">{children}</p>
-    </div>
+    <li className="border-l border-bg/15 pl-4">
+      <div className={`num text-xs ${tone === 'watch' ? 'text-accent' : tone === 'ok' ? 'text-ok' : 'text-bg/50'}`}>{when}</div>
+      <div className="mt-1 text-bg/80">{what}</div>
+    </li>
+  );
+}
+
+/**
+ * Plain-language dependency flow. Top row: the path of a swap. Bottom row:
+ * where the price comes from and who controls the gate in front of it.
+ */
+function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
+  const W = 960, H = 250;
+  const box = (x: number, y: number, w: number, label: string, sub: string, tone: Tone, dashed = false) => (
+    <g key={label}>
+      <rect x={x} y={y} width={w} height={56} rx={12} fill="none" stroke={stroke[tone]} strokeWidth={1.5} strokeDasharray={dashed ? '4 4' : undefined} />
+      <text x={x + w / 2} y={y + 24} textAnchor="middle" fill="#f6f2e8" fontSize={14} fontWeight={600}>{label}</text>
+      <text x={x + w / 2} y={y + 42} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>{sub}</text>
+    </g>
+  );
+  const arrow = (x1: number, y1: number, x2: number, y2: number, label?: string, tone: Tone = 'muted') => (
+    <g key={`${x1}-${y1}-${x2}-${y2}`}>
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={stroke[tone]} strokeWidth={1.5} markerEnd="url(#arrow)" />
+      {label && (
+        <text x={(x1 + x2) / 2} y={y1 === y2 ? y1 - 8 : (y1 + y2) / 2 + 4} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>
+          {label}
+        </text>
+      )}
+    </g>
+  );
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[720px] w-full" role="img" aria-label="Dependency flow: your wallet uses this website to swap in the HyperStake pool; the pool prices from CaviarNine's staking pool, which only accepts validators CaviarNine approved, controlled by CaviarNine's admin key.">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#f6f2e8" fillOpacity={0.6} />
+        </marker>
+      </defs>
+      {/* top row: the swap path */}
+      {box(20, 30, 180, 'Your wallet', 'you sign every step', 'ok')}
+      {arrow(200, 58, 260, 58, 'uses')}
+      {box(260, 30, 200, 'This website', 'open source · no custody', 'ok')}
+      {arrow(460, 58, 520, 58, 'sends a swap to')}
+      {box(520, 30, 200, 'HyperStake pool', 'LSULP ⇄ XRD · open to all', 'ok')}
+      {arrow(720, 58, 780, 58, 'holds')}
+      {box(780, 30, 160, 'LSULP + XRD', 'the real reserves', 'ok')}
+
+      {/* bottom row: where the price comes from and who gates it */}
+      {arrow(620, 150, 620, 90, 'price', oracle)}
+      {box(520, 150, 200, 'CaviarNine staking pool', 'sets the LSULP value', oracle)}
+      {arrow(520, 178, 460, 178, 'gated by', allow)}
+      {box(260, 150, 200, 'Approved validators', 'list maintained by owner', allow)}
+      {arrow(260, 178, 200, 178, 'controlled by', 'watch')}
+      {box(20, 150, 180, 'CaviarNine admin key', 'handover pending', 'watch', true)}
+    </svg>
   );
 }

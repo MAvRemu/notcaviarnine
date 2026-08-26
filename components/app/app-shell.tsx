@@ -58,7 +58,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
 
         <footer className="mx-auto max-w-6xl px-6 pb-10 text-xs text-muted">
           Non-custodial: every action is a transaction you review and sign in your Radix Wallet. Contracts by CaviarNine; this site is independent.{' '}
-          <Link href="/disclaimer" className="underline underline-offset-2">Disclaimer</Link>
+          <Link href="/disclaimer" className="underline underline-offset-2">Disclaimer</Link> · <Link href="/terms" className="underline underline-offset-2">Terms</Link>
         </footer>
       </PoolProvider>
     </RdtProvider>

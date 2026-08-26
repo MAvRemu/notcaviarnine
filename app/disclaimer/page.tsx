@@ -64,11 +64,34 @@ export default function Disclaimer() {
           in your jurisdiction, and for your own tax obligations. Do not use this site if you do not understand these risks.
         </p>
 
+        <h2>Availability</h2>
+        <p>
+          The site may be unavailable, delayed or discontinued at any time. Because the protocol lives on the Radix network, you can always
+          reach your assets without this site — through your wallet, the Radix Dashboard, or any other interface.
+        </p>
+
+        <h2>Privacy</h2>
+        <p>
+          We do not require accounts and do not store personal data. Your wallet address is used in your browser to read balances from the
+          public Radix Gateway. We use Vercel Analytics for aggregated, cookie-less page statistics. Third-party services you connect to
+          (Radix Wallet, Radix Gateway, Radix Dashboard) have their own policies.
+        </p>
+
+        <h2>Links to third parties</h2>
+        <p>
+          We link to CaviarNine documentation and other external sites for reference. We do not control them and are not responsible for
+          their content or availability.
+        </p>
+
         <h2>Open source</h2>
         <p>
           The frontend source is public at <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">github.com/MAvRemu/notcaviarnine</a>.
           The contract source is public at <a href={LINKS.scryptoRepo} target="_blank" rel="noreferrer">github.com/caviarnine/caviarnine-scrypto</a>.
           Verify, don&apos;t trust.
+        </p>
+
+        <p className="text-muted">
+          See also our <Link href="/terms">Terms of Use</Link>. We may update this disclaimer; the date above shows the current version.
         </p>
       </main>
       <SiteFooter />
