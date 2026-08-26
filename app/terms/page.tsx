@@ -71,7 +71,7 @@ export default function Terms() {
         <h2>8. Intellectual property</h2>
         <p>
           The Site&apos;s source code is published at{' '}
-          <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">github.com/MAvRemu/notcaviarnine</a> under the licence stated there.
+          <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">github.com/MAvRemu/notcaviarnine</a> under the MIT licence.
           Names and marks of CaviarNine, HyperStake and Radix belong to their respective owners and are used only to describe the
           Protocol the Site interacts with.
         </p>

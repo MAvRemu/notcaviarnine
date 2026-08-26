@@ -60,3 +60,8 @@ never on Vercel). Both gitignored.
 - Contract source: https://github.com/caviarnine/caviarnine-scrypto
 
 Not affiliated with CaviarNine. Use at your own risk — see `/disclaimer`.
+
+## License
+
+MIT — see [LICENSE](LICENSE). The HyperStake smart contracts are CaviarNine's and carry their own license in
+[caviarnine-scrypto](https://github.com/caviarnine/caviarnine-scrypto); this repository contains only the frontend.
