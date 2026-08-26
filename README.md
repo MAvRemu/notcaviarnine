@@ -1,6 +1,6 @@
 # Not CaviarNine
 
-**Caviar is gone. Contracts never die.**
+**CaviarNine is gone. But contracts never die.**
 
 An independent, non-custodial frontend for CaviarNine's [HyperStake](https://docs.caviarnine.com/products-caviar/hyperstake)
 LSULP/XRD pool on Radix mainnet — built after CaviarNine [announced](https://t.me/caviarxrd/70246) it is leaving Radix and

@@ -30,7 +30,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="mx-auto max-w-6xl px-6 pb-10 text-xs text-muted">
-        Caviar is gone. Contracts never die. · Use at your own risk · notcaviarnine.com
+        CaviarNine is gone, but contracts never die. · Use at your own risk · notcaviarnine.com
       </div>
     </footer>
   );

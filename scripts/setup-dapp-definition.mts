@@ -41,7 +41,7 @@ const origins = (xs: string[]) => `Enum<142u8>(Array<String>(${xs.map((x) => `"$
 const manifestBody = `
 SET_METADATA Address("${ACCOUNT}") "account_type" ${str('dapp definition')};
 SET_METADATA Address("${ACCOUNT}") "name" ${str('Not CaviarNine')};
-SET_METADATA Address("${ACCOUNT}") "description" ${str('Independent, non-custodial frontend for the HyperStake LSULP/XRD pool on Radix. Caviar is gone; contracts never die. Not affiliated with CaviarNine.')};
+SET_METADATA Address("${ACCOUNT}") "description" ${str('Independent, non-custodial frontend for the HyperStake LSULP/XRD pool on Radix. CaviarNine is gone, but contracts never die. Not affiliated with CaviarNine.')};
 SET_METADATA Address("${ACCOUNT}") "icon_url" ${url(`${SITE}/dapp-icon.png`)};
 SET_METADATA Address("${ACCOUNT}") "claimed_websites" ${origins([SITE])};
 SET_METADATA Address("${ACCOUNT}") "tags" Enum<128u8>(Array<String>("dapp", "defi", "hyperstake"));

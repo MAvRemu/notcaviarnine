@@ -14,8 +14,8 @@
   --muted: #6d6961;
   --line: #d9d2c2;
   --card: #fffdf8;
-  --accent: #ffde68;
-  --accent-deep: #d28e00;
+  --accent: #e9b400;
+  --accent-deep: #a67300;
   --ok: #2f7a4f;
   --warn: #b45f06;
   --danger: #a83232;
@@ -36,7 +36,6 @@
   --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
 }
 
 html { height: 100%; scroll-behavior: smooth; }
@@ -50,13 +49,14 @@ body {
   line-height: 1.55;
 }
 ::selection { background: var(--accent); color: var(--ink); }
+.text-accent-deep { color: var(--accent-deep); }
 
-.display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; line-height: 1.02; }
+.display { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.035em; line-height: 1.0; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
 
 /* yellow highlighter behind a word */
-.hl { background: linear-gradient(transparent 55%, var(--accent) 55%, var(--accent) 92%, transparent 92%); padding: 0 0.08em; }
+.hl { color: var(--accent-deep); }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
@@ -101,7 +101,7 @@ body {
 
 .prose p { margin: 0 0 1rem; }
 .prose a { text-decoration: underline; text-underline-offset: 3px; }
-.prose h2 { font-family: var(--font-display); font-size: 1.75rem; margin: 2rem 0 .75rem; }
+.prose h2 { font-weight: 700; letter-spacing: -0.02em; font-size: 1.5rem; margin: 2rem 0 .75rem; }
 .prose ul { list-style: disc; padding-left: 1.25rem; margin: 0 0 1rem; }
 .prose li { margin: .25rem 0; }
 
