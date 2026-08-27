@@ -103,6 +103,15 @@ indexed state version, decodes `SwapEvent` / `LiquidityChangeEvent`, and upserts
 one daily run) and a lazy kick from `/api/pool` when the last run is >1 h old (`after()` so the response isn't delayed).
 Swap rows carry `liquidity_fee_xrd` (LSULP fees converted at the swap's oracle price) and `tvl_xrd_after`.
 
+### Caching layers
+1. **Next Data Cache (`unstable_cache`, cross-instance, survives cold starts)** — `lib/cached.ts` + `lib/prices/astrolescent.ts`:
+   pool snapshot 20 s · Simple Pool summaries 5 min (tags `fees`,`simple-pools`) · Shape summary 15 min · admin-key log 10 min ·
+   Astrolescent prices 10 min (tag `prices`) · token metadata 24 h (tag `tokens`). Stale-while-revalidate: visitors always get the cached copy.
+2. **In-process memos** inside the readers (15 s–30 min) — only matter within one warm instance.
+3. **Watchtower invalidation** — `lib/governance/invalidate.ts` runs after `/api/pool` responses; when the newest admin-key action
+   changed a fee or a list, it calls `revalidateTag('fees'|'simple-pools')` so cached values refresh immediately.
+Never cache anything that feeds a quote or a minimum output beyond the 20 s snapshot; per-account data is never cached.
+
 ### Stats
 `getFeeStats(tvl, 7d)`: sum of `liquidity_fee_xrd` and XRD-equivalent volume over the window; APR = fees / TVL × 365/days
 covered. Falls back to five Gateway pages when the DB is empty or unconfigured.
