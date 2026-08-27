@@ -97,8 +97,8 @@ export function History() {
       <div className="mb-3 flex items-center justify-between">
         <div className="label">Activity</div>
         <div className="flex gap-1">
-          <button className="tab !py-1 !text-xs" data-active={scope === 'pool'} onClick={() => switchScope('pool')}>Pool</button>
-          <button className="tab !py-1 !text-xs" data-active={scope === 'mine'} onClick={() => switchScope('mine')} disabled={!account} title={account ? '' : 'Connect a wallet'}>Mine</button>
+          <button className="tab tab-sm" data-active={scope === 'pool'} onClick={() => switchScope('pool')}>Pool</button>
+          <button className="tab tab-sm" data-active={scope === 'mine'} onClick={() => switchScope('mine')} disabled={!account} title={account ? '' : 'Connect a wallet'}>Mine</button>
         </div>
       </div>
       {err && <div className="text-xs text-danger">{err}</div>}
@@ -111,14 +111,14 @@ export function History() {
               <li key={key(e)} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="min-w-0">
                   <div className="truncate">{describe(e)}</div>
-                  <div className="num mt-0.5 text-[11px] text-muted">{timeAgo(e.timestamp)}{e.kind === 'swap' && e.liquidityFeeXrd ? ` · LP fee ${fmt(e.liquidityFeeXrd, { dp: 3 })} XRD` : ''}</div>
+                  <div className="num mt-0.5 text-xs text-muted">{timeAgo(e.timestamp)}{e.kind === 'swap' && e.liquidityFeeXrd ? ` · LP fee ${fmt(e.liquidityFeeXrd, { dp: 3 })} XRD` : ''}</div>
                 </div>
-                <a className="shrink-0 text-xs text-muted hover:text-accent" href={dashboardUrl(e.intentHash)} target="_blank" rel="noreferrer">tx ↗</a>
+                <a className="shrink-0 text-xs text-muted hover:text-accent-text" href={dashboardUrl(e.intentHash)} target="_blank" rel="noreferrer">tx ↗</a>
               </li>
             ))}
           </ul>
         )}
-        <div ref={sentinel} className="py-3 text-center text-[11px] text-muted">
+        <div ref={sentinel} className="py-3 text-center text-xs text-muted">
           {loadingMore ? 'Loading…' : cursor ? '' : items && items.length ? 'End of history' : ''}
         </div>
       </div>
@@ -133,7 +133,7 @@ function describe(e: HyperStakeEvent) {
     const inS = sym(e.inputResource);
     return (
       <>
-        <span className={`pill mr-2 ${inS === 'XRD' ? 'border-ok/40 text-ok' : 'border-warn/40 text-warn'}`}>{inS === 'XRD' ? 'stake' : 'unstake'}</span>
+        <span className={`chip mr-2 !h-6 ${inS === 'XRD' ? 'border-ok/40 text-ok' : 'border-warn/40 text-warn'}`}>{inS === 'XRD' ? 'stake' : 'unstake'}</span>
         <span className="num">{fmt(e.inputAmount, { dp: 2 })}</span> {inS} → <span className="num">{fmt(e.outputAmount, { dp: 2 })}</span> {sym(e.outputResource)}
       </>
     );
@@ -141,7 +141,7 @@ function describe(e: HyperStakeEvent) {
   const add = e.kind === 'add';
   return (
     <>
-      <span className={`pill mr-2 ${add ? 'border-ink/30' : 'border-line text-muted'}`}>{add ? 'add LP' : 'remove LP'}</span>
+      <span className={`chip mr-2 !h-6 ${add ? 'border-ink/30 text-ink' : ''}`}>{add ? 'add LP' : 'remove LP'}</span>
       <span className="num">{fmt(e.amountLp?.replace('-', ''), { dp: 2 })}</span> HLP · <span className="num">{fmt(e.amountLsulp?.replace('-', ''), { dp: 1 })}</span> LSULP + <span className="num">{fmt(e.amountXrd?.replace('-', ''), { dp: 1 })}</span> XRD
     </>
   );

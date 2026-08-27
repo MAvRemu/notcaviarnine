@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { PoolSnapshot } from '@/lib/pool-data';
 import { ProductShell } from '@/components/shell/product-shell';
+import { PageHeader } from '@/components/ui';
 import { PoolProvider } from './pool-context';
 import { SwapPanel } from './swap-panel';
 import { AddLiquidityPanel } from './add-liquidity-panel';
@@ -19,12 +20,8 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
   return (
     <ProductShell>
       <PoolProvider initial={initial}>
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 pt-6 sm:px-6">
-          <div>
-            <div className="label">HyperStake · LSULP / XRD</div>
-            <h1 className="display mt-1 text-2xl">Instant stake & unstake</h1>
-          </div>
-          <a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink sm:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>
+        <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+          <PageHeader eyebrow="HyperStake · LSULP / XRD" title="Instant stake & unstake" aside={<a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink sm:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>} />
         </div>
         <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
           <section className="min-w-0 space-y-6">

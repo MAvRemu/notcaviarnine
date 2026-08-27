@@ -43,13 +43,13 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <input className="field h-10 flex-1 min-w-[220px] px-3 text-sm outline-none" placeholder="Search token, pool or address…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search pools" />
+        <input className="field h-11 flex-1 min-w-[220px] px-4 text-sm outline-none" placeholder="Search token, pool or address…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search pools" />
         <Chip on={xrdOnly} onClick={() => setXrdOnly(!xrdOnly)}>XRD pairs</Chip>
         <Chip on={stables} onClick={() => setStables(!stables)}>Stablecoins</Chip>
         <Chip on={showEmpty} onClick={() => setShowEmpty(!showEmpty)}>Show empty pools</Chip>
         <div className="ml-auto flex items-center gap-1">
-          <button className="tab !py-1 !text-xs" data-active={!usd} onClick={() => setUsd(false)}>XRD</button>
-          <button className="tab !py-1 !text-xs" data-active={usd} onClick={() => setUsd(true)} disabled={!xrdUsd} title={xrdUsd ? '' : 'USD rate unavailable'}>USD</button>
+          <button className="tab tab-sm" data-active={!usd} onClick={() => setUsd(false)}>XRD</button>
+          <button className="tab tab-sm" data-active={usd} onClick={() => setUsd(true)} disabled={!xrdUsd} title={xrdUsd ? '' : 'USD rate unavailable'}>USD</button>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
                     <Link href={`/pools/${p.swapComponent}`} className="flex items-center gap-2">
                       <Pair a={p.iconX} b={p.iconY} />
                       <span className="font-semibold">{p.symbolX} / {p.symbolY}</span>
-                      {dup > 1 && <span className="pill !py-0 text-muted">×{dup}</span>}
+                      {dup > 1 && <span className="chip !h-5 !px-1.5 !text-[11px]">×{dup}</span>}
                       {p.divergence !== null && Math.abs(p.divergence) > 0.05 && <span className="dot dot-warn" title={`Pool price is ${(p.divergence * 100).toFixed(0)}% away from market`} />}
                       {(!p.iconX || !p.iconY) && <span className="dot dot-warn" title="A token in this pool has no metadata — verify the address" />}
                     </Link>
@@ -103,7 +103,7 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
         </ul>
         {rows.length === 0 && <div className="p-6 text-sm text-muted">No pools match.</div>}
       </div>
-      <div className="flex flex-wrap justify-between gap-2 text-[11px] text-muted">
+      <div className="flex flex-wrap justify-between gap-2 text-xs text-muted">
         <span>{rows.length} of {pools.length} pools shown</span>
         <span>Prices by Astrolescent · reserves live from the Radix Gateway</span>
       </div>
@@ -112,7 +112,7 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
 }
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
-  return <button onClick={onClick} className={`rounded-full border px-3 py-1 text-xs font-semibold ${on ? 'border-accent bg-accent text-white' : 'border-line text-muted hover:text-ink'}`}>{children}</button>;
+  return <button onClick={onClick} className="chip" data-selected={on}>{children}</button>;
 }
 
 function Pair({ a, b }: { a?: string; b?: string }) {

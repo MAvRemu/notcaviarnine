@@ -11,7 +11,7 @@ export function ProductSwitcher() {
       {PRODUCTS.map((p) => {
         const active = path === p.href || path.startsWith(p.href + '/');
         return (
-          <Link key={p.id} href={p.href} className="tab flex shrink-0 items-center gap-1.5 !py-1.5 !text-[13px]" data-active={active} title={p.subtitle}>
+          <Link key={p.id} href={p.href} className="tab flex shrink-0 items-center gap-1.5 !py-1.5 !text-sm" data-active={active} title={p.subtitle}>
             {p.name}
             {p.status !== 'live' && <span className="dot dot-warn !h-1.5 !w-1.5" aria-label={p.statusLabel} />}
           </Link>

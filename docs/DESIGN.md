@@ -30,12 +30,25 @@ It keeps CaviarNine's black-and-cream ground but replaces their yellow as the ac
 | `--ink` | `#f6f2e8` | primary type (cream) |
 | `--ink-soft` | `#d8d3c6` | body copy |
 | `--muted` | `#8d887c` | labels, secondary text |
-| `--accent` | `#2f6fef` | the one accent (actions) |
+| `--accent` | `#2f6fef` | the one accent — fills only |
+| `--accent-text` | `#4d84f7` | the accent when used as text/links (AA on dark) |
 | `--ok` | `#3fae6a` | healthy status only |
 | `--warn` | `#e9b400` | watch status only |
 | `--danger` | `#e0563f` | failing status / errors only |
 
 Exposed to Tailwind v4 via `@theme inline` as `bg-bg`, `text-ink`, `border-line`, `text-accent`, etc.
+
+## Scales (fixed — do not add values)
+
+- **Type**: `display` (5xl/4xl, Geist 700 tight) · `title` (2xl) · `heading` (xl) · `body` (sm = 14px) · `caption` (xs = 12px) ·
+  `eyebrow` (`.label`, 11px tracked uppercase — the only sub-12px size). Numbers use `.num` at any of these sizes.
+- **Radius**: `999px` (pills, buttons, chips) · `16px` (cards, fields = `rounded-2xl`) · `8px` (tiles, small boxes = `rounded-lg`).
+- **Buttons**: default 44px (`.btn`) and small 36px (`.btn-sm`). Nothing else.
+- **Chip** (`.chip`): the one small rounded control — filters, presets, tags, status labels. Neutral by default, `data-selected` = blue fill,
+  status tones via `text-ok/warn` + border. `.tab`/`.tab-sm` only for segmented navigation.
+- **Focus**: every interactive element shows a 2px `--accent-text` ring on `:focus-visible` (global rule).
+- **Accent as text** uses `--accent-text #4d84f7` (5.6:1 on the ground) — `--accent #2f6fef` is for fills only (white text on it, 4.5:1).
+- **Shared states**: `Skeleton`, `SkeletonCard`, `Empty`, `ErrorNote`, `PageHeader` in `components/ui.tsx` — never hand-roll loading/empty UI.
 
 ## Typography
 

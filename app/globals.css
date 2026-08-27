@@ -13,8 +13,9 @@
   --muted: #8d887c;
   --line: #262521;
   --card: #111110;
-  --accent: #2f6fef;
-  --accent-deep: #2f6fef;
+  --accent: #2f6fef;        /* fills: buttons, selected chips */
+  --accent-text: #4d84f7;   /* the same hue for text on dark (AA ≥ 4.5:1) */
+  --accent-deep: #4d84f7;
   --ok: #3fae6a;
   --warn: #e9b400;
   --danger: #e0563f;
@@ -30,6 +31,7 @@
   --color-card: var(--card);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
+  --color-accent-text: var(--accent-text);
   --color-ok: var(--ok);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
@@ -49,12 +51,15 @@ body {
   line-height: 1.55;
 }
 ::selection { background: var(--accent); color: #ffffff; }
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; border-radius: 4px; }
+.btn:focus-visible, .tab:focus-visible, .chip:focus-visible { outline-offset: 3px; border-radius: 999px; }
 
 .display { font-weight: 700; letter-spacing: -0.035em; line-height: 1.0; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
-.hl { color: var(--accent); }
+.hl { color: var(--accent-text); }
 .text-accent-deep { color: var(--accent-deep); }
+.text-accent-text { color: var(--accent-text); }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
@@ -71,13 +76,15 @@ body {
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover { background: var(--ink); color: #0b0b0b; border-color: var(--ink); box-shadow: none; }
 .btn-accent { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+.btn-sm { height: 36px; padding: 0 1rem; font-size: 13px; }
 
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
 .hairline { border-color: var(--line); }
 
 .tab { padding: .55rem 1rem; border-radius: 999px; font-weight: 600; font-size: 14px; color: var(--muted); transition: background .15s, color .15s; }
 .tab[data-active="true"] { background: var(--accent); color: #ffffff; }
 .tab:not([data-active="true"]):hover { color: var(--ink); background: var(--bg-deep); }
+.tab-sm { padding: .3rem .8rem; font-size: 12px; }
 
 .input {
   width: 100%; background: transparent; border: 0; outline: 0; font-family: var(--font-mono);
@@ -90,7 +97,12 @@ input[type=number] { -moz-appearance: textfield; }
 .field { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 16px; transition: border-color .15s; }
 .field:focus-within { border-color: var(--accent); }
 
-.pill { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .65rem; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; font-weight: 600; }
+.pill { display: inline-flex; align-items: center; gap: .4rem; height: 28px; padding: 0 .7rem; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; font-weight: 600; white-space: nowrap; }
+/* Chip: the one small rounded control. Neutral by default; data-selected = blue fill; as a <button> it is clickable. */
+.chip { display: inline-flex; align-items: center; gap: .4rem; height: 28px; padding: 0 .7rem; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; transition: color .15s, background .15s, border-color .15s; }
+button.chip:hover { color: var(--ink); border-color: var(--muted); }
+.chip[data-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip:disabled { opacity: .45; cursor: not-allowed; }
 .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
 .dot-ok { background: var(--ok); box-shadow: 0 0 10px -1px var(--ok); }
 .dot-warn { background: var(--warn); box-shadow: 0 0 10px -1px var(--warn); }

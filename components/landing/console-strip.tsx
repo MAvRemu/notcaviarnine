@@ -30,8 +30,8 @@ export function ConsoleStrip({ snap, pools, shape }: { snap: PoolSnapshot | null
                 <span className="label">{p.name}</span>
                 <span className={`dot ${p.status === 'live' ? 'dot-ok' : 'dot-warn'}`} title={p.statusLabel} />
               </div>
-              <div className="num text-2xl leading-none group-hover:text-accent">{d.v}</div>
-              <div className="text-[11px] text-muted">{d.sub}</div>
+              <div className="num text-2xl leading-none group-hover:text-accent-text">{d.v}</div>
+              <div className="text-xs text-muted">{d.sub}</div>
             </Link>
           );
         })}

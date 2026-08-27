@@ -144,7 +144,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
                 {r.metricSub && <div className="mt-1 text-xs text-muted">{r.metricSub}</div>}
               </div>
               <p className="text-sm text-ink-soft">{r.text}</p>
-              <span className="text-xs text-muted group-hover:text-accent">verify ↗</span>
+              <span className="text-xs text-muted group-hover:text-accent-text">verify ↗</span>
             </a>
           ))}
         </div>
@@ -176,7 +176,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
                       </div>
                     ))}
                   </div>
-                  <a className="text-xs text-muted hover:text-accent" href={dashboardUrl(e.intentHash)} target="_blank" rel="noreferrer">tx ↗</a>
+                  <a className="text-xs text-muted hover:text-accent-text" href={dashboardUrl(e.intentHash)} target="_blank" rel="noreferrer">tx ↗</a>
                 </li>
               ))}
             </ul>
@@ -200,7 +200,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
 function Milestone({ when, what, tone }: { when: string; what: string; tone?: Tone }) {
   return (
     <li className="border-l border-line pl-4">
-      <div className={`num text-xs ${tone === 'watch' ? 'text-accent' : tone === 'ok' ? 'text-ok' : 'text-muted'}`}>{when}</div>
+      <div className={`num text-xs ${tone === 'watch' ? 'text-accent-text' : tone === 'ok' ? 'text-ok' : 'text-muted'}`}>{when}</div>
       <div className="mt-1 text-ink-soft">{what}</div>
     </li>
   );

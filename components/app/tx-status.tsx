@@ -14,7 +14,7 @@ export function TxStatus({ state, onDismiss }: { state: TxState; onDismiss: () =
   const tone =
     state.phase === 'done' ? 'border-ok/40 bg-ok/10' : state.phase === 'error' ? 'border-danger/40 bg-danger/10' : 'border-accent/40 bg-accent/10';
   return (
-    <div className={`flex items-start justify-between gap-3 rounded-xl border px-3 py-2 text-sm ${tone}`} role="status">
+    <div className={`flex items-start justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${tone}`} role="status">
       <div>
         {state.phase === 'previewing' && 'Simulating transaction on the Gateway…'}
         {state.phase === 'signing' && 'Review and sign in your Radix Wallet…'}

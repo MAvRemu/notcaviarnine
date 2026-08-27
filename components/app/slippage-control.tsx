@@ -15,12 +15,13 @@ export function SlippageControl() {
             key={b}
             type="button"
             onClick={() => setSlippageBps(b)}
-            className={`rounded-full border px-2 py-0.5 ${slippageBps === b ? 'border-accent bg-accent text-white' : 'border-line hover:border-ink'}`}
+            className="chip"
+            data-selected={slippageBps === b}
           >
             {(b / 100).toFixed(b % 100 ? 1 : 0)}%
           </button>
         ))}
-        <label className="ml-1 flex items-center gap-1 rounded-full border border-line px-2 py-0.5">
+        <label className="chip ml-1 gap-1">
           <input
             className="num w-10 bg-transparent text-right outline-none"
             inputMode="decimal"

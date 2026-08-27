@@ -65,7 +65,7 @@ export default function Home() {
           <a href="#products" className="hidden text-muted hover:text-ink sm:inline">Products</a>
           <a href="#status" className="hidden text-muted hover:text-ink sm:inline">Status</a>
           <a href={`${LINKS.frontendRepo}/tree/main/docs`} target="_blank" rel="noreferrer" className="hidden text-muted hover:text-ink sm:inline">Docs ↗</a>
-          <Link href="/hyperstake" className="btn h-10">Open app</Link>
+          <Link href="/hyperstake" className="btn btn-sm">Open app</Link>
         </nav>
       </header>
 
@@ -81,8 +81,8 @@ export default function Home() {
             Simple Pools, Shape Liquidity and the LSU Pool. This independent console keeps them usable, starting with HyperStake.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/hyperstake" className="btn btn-accent h-12 px-6 text-base">Open the app</Link>
-            <a href="#products" className="btn btn-ghost h-12">See all products</a>
+            <Link href="/hyperstake" className="btn btn-accent px-6">Open the app</Link>
+            <a href="#products" className="btn btn-ghost">See all products</a>
           </div>
         </section>
 

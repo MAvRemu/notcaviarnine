@@ -36,7 +36,7 @@ export function TokenInput({
             title="Use full balance"
           >
             Balance <span className="num">{fmt(balance, { dp: 4 })}</span>
-            {!readOnly && onChange && <span className="ml-1 font-semibold text-accent">MAX</span>}
+            {!readOnly && onChange && <span className="ml-1 font-semibold text-accent-text">MAX</span>}
           </button>
         )}
       </div>

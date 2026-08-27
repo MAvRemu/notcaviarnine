@@ -27,7 +27,7 @@ export function HealthPanel() {
     <div className="card p-5">
       <div className="mb-4 flex items-center justify-between">
         <div className="label">Pool health</div>
-        {s && <span className="num text-[11px] text-muted">live · {timeAgo(s.fetchedAt)}</span>}
+        {s && <span className="num text-xs text-muted">live · {timeAgo(s.fetchedAt)}</span>}
       </div>
       {error && <div className="mb-3 text-xs text-danger">Live data unavailable: {error}</div>}
 
@@ -42,7 +42,7 @@ export function HealthPanel() {
           <div className="sm:text-right">
             <div className="label">Pool · NAV</div>
             <div className="num mt-1 text-sm">{s ? `${fmt(s.price, { dp: 4 })} · ${fmt(s.nav, { dp: 4 })}` : '—'}</div>
-            <div className="text-[11px] text-muted">XRD per LSULP</div>
+            <div className="text-xs text-muted">XRD per LSULP</div>
           </div>
         </div>
         <div className="mt-4">
@@ -50,7 +50,7 @@ export function HealthPanel() {
             <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-ok/60 to-warn/60" style={{ width: `${pos * 100}%` }} />
             <div className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-bg bg-ink shadow" style={{ left: `${pos * 100}%` }} />
           </div>
-          <div className="num mt-2 flex justify-between text-[11px] text-muted">
+          <div className="num mt-2 flex justify-between text-xs text-muted">
             <span>{s ? `${fmt(s.rangeLower, { dp: 4 })} · −1.5%` : ''}</span>
             <span>trading range</span>
             <span>{s ? `${fmt(s.rangeUpper, { dp: 4 })} · NAV` : ''}</span>
@@ -68,7 +68,7 @@ export function HealthPanel() {
           <div className="bg-ink" style={{ width: `${xrdShare}%` }} />
           <div className="bg-accent" style={{ width: `${100 - xrdShare}%` }} />
         </div>
-        <div className="num mt-2 flex justify-between text-[11px] text-muted">
+        <div className="num mt-2 flex justify-between text-xs text-muted">
           <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-ink" />{s ? `${fmt(s.reserveXrd, { dp: 0 })} XRD` : '—'} · {xrdShare.toFixed(0)}%</span>
           <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-accent" />{s ? `${fmt(s.reserveLsulp, { dp: 0 })} LSULP` : '—'} · {(100 - xrdShare).toFixed(0)}%</span>
         </div>
@@ -91,7 +91,7 @@ export function HealthPanel() {
             <span className="flex items-center gap-1.5 whitespace-nowrap"><span className={`dot ${s?.requireActiveSet ? 'dot-warn' : 'dot-ok'}`} />validators {s?.allowlistCount != null ? `${s.allowlistCount}/${s.lsuPoolHeldCount}` : ''}</span>
             <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="dot dot-ok" />open access</span>
           </span>
-          <span className="label !text-[10px]">details</span>
+          <span className="label">details</span>
         </summary>
         <div className="mt-3 space-y-2 text-muted">
           <Dep href={dashboardUrl(ADDRESSES.lsuPool)} title="Price feed" text={s ? `LSULP value last refreshed ${timeAgo(s.lsuPoolLastTxAt)}. It refreshes whenever CaviarNine’s staking pool is used; anyone can trigger it.` : '…'} />
@@ -105,10 +105,10 @@ export function HealthPanel() {
 
 function Tile({ k, v, sub, accent }: { k: string; v?: string; sub?: string; accent?: boolean }) {
   return (
-    <div className="rounded-xl border border-line p-3">
-      <div className="label !text-[10px]">{k}</div>
-      <div className={`num mt-1 text-xl leading-none ${accent ? 'text-accent' : ''} ${v === undefined ? 'skeleton inline-block w-16' : ''}`}>{v ?? '0'}</div>
-      {sub && <div className="mt-1 text-[11px] text-muted">{sub}</div>}
+    <div className="rounded-lg border border-line p-3">
+      <div className="label">{k}</div>
+      <div className={`num mt-1 text-xl leading-none ${accent ? 'text-accent-text' : ''} ${v === undefined ? 'skeleton inline-block w-16' : ''}`}>{v ?? '0'}</div>
+      {sub && <div className="mt-1 text-xs text-muted">{sub}</div>}
     </div>
   );
 }

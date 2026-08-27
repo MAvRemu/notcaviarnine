@@ -22,7 +22,7 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <Link href="/pools" className="text-xs text-muted hover:text-ink">← All pools</Link>
+            <Link href="/pools" className="label hover:text-ink">← All pools</Link>
             <h1 className="display mt-1 text-2xl">{p.symbolX} / {p.symbolY}</h1>
             <div className="num mt-1 text-xs text-muted">{Math.round(p.weightX * 100)} / {Math.round(p.weightY * 100)} · fee {(p.fee * 100).toFixed(2)}% · created {p.createdAt.slice(0, 10)}</div>
           </div>
@@ -55,5 +55,5 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
     </ProductShell>
   );
 }
-function F({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div><dt className="text-[11px] uppercase tracking-wider text-muted">{k}</dt><dd className="num">{v}</dd>{sub && <dd className="text-[11px] text-muted">{sub}</dd>}</div>); }
-function A({ label, a }: { label: string; a: string }) { return (<div className="flex justify-between gap-3"><span className="text-muted">{label}</span><a className="num truncate hover:text-accent" href={dashboardUrl(a)} target="_blank" rel="noreferrer">{a.slice(0, 18)}…{a.slice(-6)} ↗</a></div>); }
+function F({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div><dt className="text-xs uppercase tracking-wider text-muted">{k}</dt><dd className="num">{v}</dd>{sub && <dd className="text-xs text-muted">{sub}</dd>}</div>); }
+function A({ label, a }: { label: string; a: string }) { return (<div className="flex justify-between gap-3"><span className="text-muted">{label}</span><a className="num truncate hover:text-accent-text" href={dashboardUrl(a)} target="_blank" rel="noreferrer">{a.slice(0, 18)}…{a.slice(-6)} ↗</a></div>); }

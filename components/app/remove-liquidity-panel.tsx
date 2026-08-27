@@ -46,7 +46,7 @@ export function RemoveLiquidityPanel() {
       <TokenInput label="HLP to redeem" symbol="HLP" value={hlp} onChange={setHlp} balance={balances?.HLP ?? null} />
       <div className="flex gap-2">
         {[25, 50, 75, 100].map((p) => (
-          <button key={p} type="button" onClick={() => setPct(p)} disabled={!balances} className="flex-1 rounded-full border border-line py-1 text-xs font-semibold hover:border-accent hover:text-accent disabled:opacity-40">
+          <button key={p} type="button" onClick={() => setPct(p)} disabled={!balances} className="chip flex-1 justify-center">
             {p}%
           </button>
         ))}

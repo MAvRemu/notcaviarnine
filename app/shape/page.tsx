@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductShell } from '@/components/shell/product-shell';
+import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
 import { getShapeSummary } from '@/lib/shape/registry';
@@ -13,11 +14,7 @@ export default function ShapePage() {
   return (
     <ProductShell>
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
-        <div>
-          <div className="label">Shape Liquidity · concentrated positions</div>
-          <h1 className="display mt-1 text-2xl">Concentrated liquidity positions</h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted">Concentrated-liquidity pools. Your positions are NFTs in your wallet and earn fees per position.</p>
-        </div>
+        <PageHeader eyebrow="Shape Liquidity · concentrated positions" title="Concentrated liquidity positions" lede={<>Concentrated-liquidity pools. Your positions are NFTs in your wallet and earn fees per position.</>} />
         <ComingSoon product={productById('shape')} />
         <Suspense fallback={<div className="grid gap-4 sm:grid-cols-3">{[0, 1, 2].map((i) => <div key={i} className="card p-5"><div className="skeleton h-3 w-24" /><div className="skeleton mt-3 h-7 w-32" /></div>)}</div>}>
           <ShapeStats />
@@ -26,7 +23,7 @@ export default function ShapePage() {
     </ProductShell>
   );
 }
-function T({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div className="card p-5"><div className="label">{k}</div><div className="num mt-1 text-2xl">{v}</div>{sub && <div className="mt-1 text-[11px] text-muted">{sub}</div>}</div>); }
+function T({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div className="card p-5"><div className="label">{k}</div><div className="num mt-1 text-2xl">{v}</div>{sub && <div className="mt-1 text-xs text-muted">{sub}</div>}</div>); }
 
 async function ShapeStats() {
   const s = await getShapeSummary().catch(() => null);

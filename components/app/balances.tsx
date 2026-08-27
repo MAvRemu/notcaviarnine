@@ -58,7 +58,7 @@ function Line({ icon, sym, amount, sub }: { icon: string; sym: string; amount: b
       </div>
       <div className="text-right">
         <div className={`num text-sm ${amount === undefined ? 'skeleton inline-block w-24' : ''}`}>{amount === undefined ? '0.00' : fmt(amount, { dp: 4 })}</div>
-        {sub && <div className="num text-[11px] text-muted">{sub}</div>}
+        {sub && <div className="num text-xs text-muted">{sub}</div>}
       </div>
     </div>
   );

@@ -67,7 +67,7 @@ export function SwapPanel() {
     <div className="space-y-3">
       <TokenInput label="You pay" symbol={from} value={amount} onChange={setAmount} balance={balance} />
       <div className="flex justify-center">
-        <button type="button" onClick={flip} className="rounded-full border border-line bg-card px-3 py-1 text-xs font-semibold hover:border-accent hover:text-accent" aria-label="Flip direction">
+        <button type="button" onClick={flip} className="chip bg-card" aria-label="Flip direction">
           ↓↑ flip
         </button>
       </div>
