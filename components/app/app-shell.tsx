@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { PoolSnapshot } from '@/lib/pool-data';
 import { ProductShell } from '@/components/shell/product-shell';
