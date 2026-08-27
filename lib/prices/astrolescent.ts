@@ -15,25 +15,26 @@ export type TokenPrice = {
 
 type Raw = Record<string, { address: string; symbol: string; name: string; iconUrl?: string; divisibility: number; tokenPriceXRD: number; tokenPriceUSD: number; updatedAt?: string }>;
 
-const TTL = 10 * 60_000;
-let memo: { at: number; p: Promise<Map<string, TokenPrice>> } | null = null;
+import { unstable_cache } from 'next/cache';
 
-export function getPrices(): Promise<Map<string, TokenPrice>> {
-  if (memo && Date.now() - memo.at < TTL) return memo.p;
+/** Persistent (cross-instance) cache of the price table as a plain record; 10-minute window, tag `prices`. */
+export const getPricesRecord = unstable_cache(fetchPricesRecord, ['astrolescent-prices'], { revalidate: 600, tags: ['prices'] });
+
+export async function getPrices(): Promise<Map<string, TokenPrice>> {
+  const rec = await getPricesRecord();
+  return new Map(Object.entries(rec));
+}
+
+async function fetchPricesRecord(): Promise<Record<string, TokenPrice>> {
   const key = process.env.ASTROLESCENT_API_KEY;
   const url = key ? `https://api.astrolescent.com/partner/${encodeURIComponent(key)}/prices` : 'https://api.astrolescent.com/prices';
-  const p = (async () => {
-    const res = await fetch(url, { headers: { 'user-agent': 'notcaviarnine.com' }, next: { revalidate: 600 } });
-    if (!res.ok) throw new Error(`astrolescent ${res.status}`);
-    const raw = (await res.json()) as Raw;
-    const m = new Map<string, TokenPrice>();
-    for (const t of Object.values(raw)) {
-      if (!t?.address || typeof t.tokenPriceXRD !== 'number') continue;
-      m.set(t.address, { address: t.address, symbol: t.symbol, name: t.name, iconUrl: t.iconUrl, divisibility: t.divisibility, priceXrd: t.tokenPriceXRD, priceUsd: t.tokenPriceUSD, updatedAt: t.updatedAt });
-    }
-    return m;
-  })();
-  memo = { at: Date.now(), p };
-  p.catch(() => (memo = null));
-  return p;
+  const res = await fetch(url, { headers: { 'user-agent': 'notcaviarnine.com' }, cache: 'no-store' });
+  if (!res.ok) throw new Error(`astrolescent ${res.status}`);
+  const raw = (await res.json()) as Raw;
+  const out: Record<string, TokenPrice> = {};
+  for (const t of Object.values(raw)) {
+    if (!t?.address || typeof t.tokenPriceXRD !== 'number') continue;
+    out[t.address] = { address: t.address, symbol: t.symbol, name: t.name, iconUrl: t.iconUrl, divisibility: t.divisibility, priceXrd: t.tokenPriceXRD, priceUsd: t.tokenPriceUSD, updatedAt: t.updatedAt };
+  }
+  return out;
 }

@@ -1,12 +1,16 @@
 import { after } from 'next/server';
 import { getPoolSnapshot, maybeIndex } from '@/lib/pool-data';
+import { invalidateOnGovernanceChange } from '@/lib/governance/invalidate';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const snap = await getPoolSnapshot();
-    after(() => maybeIndex(snap));
+    after(async () => {
+      await maybeIndex(snap);
+      await invalidateOnGovernanceChange();
+    });
     return Response.json(snap, {
       headers: { 'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=60' },
     });

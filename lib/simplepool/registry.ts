@@ -1,6 +1,7 @@
 import { RESOURCES } from '@/lib/radix/config';
 import { field, getEntityDetails, streamTransactions } from '@/lib/radix/gateway';
 import { getPrices, type TokenPrice } from '@/lib/prices/astrolescent';
+import { unstable_cache } from 'next/cache';
 
 /** WeightedPool package — every Simple Pool is created by its `new` function, which emits NewPoolEvent. */
 export const SIMPLE_POOL_PACKAGE = 'package_rdx1pkhxu8zy5t7h3rww6jsftca22e2jdgqpc28rje7lnmkjxxf50zagr7';
@@ -74,6 +75,23 @@ export function getSimplePoolRegistry(): Promise<SimplePool[]> {
   return p;
 }
 
+/** Symbol/icon for a set of tokens; persistent cache (tag `tokens`), 24 h. Keyed by the sorted address list. */
+const getTokenMeta = unstable_cache(
+  async (addresses: string[]): Promise<Record<string, { symbol: string; icon?: string }>> => {
+    const out: Record<string, { symbol: string; icon?: string }> = {};
+    for (let i = 0; i < addresses.length; i += 20) {
+      const d = await getEntityDetails(addresses.slice(i, i + 20), { explicitMetadata: ['symbol', 'name', 'icon_url'] });
+      for (const it of d.items) {
+        const m = Object.fromEntries((it.metadata?.items ?? []).map((x) => [x.key, x.value.typed.value]));
+        out[it.address] = { symbol: m.symbol ?? m.name ?? it.address.slice(-6), icon: m.icon_url };
+      }
+    }
+    return out;
+  },
+  ['token-meta'],
+  { revalidate: 86_400, tags: ['tokens'] },
+);
+
 const SUM_TTL = 5 * 60_000;
 let sumMemo: { at: number; p: Promise<SimplePoolSummary[]> } | null = null;
 
@@ -91,16 +109,9 @@ export function getSimplePoolSummaries(): Promise<SimplePoolSummary[]> {
         reserves.set(it.address, Object.fromEntries((it.fungible_resources?.items ?? []).map((f) => [f.resource_address, Number(f.amount ?? '0')])));
       }
     }
-    // token symbols for tokens Astrolescent doesn't know
-    const unknown = [...new Set(pools.flatMap((x) => [x.resourceX, x.resourceY]).filter((a) => !prices.has(a)))];
-    const meta = new Map<string, { symbol: string; icon?: string }>();
-    for (let i = 0; i < unknown.length; i += 20) {
-      const d = await getEntityDetails(unknown.slice(i, i + 20), { explicitMetadata: ['symbol', 'name', 'icon_url'] });
-      for (const it of d.items) {
-        const m = Object.fromEntries((it.metadata?.items ?? []).map((x) => [x.key, x.value.typed.value]));
-        meta.set(it.address, { symbol: m.symbol ?? m.name ?? it.address.slice(-6), icon: m.icon_url });
-      }
-    }
+    // token symbols for tokens Astrolescent doesn't know — metadata never changes in practice, cached 24 h
+    const unknown = [...new Set(pools.flatMap((x) => [x.resourceX, x.resourceY]).filter((a) => !prices.has(a)))].sort();
+    const meta = new Map(Object.entries(await getTokenMeta(unknown)));
     const sym = (a: string) => prices.get(a)?.symbol ?? meta.get(a)?.symbol ?? a.slice(-6);
     const icon = (a: string) => prices.get(a)?.iconUrl ?? meta.get(a)?.icon;
     const xrdUsd = prices.get(RESOURCES.XRD)?.priceUsd ?? null;
