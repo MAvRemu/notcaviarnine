@@ -38,6 +38,12 @@ scripts/             verify-math.mts (replays live swaps), index-once.mts (backf
 .claude/skills/radix Radix skill + guides for AI agents working on this repo
 ```
 
+## Docs
+
+- [docs/SYSTEM.md](docs/SYSTEM.md) — architecture, data flows, configuration, operations
+- [docs/HYPERSTAKE.md](docs/HYPERSTAKE.md) — protocol spec: addresses, parameters, math, roles, risks
+- [docs/DESIGN.md](docs/DESIGN.md) — visual identity and component system
+
 ## Develop
 
 ```bash
