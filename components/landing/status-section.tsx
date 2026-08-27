@@ -13,7 +13,8 @@ const stroke: Record<Tone, string> = { ok: '#3fae6a', watch: '#e9b400', muted: '
 
 export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSnapshot | null; pools: SimplePoolSummary[] | null; shape: ShapeSummary | null; governance: GovernanceEntry[] | null }) {
   const lastAction = governance?.[0] ?? null;
-  const recentDays = lastAction ? (Date.now() - new Date(lastAction.timestamp).getTime()) / 86400_000 : null;
+  const lastMin = minutesSince(lastAction?.timestamp);
+  const recentDays = lastMin === null ? null : lastMin / 1440;
   const livePools = pools?.filter((p) => p.hasLiquidity).length ?? null;
   const s = snap?.state;
   const oracleMin = minutesSince(s?.lsuPoolLastTxAt);
