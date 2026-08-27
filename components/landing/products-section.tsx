@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { PRODUCTS } from '@/lib/products';
-import { LINKS } from '@/lib/radix/config';
 
 export function ProductsSection() {
   return (
     <section id="products" className="mx-auto max-w-6xl px-6 py-20">
       <div className="label mb-3">What you can do here</div>
       <h2 className="display text-4xl md:text-5xl">Four CaviarNine products, one console</h2>
-      <p className="mt-4 max-w-2xl text-ink-soft">Same contracts, same liquidity, same fee rules — read live from the ledger. We ship the withdraw-safe path first for every product, then the rest.</p>
+      <p className="mt-4 max-w-2xl text-ink-soft">Same contracts, same liquidity, same fee rules — read live from the ledger. HyperStake is fully working today; the other three are opening up one by one.</p>
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         {PRODUCTS.map((p) => (
           <div key={p.id} className="card flex flex-col p-6">
@@ -23,7 +22,6 @@ export function ProductsSection() {
             <p className="mt-3 flex-1 text-sm text-ink-soft">{p.blurb}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link href={p.href} className={`btn h-10 ${p.status === 'live' ? '' : 'btn-ghost'}`}>{p.status === 'live' ? `Open ${p.name}` : p.status === 'read-only' ? 'Browse (read-only)' : 'Preview'}</Link>
-              <a className="btn btn-ghost h-10" href={`${LINKS.frontendRepo}/blob/main/${p.spec}`} target="_blank" rel="noreferrer">Spec ↗</a>
             </div>
           </div>
         ))}

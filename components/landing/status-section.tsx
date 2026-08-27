@@ -57,8 +57,8 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       tone: 'watch',
       title: 'Admin key',
       metric: 'CaviarNine',
-      metricSub: 'handover pending',
-      text: 'The admin key sets fee splits and maintains the validator list. A transfer to the Radix Accountability Council was requested on 21 Aug 2026; CaviarNine is considering it.',
+      metricSub: 'held by CaviarNine',
+      text: 'One key, held by CaviarNine, can change fee splits and the approved-validator list across all four products. It cannot touch your funds or block withdrawals.',
       href: dashboardUrl(ADDRESSES.c9AdminBadge),
     },
     {
@@ -74,7 +74,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       title: 'Shape Liquidity',
       metric: shape ? `${shape.pools} pools` : '—',
       metricSub: 'coming soon',
-      text: 'Concentrated-liquidity positions held as NFTs in your wallet. We are researching the contracts; the first goal is a withdraw-safe path (see, claim, remove).',
+      text: 'Concentrated-liquidity positions held as NFTs in your wallet. We are working through the contracts; seeing, claiming and removing positions comes first.',
       href: dashboardUrl(SHAPE_FACTORY),
     },
     {
@@ -103,7 +103,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
             <div className="label mb-3">Status · who keeps what running</div>
             <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine</h2>
             <p className="mt-4 max-w-2xl text-ink-soft">
-              The website was the easy part. This is the chain behind a HyperStake swap, what&apos;s healthy across all four products, and what we&apos;re watching.
+              The website was the easy part. This is how the four products connect, what&apos;s healthy, and what we&apos;re watching.
             </p>
           </div>
           <div className="flex items-center gap-3 rounded-full border border-line px-4 py-2 text-sm">
@@ -118,7 +118,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
 
         {/* Flow diagram */}
         <div className="mt-12 overflow-x-auto">
-          <Flow oracle={oracleTone} allow={allowTone} />
+          <Flow oracle={oracleTone} allow={allowTone} pools={livePools} shape={shape?.pools ?? null} />
         </div>
 
         {/* Readouts */}
@@ -149,7 +149,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
         <ol className="mt-12 grid gap-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <Milestone when="Apr 2025" what="HyperStake launched by CaviarNine" />
           <Milestone when={s?.allowlistLastUpdatedAt ? new Date(s.allowlistLastUpdatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Oct 2025'} what="Validator list last updated" tone="watch" />
-          <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix; admin-key handover requested" />
+          <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix" />
           <Milestone when="Aug 2026" what="Not CaviarNine goes live" tone="ok" />
         </ol>
       </div>
@@ -167,11 +167,12 @@ function Milestone({ when, what, tone }: { when: string; what: string; tone?: To
 }
 
 /**
- * Plain-language dependency flow. Top row: the path of a swap. Bottom row:
- * where the price comes from and who controls the gate in front of it.
+ * Plain-language dependency map of all four products: your wallet uses this website to reach four
+ * CaviarNine contracts; HyperStake prices from the LSU Pool; the LSU Pool only accepts approved
+ * validators; one CaviarNine admin key controls fees and that list.
  */
-function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
-  const W = 960, H = 250;
+function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pools: number | null; shape: number | null }) {
+  const W = 980, H = 420;
   const box = (x: number, y: number, w: number, label: string, sub: string, tone: Tone, dashed = false) => (
     <g key={label}>
       <rect x={x} y={y} width={w} height={56} rx={12} fill="none" stroke={stroke[tone]} strokeWidth={1.5} strokeDasharray={dashed ? '4 4' : undefined} />
@@ -179,39 +180,48 @@ function Flow({ oracle, allow }: { oracle: Tone; allow: Tone }) {
       <text x={x + w / 2} y={y + 42} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>{sub}</text>
     </g>
   );
-  const arrow = (x1: number, y1: number, x2: number, y2: number, label?: string, tone: Tone = 'muted') => (
-    <g key={`${x1}-${y1}-${x2}-${y2}`}>
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={stroke[tone]} strokeWidth={1.5} markerEnd="url(#arrow)" />
-      {label && (
-        <text x={(x1 + x2) / 2} y={y1 === y2 ? y1 - 10 : (y1 + y2) / 2 + 4} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>
-          {label}
-        </text>
-      )}
-    </g>
+  const line = (d: string, tone: Tone = 'muted', arrow = true) => (
+    <path key={d} d={d} fill="none" stroke={stroke[tone]} strokeWidth={1.5} markerEnd={arrow ? 'url(#arrow)' : undefined} />
   );
+  const label = (x: number, y: number, t: string) => (
+    <text key={`${x}-${y}-${t}`} x={x} y={y} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>{t}</text>
+  );
+  // columns: wallet 20–200 · website 250–450 · products 520–720 · right 790–970
+  const PX = 520, PW = 200;
+  const rows = [70, 160, 250, 340]; // HyperStake, LSU Pool, Simple Pools, Shape
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[720px] w-full" role="img" aria-label="Dependency flow: your wallet uses this website to swap in the HyperStake pool; the pool prices from CaviarNine's staking pool, which only accepts validators CaviarNine approved, controlled by CaviarNine's admin key.">
+    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[760px] w-full" role="img" aria-label="Dependency map: your wallet uses this website to reach HyperStake, the LSU Pool, Simple Pools and Shape Liquidity. HyperStake takes its price from the LSU Pool, which only accepts approved validators. One CaviarNine admin key controls fees and that list.">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#f6f2e8" fillOpacity={0.6} />
         </marker>
       </defs>
-      {/* top row: the swap path */}
-      {box(20, 30, 180, 'Your wallet', 'you sign every step', 'ok')}
-      {arrow(200, 58, 260, 58, 'uses')}
-      {box(260, 30, 200, 'This website', 'open source · no custody', 'ok')}
-      {arrow(460, 58, 520, 58, 'swaps in')}
-      {box(520, 30, 200, 'HyperStake pool', 'LSULP ⇄ XRD · open to all', 'ok')}
-      {arrow(720, 58, 780, 58, 'holds')}
-      {box(780, 30, 160, 'LSULP + XRD', 'the real reserves', 'ok')}
-
-      {/* bottom row: where the price comes from and who gates it */}
-      {arrow(620, 150, 620, 90, 'price', oracle)}
-      {box(520, 150, 200, 'CaviarNine staking pool', 'sets the LSULP value', oracle)}
-      {arrow(520, 178, 460, 178, 'gated by', allow)}
-      {box(260, 150, 200, 'Approved validators', 'list maintained by owner', allow)}
-      {arrow(260, 178, 200, 178, 'owned by', 'watch')}
-      {box(20, 150, 180, 'CaviarNine admin key', 'handover pending', 'watch', true)}
+      {box(20, 205, 180, 'Your wallet', 'you sign every step', 'ok')}
+      {line('M200 233 L250 233')}
+      {label(225, 223, 'uses')}
+      {box(250, 205, 200, 'This website', 'open source · no custody', 'ok')}
+      {/* fan-out to the four products */}
+      {rows.map((y) => line(`M450 233 C485 233 485 ${y + 28} ${PX} ${y + 28}`))}
+      {label(485, 58, 'reaches')}
+      {box(PX, rows[0], PW, 'HyperStake', 'instant stake & unstake · live', 'ok')}
+      {box(PX, rows[1], PW, 'LSU Pool', 'staking basket · sets LSULP value', oracle)}
+      {box(PX, rows[2], PW, 'Simple Pools', pools !== null ? `${pools} live pools · read-only` : 'two-token pools · read-only', 'ok')}
+      {box(PX, rows[3], PW, 'Shape Liquidity', shape !== null ? `${shape} pools · coming soon` : 'concentrated positions · coming soon', 'muted')}
+      {/* LSU Pool → HyperStake price */}
+      {line(`M${PX + PW / 2 + 60} ${rows[1]} L${PX + PW / 2 + 60} ${rows[0] + 56}`, oracle)}
+      {label(PX + PW / 2 + 60 + 22, rows[1] - 12, 'price')}
+      {/* LSU Pool → approved validators */}
+      {line(`M${PX + PW} ${rows[1] + 28} L790 ${rows[1] + 28}`, allow)}
+      {label(755, rows[1] + 18, 'gated by')}
+      {box(790, rows[1], 180, 'Approved validators', 'list kept by the admin key', allow)}
+      {/* admin key: one bus collecting all four products + validators */}
+      {rows.map((y) => line(`M${PX + PW} ${y + 44} L745 ${y + 44}`, 'watch', false))}
+      {line(`M745 ${rows[0] + 44} L745 ${rows[3] + 44}`, 'watch', false)}
+      {line(`M745 ${rows[3] + 44} L790 ${rows[3] + 44}`, 'watch')}
+      {label(767, rows[3] + 34, 'fees')}
+      {line(`M880 ${rows[1] + 56} L880 ${rows[3] + 16}`, 'watch')}
+      {label(905, (rows[1] + 56 + rows[3] + 16) / 2, 'maintains')}
+      {box(790, rows[3] + 16, 180, 'CaviarNine admin key', 'sets fees · approves validators', 'watch', true)}
     </svg>
   );
 }
