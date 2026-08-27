@@ -11,7 +11,6 @@ import { RemoveLiquidityPanel } from './remove-liquidity-panel';
 import { Balances } from './balances';
 import { HealthPanel } from './health-panel';
 import { History } from './history';
-import { LINKS } from '@/lib/radix/config';
 import { trackEvent } from '@/lib/analytics';
 
 type Tab = 'swap' | 'add' | 'remove';
@@ -23,7 +22,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
     <ProductShell>
       <PoolProvider initial={initial}>
         <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
-          <PageHeader eyebrow="HyperStake · LSULP / XRD" title="Instant stake & unstake" aside={<a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink sm:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>} />
+          <PageHeader eyebrow="HyperStake · LSULP / XRD" title="Instant stake & unstake" aside={<button type="button" onClick={() => setTab('swap')} className="hidden text-sm text-muted hover:text-ink sm:inline">Need LSULP? Swap XRD → LSULP</button>} />
         </div>
         <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
           <section className="min-w-0 space-y-6">

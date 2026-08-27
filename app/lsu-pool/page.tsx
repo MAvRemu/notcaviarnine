@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ProductShell } from '@/components/shell/product-shell';
 import { PageHeader } from '@/components/ui';
@@ -5,7 +6,7 @@ import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
 import { getPoolSnapshot } from '@/lib/pool-data';
 import { fmt, timeAgo, minutesSince } from '@/lib/format';
-import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
+import { ADDRESSES, dashboardUrl } from '@/lib/radix/config';
 
 export const metadata: Metadata = { title: 'LSU Pool' };
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,7 @@ export default async function LsuPoolPage() {
           <T k="Price feed" v={s ? timeAgo(s.lsuPoolLastTxAt) : '—'} sub="last refresh · anyone can trigger one" tone={oracleMin === null ? undefined : oracleMin < 180 ? 'ok' : 'warn'} />
         </div>
         <div className="flex flex-wrap gap-3 text-xs">
-          <a className="btn btn-ghost btn-sm" href={LINKS.c9LsuPool} target="_blank" rel="noreferrer">Get LSULP on CaviarNine ↗</a>
+          <Link className="btn btn-sm" href="/hyperstake">Get LSULP on HyperStake</Link>
           <a className="btn btn-ghost btn-sm" href={dashboardUrl(ADDRESSES.lsuPool)} target="_blank" rel="noreferrer">On ledger ↗</a>
         </div>
       </main>

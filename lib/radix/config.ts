@@ -79,7 +79,6 @@ export const LINKS = {
   hyperStakeSource:
     'https://github.com/caviarnine/caviarnine-scrypto/blob/main/hyper_stake/hyper_stake/src/hyper_stake.rs',
   c9Docs: 'https://docs.caviarnine.com/products-caviar/hyperstake',
-  c9LsuPool: 'https://www.caviarnine.io/earn/lsu-pool',
   c9Announcement: 'https://t.me/caviarxrd/70246',
   frontendRepo: 'https://github.com/MAvRemu/notcaviarnine',
 } as const;
