@@ -38,56 +38,23 @@ async function xrdUsd(): Promise<number | null> {
 
 /** Sum of the four products, in dollars — the number people actually read. */
 async function TotalLine() {
+  let total: number | null = null, rate: number | null = null;
   try {
-    const [snap, pools, shape, rate] = await Promise.all([cachedPoolSnapshot(), cachedSimplePools(), cachedShape(), xrdUsd()]);
-    const hyper = Number(snap.state.tvlXrd);
+    const [snap, pools, shape, r] = await Promise.all([cachedPoolSnapshot(), cachedSimplePools(), cachedShape(), xrdUsd()]);
     const simple = pools.filter((x) => x.hasLiquidity).reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
-    const lsu = Number(snap.state.lsuPoolValuationXrd);
-    const total = hyper + simple + shape.tvlXrd + lsu;
-    return (
-      <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-2 px-6 pb-4 text-xs text-muted">
-        <span>
-          Across the four products: <span className="num text-ink">{fmtNum(total, { compact: true })} XRD</span>
-          {rate && <> <span className="num text-ink">{usd(total, rate)}</span></>}
-        </span>
-        {rate && <span className="num">1 XRD = ${rate.toFixed(4)} · prices by Astrolescent</span>}
-      </div>
-    );
+    total = Number(snap.state.tvlXrd) + simple + shape.tvlXrd + Number(snap.state.lsuPoolValuationXrd);
+    rate = r;
   } catch {
-    return null;
+    total = null;
   }
-}
-
-async function CardValue({ product }: { product: Product }) {
-  let v = '—', sub = '';
-  try {
-    const rate = await xrdUsd();
-    if (product.id === 'hyperstake') {
-      const snap = await cachedPoolSnapshot();
-      const s = snap.state;
-      v = `${fmt(s.tvlXrd, { dp: 0, compact: true })} XRD`;
-      sub = `${usd(Number(s.tvlXrd), rate)} TVL · LSULP ${pct(s.premiumToNav)} vs NAV${snap.stats?.aprLp ? ` · ${pct(snap.stats.aprLp, 1, false)} APR` : ''}`;
-    } else if (product.id === 'lsu-pool') {
-      const s = (await cachedPoolSnapshot()).state;
-      v = `${fmt(s.lsuPoolValuationXrd, { dp: 0, compact: true })} XRD`;
-      sub = `${usd(Number(s.lsuPoolValuationXrd), rate)} staked · ${s.lsuPoolHeldCount} validators`;
-    } else if (product.id === 'pools') {
-      const live = (await cachedSimplePools()).filter((x) => x.hasLiquidity);
-      const tvl = live.reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
-      v = `${live.length} pools`;
-      sub = `${fmtNum(tvl, { compact: true })} XRD ${usd(tvl, rate)} TVL`;
-    } else if (product.id === 'shape') {
-      const s = await cachedShape();
-      v = `${s.poolsWithLiquidity} pools`;
-      sub = `${fmtNum(s.tvlXrd, { compact: true })} XRD ${usd(s.tvlXrd, rate)} TVL`;
-    }
-  } catch {
-    /* leave dashes */
-  }
+  if (total === null) return null;
   return (
-    <>
-      <div className="num text-2xl leading-none group-hover:text-accent-text">{v}</div>
-      <div className="text-xs text-muted">{sub}</div>
-    </>
+    <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-2 px-6 pb-4 text-xs text-muted">
+      <span>
+        Across the four products: <span className="num text-ink">{fmtNum(total, { compact: true })} XRD</span>
+        {rate && <> <span className="num text-ink">{usd(total, rate)}</span></>}
+      </span>
+      {rate && <span className="num">1 XRD = ${rate.toFixed(4)} · prices by Astrolescent</span>}
+    </div>
   );
 }
