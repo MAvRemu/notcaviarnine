@@ -31,8 +31,8 @@ async function ShapeStats() {
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <T k="Pools created" v={s ? nf0.format(s.pools) : '—'} sub="via the CaviarNine factory" />
-      <T k="Pools holding XRD" v={s ? nf0.format(s.poolsWithXrd) : '—'} />
-      <T k="XRD in pools" v={s ? `${nf0.format(s.xrdInPools)} XRD` : '—'} sub="XRD side only" />
+      <T k="Pools with liquidity" v={s ? nf0.format(s.poolsWithLiquidity) : '—'} />
+      <T k="Total value" v={s ? `${nf0.format(s.tvlXrd)} XRD` : '—'} sub="priced by Astrolescent" />
     </div>
   );
 }

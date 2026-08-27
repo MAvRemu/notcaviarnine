@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { PRODUCTS, type Product } from '@/lib/products';
 import { cachedPoolSnapshot, cachedShape, cachedSimplePools } from '@/lib/cached';
+import { getPricesRecord } from '@/lib/prices/astrolescent';
+import { RESOURCES } from '@/lib/radix/config';
 import { fmt, fmtNum, pct } from '@/lib/format';
 
 /** One live number per product. Each card streams on its own so a slow source never blocks the others. */
@@ -21,31 +23,63 @@ export function ConsoleStrip() {
           </Link>
         ))}
       </div>
+      <Suspense fallback={<div className="mx-auto max-w-6xl px-6 pb-4"><div className="skeleton h-3 w-72" /></div>}>
+        <TotalLine />
+      </Suspense>
     </section>
   );
+}
+
+const usd = (xrd: number, rate: number | null) => (rate ? `≈ $${fmtNum(xrd * rate, { compact: true })}` : '');
+
+async function xrdUsd(): Promise<number | null> {
+  try { return (await getPricesRecord())[RESOURCES.XRD]?.priceUsd ?? null; } catch { return null; }
+}
+
+/** Sum of the four products, in dollars — the number people actually read. */
+async function TotalLine() {
+  try {
+    const [snap, pools, shape, rate] = await Promise.all([cachedPoolSnapshot(), cachedSimplePools(), cachedShape(), xrdUsd()]);
+    const hyper = Number(snap.state.tvlXrd);
+    const simple = pools.filter((x) => x.hasLiquidity).reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
+    const lsu = Number(snap.state.lsuPoolValuationXrd);
+    const total = hyper + simple + shape.tvlXrd + lsu;
+    return (
+      <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-2 px-6 pb-4 text-xs text-muted">
+        <span>
+          Across the four products: <span className="num text-ink">{fmtNum(total, { compact: true })} XRD</span>
+          {rate && <> <span className="num text-ink">{usd(total, rate)}</span></>}
+        </span>
+        {rate && <span className="num">1 XRD = ${rate.toFixed(4)} · prices by Astrolescent</span>}
+      </div>
+    );
+  } catch {
+    return null;
+  }
 }
 
 async function CardValue({ product }: { product: Product }) {
   let v = '—', sub = '';
   try {
+    const rate = await xrdUsd();
     if (product.id === 'hyperstake') {
       const snap = await cachedPoolSnapshot();
       const s = snap.state;
       v = `${fmt(s.tvlXrd, { dp: 0, compact: true })} XRD`;
-      sub = `TVL · LSULP ${pct(s.premiumToNav)} vs NAV${snap.stats?.aprLp ? ` · ${pct(snap.stats.aprLp, 1, false)} fee APR` : ''}`;
+      sub = `${usd(Number(s.tvlXrd), rate)} TVL · LSULP ${pct(s.premiumToNav)} vs NAV${snap.stats?.aprLp ? ` · ${pct(snap.stats.aprLp, 1, false)} APR` : ''}`;
     } else if (product.id === 'lsu-pool') {
       const s = (await cachedPoolSnapshot()).state;
       v = `${fmt(s.lsuPoolValuationXrd, { dp: 0, compact: true })} XRD`;
-      sub = `staked across ${s.lsuPoolHeldCount} validators`;
+      sub = `${usd(Number(s.lsuPoolValuationXrd), rate)} staked · ${s.lsuPoolHeldCount} validators`;
     } else if (product.id === 'pools') {
       const live = (await cachedSimplePools()).filter((x) => x.hasLiquidity);
       const tvl = live.reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
       v = `${live.length} pools`;
-      sub = `with liquidity · ≈ ${fmtNum(tvl, { compact: true })} XRD`;
+      sub = `${fmtNum(tvl, { compact: true })} XRD ${usd(tvl, rate)} TVL`;
     } else if (product.id === 'shape') {
       const s = await cachedShape();
-      v = `${s.pools} pools`;
-      sub = `${fmtNum(s.xrdInPools, { compact: true })} XRD on the XRD side`;
+      v = `${s.poolsWithLiquidity} pools`;
+      sub = `${fmtNum(s.tvlXrd, { compact: true })} XRD ${usd(s.tvlXrd, rate)} TVL`;
     }
   } catch {
     /* leave dashes */
