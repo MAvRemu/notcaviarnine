@@ -33,7 +33,45 @@ export function ConsoleStrip() {
 const usd = (xrd: number, rate: number | null) => (rate ? `≈ $${fmtNum(xrd * rate, { compact: true })}` : '');
 
 async function xrdUsd(): Promise<number | null> {
-  try { return (await getPricesRecord())[RESOURCES.XRD]?.priceUsd ?? null; } catch { return null; }
+  try {
+    return (await getPricesRecord())[RESOURCES.XRD]?.priceUsd ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function CardValue({ product }: { product: Product }) {
+  let v = '—', sub = '';
+  try {
+    const rate = await xrdUsd();
+    if (product.id === 'hyperstake') {
+      const snap = await cachedPoolSnapshot();
+      const s = snap.state;
+      v = `${fmt(s.tvlXrd, { dp: 0, compact: true })} XRD`;
+      sub = `${usd(Number(s.tvlXrd), rate)} TVL · LSULP ${pct(s.premiumToNav)} vs NAV${snap.stats?.aprLp ? ` · ${pct(snap.stats.aprLp, 1, false)} APR` : ''}`;
+    } else if (product.id === 'lsu-pool') {
+      const s = (await cachedPoolSnapshot()).state;
+      v = `${fmt(s.lsuPoolValuationXrd, { dp: 0, compact: true })} XRD`;
+      sub = `${usd(Number(s.lsuPoolValuationXrd), rate)} staked · ${s.lsuPoolHeldCount} validators`;
+    } else if (product.id === 'pools') {
+      const live = (await cachedSimplePools()).filter((x) => x.hasLiquidity);
+      const tvl = live.reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
+      v = `${live.length} pools`;
+      sub = `${fmtNum(tvl, { compact: true })} XRD ${usd(tvl, rate)} TVL`;
+    } else if (product.id === 'shape') {
+      const s = await cachedShape();
+      v = `${s.poolsWithLiquidity} pools`;
+      sub = `${fmtNum(s.tvlXrd, { compact: true })} XRD ${usd(s.tvlXrd, rate)} TVL`;
+    }
+  } catch {
+    /* leave dashes */
+  }
+  return (
+    <>
+      <div className="num text-2xl leading-none group-hover:text-accent-text">{v}</div>
+      <div className="text-xs text-muted">{sub}</div>
+    </>
+  );
 }
 
 /** Sum of the four products, in dollars — the number people actually read. */
