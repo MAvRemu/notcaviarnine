@@ -15,7 +15,7 @@ export function SlippageControl() {
             key={b}
             type="button"
             onClick={() => setSlippageBps(b)}
-            className={`rounded-full border px-2 py-0.5 ${slippageBps === b ? 'border-accent bg-accent text-[#0b0b0b]' : 'border-line hover:border-ink'}`}
+            className={`rounded-full border px-2 py-0.5 ${slippageBps === b ? 'border-accent bg-accent text-white' : 'border-line hover:border-ink'}`}
           >
             {(b / 100).toFixed(b % 100 ? 1 : 0)}%
           </button>

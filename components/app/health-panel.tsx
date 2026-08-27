@@ -36,7 +36,7 @@ export function HealthPanel() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="label">LSULP price vs fair value</div>
-            <div className={`num mt-1 text-4xl leading-none ${prem < 0n ? 'text-ok' : 'text-accent'}`}>{s ? pct(s.premiumToNav) : <span className="skeleton">−0.00%</span>}</div>
+            <div className={`num mt-1 text-4xl leading-none ${prem < 0n ? 'text-ok' : 'text-warn'}`}>{s ? pct(s.premiumToNav) : <span className="skeleton">−0.00%</span>}</div>
             <div className="mt-1 text-xs text-muted">{s ? (prem < 0n ? 'Discount — instant staking is cheaper than NAV' : 'At or above NAV') : ''}</div>
           </div>
           <div className="text-right">
@@ -47,7 +47,7 @@ export function HealthPanel() {
         </div>
         <div className="mt-4">
           <div className="relative h-2 rounded-full bg-line">
-            <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-ok/60 to-accent/60" style={{ width: `${pos * 100}%` }} />
+            <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-ok/60 to-warn/60" style={{ width: `${pos * 100}%` }} />
             <div className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-bg bg-ink shadow" style={{ left: `${pos * 100}%` }} />
           </div>
           <div className="num mt-2 flex justify-between text-[11px] text-muted">

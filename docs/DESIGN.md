@@ -1,14 +1,14 @@
 # Design system — "control room"
 
 Not CaviarNine looks like the instrument panel of a protocol that keeps running after its operators left:
-dark ground, precise type, one warning-yellow accent, and numbers you can trust at a glance.
-It is CaviarNine's own palette (black / cream / yellow) kept, not inverted — the continuity is the point.
+dark ground, precise type, one electric-blue accent, yellow reserved for things to watch, and numbers you can trust at a glance.
+It keeps CaviarNine's black-and-cream ground but replaces their yellow as the action colour, so the two sites are unmistakably different.
 
 ## Principles
 
-1. **One accent.** Yellow `#e9b400` is the only colour that asks for attention. It marks primary actions, the active tab,
-   "watch" states and the highlighted line of a headline. Never add a second brand colour. Green and red exist only as
-   *status semantics* (healthy / failing), never as decoration.
+1. **One accent.** Blue `#2f6fef` is the only colour that asks for action: primary buttons, the active tab, links on hover,
+   the highlighted line of a headline, the wordmark's `NOT`. Never add a second brand colour. Green / yellow / red exist only as
+   *status semantics* (healthy / watch / failing), never as decoration — yellow in particular means "keep an eye on this".
 2. **Numbers are instruments.** Every number is monospaced and tabular (`.num`) so columns align and values can be compared
    by eye. Units follow the number in muted type (`1.2233 XRD`).
 3. **Plain language.** Copy explains what something means for the user, never the protocol identifier. "Validator list"
@@ -30,9 +30,9 @@ It is CaviarNine's own palette (black / cream / yellow) kept, not inverted — t
 | `--ink` | `#f6f2e8` | primary type (cream) |
 | `--ink-soft` | `#d8d3c6` | body copy |
 | `--muted` | `#8d887c` | labels, secondary text |
-| `--accent` | `#e9b400` | the one accent |
+| `--accent` | `#2f6fef` | the one accent (actions) |
 | `--ok` | `#3fae6a` | healthy status only |
-| `--warn` | `#e9b400` | watch status (same hue as accent, on purpose) |
+| `--warn` | `#e9b400` | watch status only |
 | `--danger` | `#e0563f` | failing status / errors only |
 
 Exposed to Tailwind v4 via `@theme inline` as `bg-bg`, `text-ink`, `border-line`, `text-accent`, etc.
@@ -50,13 +50,13 @@ Exposed to Tailwind v4 via `@theme inline` as `bg-bg`, `text-ink`, `border-line`
 
 | Class | Role | Notes |
 |---|---|---|
-| `.btn` | primary action | yellow pill, black text, 700; hover → cream fill + soft yellow glow; disabled → `bg-deep` + muted text |
+| `.btn` | primary action | blue pill, white text, 700; hover → cream fill + soft blue glow; disabled → `bg-deep` + muted text |
 | `.btn-ghost` | secondary action | transparent, hairline border; hover → cream fill |
-| `.tab` | segmented control | active = yellow pill with black text |
+| `.tab` | segmented control | active = blue pill with white text |
 | `.card` | container | `--card` fill, 1px `--line`, radius 18 |
 | `.field` | input well | `--bg-deep`, 1px `--line`, radius 16; focus-within → accent border |
 | `.input` | amount input | mono 28px, no chrome; placeholder in `--line` |
-| `.pill` | tag | hairline pill, 12px 600; colour by meaning (`text-ok` stake, `text-accent` unstake, muted remove) |
+| `.pill` | tag | hairline pill, 12px 600; colour by meaning (`text-ok` stake, `text-warn` unstake, muted remove) |
 | `.dot` + `.dot-ok/-warn/-danger/-muted` | status | 8px, glows in its own colour |
 | `.skeleton` | loading | shimmering `--bg-deep`; never show a fake number |
 
@@ -66,13 +66,14 @@ Spacing: page gutter 24px, max width 72rem (6xl); section padding `py-20`; card 
 ## Patterns
 
 - **Stat tile**: eyebrow label → mono value (xl–4xl) → one-line muted sub. Accent colour on the single most important value.
-- **Range bar**: hairline track, gradient fill from `--ok` to `--accent`, cream marker with a dark ring; bounds labelled in
+- **Responsive header**: gutters 16px on mobile, wallet button 36×120 on ≤640px (`--radix-connect-button-*` vars), 44×160 above; secondary links hidden below `md`.
+- **Range bar**: hairline track, gradient fill from `--ok` to `--warn`, cream marker with a dark ring; bounds labelled in
   mono under the track.
-- **Share bar**: two-tone (cream = XRD, yellow = LSULP), legend dots match.
+- **Share bar**: two-tone (cream = XRD, blue = LSULP), legend dots match.
 - **Readout row** (status page): dot + title | big mono metric + sub | plain sentence | `verify ↗` linking to the ledger.
 - **Dependency flow**: SVG boxes stroked in their status colour; edges labelled with verbs ("uses", "gated by", "owned by").
   Dashed stroke = external/pending. Text always cream; never colour the text, only the stroke.
-- **Transaction status**: one tinted line (`accent/10` while simulating or awaiting wallet, `ok/10` committed with a
+- **Transaction status**: one tinted line (`accent/10` blue while simulating or awaiting wallet, `ok/10` committed with a
   dashboard link, `danger/10` with a humanised error).
 
 ## Voice
@@ -83,7 +84,7 @@ Credit CaviarNine where due; never imply affiliation. "Verify, don't trust" is t
 
 ## Identity marks
 
-- **Wordmark**: `NOT` in accent yellow + `CaviarNine` in cream, both Geist 700, same cap height, `gap-2`.
-- **Icon**: black rounded square, cream `N`, yellow `9` (`public/icon.svg` → `app/icon.png`, `app/apple-icon.png`,
+- **Wordmark**: `NOT` in accent blue + `CaviarNine` in cream, both Geist 700, same cap height, `gap-2`.
+- **Icon**: black rounded square, cream `N`, blue `9` (`public/icon.svg` → `app/icon.png`, `app/apple-icon.png`,
   `app/favicon.ico`, `public/dapp-icon.png`).
-- **Tagline**: "CaviarNine is gone. But contracts never die." — the second sentence in yellow.
+- **Tagline**: "CaviarNine is gone. But contracts never die." — the second sentence in blue.

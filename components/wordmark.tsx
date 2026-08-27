@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export function Wordmark({ href = '/', size = 'md' }: { href?: string; size?: 'md' | 'lg' }) {
-  const text = size === 'lg' ? 'text-3xl' : 'text-xl';
+  const text = size === 'lg' ? 'text-3xl' : 'text-lg sm:text-xl';
   return (
     <Link
       href={href}

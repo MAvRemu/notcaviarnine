@@ -34,8 +34,9 @@ npx tsx scripts/verify-math.mts   # must print "✓ EXACT" and "N/N exact" — r
 ## Visual identity ("control room") — follow everywhere
 
 - Ground near-black `--bg #0b0b0b`, surfaces `--card/--bg-deep`, type cream `--ink #f6f2e8`, muted `--muted`, hairlines `--line`.
-- **One accent**: yellow `#e9b400` — for primary actions (solid yellow pill, black text), active tabs, "watch" states, the highlighted
-  word in headlines. Never introduce a second accent. Green `--ok` / red `--danger` only for status semantics.
+- **One accent**: blue `#2f6fef` — for primary actions (solid blue pill, white text), active tabs, the highlighted line in headlines,
+  the wordmark's NOT. Never introduce a second accent. Green `--ok` / yellow `--warn` / red `--danger` only for status semantics.
+  Full system in `docs/DESIGN.md`.
 - Every number is mono (`.num`), tabular. Section eyebrows are `.label` (11px tracked uppercase). Headlines `.display` (Geist 700, tight).
 - Cards: `.card` (1px hairline, r-18). Inputs: `.field` (focus ring = accent). Buttons: `.btn` / `.btn-ghost`.
 - No inverted/cream sections — the whole site stays on the dark ground (a cream block was tried and read as a mistake).

@@ -133,7 +133,7 @@ function describe(e: HyperStakeEvent) {
     const inS = sym(e.inputResource);
     return (
       <>
-        <span className={`pill mr-2 ${inS === 'XRD' ? 'border-ok/40 text-ok' : 'border-accent/40 text-accent'}`}>{inS === 'XRD' ? 'stake' : 'unstake'}</span>
+        <span className={`pill mr-2 ${inS === 'XRD' ? 'border-ok/40 text-ok' : 'border-warn/40 text-warn'}`}>{inS === 'XRD' ? 'stake' : 'unstake'}</span>
         <span className="num">{fmt(e.inputAmount, { dp: 2 })}</span> {inS} → <span className="num">{fmt(e.outputAmount, { dp: 2 })}</span> {sym(e.outputResource)}
       </>
     );

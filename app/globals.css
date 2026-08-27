@@ -2,7 +2,7 @@
 
 /*
  * Not CaviarNine — visual identity ("control room").
- * Near-black ground · cream type · ONE yellow accent for actions/attention ·
+ * Near-black ground · cream type · ONE blue accent for actions/attention (yellow = watch status only) ·
  * mono for every number · hairline cream borders · tracked uppercase labels.
  */
 :root {
@@ -13,8 +13,8 @@
   --muted: #8d887c;
   --line: #262521;
   --card: #111110;
-  --accent: #e9b400;
-  --accent-deep: #e9b400;
+  --accent: #2f6fef;
+  --accent-deep: #2f6fef;
   --ok: #3fae6a;
   --warn: #e9b400;
   --danger: #e0563f;
@@ -47,7 +47,7 @@ body {
   font-size: 15px;
   line-height: 1.55;
 }
-::selection { background: var(--accent); color: #0b0b0b; }
+::selection { background: var(--accent); color: #ffffff; }
 
 .display { font-weight: 700; letter-spacing: -0.035em; line-height: 1.0; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -58,24 +58,24 @@ body {
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
   height: 44px; padding: 0 1.25rem; border-radius: 999px;
-  background: var(--accent); color: #0b0b0b; font-weight: 700; font-size: 14px;
+  background: var(--accent); color: #ffffff; font-weight: 700; font-size: 14px;
   border: 1px solid var(--accent);
-  box-shadow: 0 0 0 0 rgba(233,180,0,0);
+  box-shadow: 0 0 0 0 rgba(47,111,239,0);
   transition: transform .08s ease, background .15s ease, color .15s ease, box-shadow .2s ease, border-color .15s ease;
   cursor: pointer; white-space: nowrap;
 }
-.btn:hover { background: var(--ink); border-color: var(--ink); color: #0b0b0b; box-shadow: 0 0 28px -6px rgba(233,180,0,.45); }
+.btn:hover { background: var(--ink); border-color: var(--ink); color: #0b0b0b; box-shadow: 0 0 28px -6px rgba(47,111,239,.55); }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { background: var(--bg-deep); border-color: var(--line); color: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover { background: var(--ink); color: #0b0b0b; border-color: var(--ink); box-shadow: none; }
-.btn-accent { background: var(--accent); color: #0b0b0b; border-color: var(--accent); }
+.btn-accent { background: var(--accent); color: #ffffff; border-color: var(--accent); }
 
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
 .hairline { border-color: var(--line); }
 
 .tab { padding: .55rem 1rem; border-radius: 999px; font-weight: 600; font-size: 14px; color: var(--muted); transition: background .15s, color .15s; }
-.tab[data-active="true"] { background: var(--accent); color: #0b0b0b; }
+.tab[data-active="true"] { background: var(--accent); color: #ffffff; }
 .tab:not([data-active="true"]):hover { color: var(--ink); background: var(--bg-deep); }
 
 .input {
@@ -98,6 +98,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 /* Radix connect button (official web component). */
 body { --radix-connect-button-border-radius: 999px; --radix-connect-button-height: 44px; --radix-connect-button-width: 160px; }
+@media (max-width: 640px) { body { --radix-connect-button-height: 36px; --radix-connect-button-width: 120px; } }
 
 .prose p { margin: 0 0 1rem; color: var(--ink-soft); }
 .prose a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink); }

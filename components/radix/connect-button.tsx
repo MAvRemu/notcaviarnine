@@ -19,8 +19,8 @@ export function ConnectButton() {
     getRdt().then(() => setReady(true));
   }, []);
   return (
-    <div className="inline-flex h-11 min-w-[160px] items-center justify-end">
-      {ready ? <radix-connect-button /> : <span className="skeleton h-11 w-[160px] rounded-full" />}
+    <div className="inline-flex h-9 min-w-[120px] items-center justify-end sm:h-11 sm:min-w-[160px]">
+      {ready ? <radix-connect-button /> : <span className="skeleton h-9 w-[120px] rounded-full sm:h-11 sm:w-[160px]" />}
     </div>
   );
 }

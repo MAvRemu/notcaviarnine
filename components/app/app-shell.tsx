@@ -23,8 +23,8 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
     <RdtProvider>
       <PoolProvider initial={initial}>
         <header className="hairline sticky top-0 z-20 border-b bg-bg/85 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-            <div className="flex items-center gap-6">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3">
+            <div className="flex items-center gap-3 sm:gap-6">
               <Wordmark />
               <span className="pill hidden sm:inline-flex">HyperStake</span>
             </div>
@@ -36,7 +36,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
           </div>
         </header>
 
-        <main className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
           <section className="space-y-6">
             <div className="card p-5">
               <div className="mb-4 flex items-center gap-1">
