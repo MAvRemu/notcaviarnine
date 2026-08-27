@@ -43,6 +43,7 @@ scripts/             verify-math.mts (replays live swaps), index-once.mts (backf
 - [docs/SYSTEM.md](docs/SYSTEM.md) — architecture, data flows, configuration, operations
 - [docs/HYPERSTAKE.md](docs/HYPERSTAKE.md) — protocol spec: addresses, parameters, math, roles, risks
 - [docs/DESIGN.md](docs/DESIGN.md) — visual identity and component system
+- [docs/SIMPLE_POOL.md](docs/SIMPLE_POOL.md) / [docs/SIMPLE_POOL_UX.md](docs/SIMPLE_POOL_UX.md) — Simple Pools (WeightedPool) protocol spec and product spec (planned)
 
 ## Develop
 
