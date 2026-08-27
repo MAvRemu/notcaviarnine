@@ -118,7 +118,14 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
 function Pair({ a, b }: { a?: string; b?: string }) {
   return (
     <span className="flex -space-x-2">
-      {[a, b].map((src, i) => src ? <Image key={i} src={src} alt="" width={22} height={22} className="rounded-full border border-bg bg-bg-deep" unoptimized /> : <span key={i} className="inline-block h-[22px] w-[22px] rounded-full border border-bg bg-bg-deep" />)}
+      {[a, b].map((src, i) => <TokenIcon key={i} src={src} />)}
     </span>
   );
+}
+
+/** Token icon with a neutral fallback — many issuer-hosted icons are dead links. */
+function TokenIcon({ src }: { src?: string }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return <span className="inline-block h-[22px] w-[22px] rounded-full border border-bg bg-bg-deep" />;
+  return <Image src={src} alt="" width={22} height={22} className="rounded-full border border-bg bg-bg-deep" unoptimized onError={() => setFailed(true)} />;
 }
