@@ -167,12 +167,11 @@ function Milestone({ when, what, tone }: { when: string; what: string; tone?: To
 }
 
 /**
- * Plain-language dependency map of all four products: your wallet uses this website to reach four
- * CaviarNine contracts; HyperStake prices from the LSU Pool; the LSU Pool only accepts approved
- * validators; one CaviarNine admin key controls fees and that list.
+ * Layered dependency map: users → four products → shared plumbing → one admin key.
+ * Green bar: removing liquidity is a public method on every product — no key can block it.
  */
 function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pools: number | null; shape: number | null }) {
-  const W = 980, H = 420;
+  const W = 1040, H = 480;
   const box = (x: number, y: number, w: number, label: string, sub: string, tone: Tone, dashed = false) => (
     <g key={label}>
       <rect x={x} y={y} width={w} height={56} rx={12} fill="none" stroke={stroke[tone]} strokeWidth={1.5} strokeDasharray={dashed ? '4 4' : undefined} />
@@ -183,45 +182,63 @@ function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pool
   const line = (d: string, tone: Tone = 'muted', arrow = true) => (
     <path key={d} d={d} fill="none" stroke={stroke[tone]} strokeWidth={1.5} markerEnd={arrow ? 'url(#arrow)' : undefined} />
   );
-  const label = (x: number, y: number, t: string) => (
-    <text key={`${x}-${y}-${t}`} x={x} y={y} textAnchor="middle" fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>{t}</text>
+  const label = (x: number, y: number, t: string, anchor: 'middle' | 'start' | 'end' = 'middle') => (
+    <text key={`${x}-${y}-${t}`} x={x} y={y} textAnchor={anchor} fill="#f6f2e8" fillOpacity={0.55} fontSize={11}>{t}</text>
   );
-  // columns: wallet 20–200 · website 250–450 · products 520–720 · right 790–970
-  const PX = 520, PW = 200;
-  const rows = [70, 160, 250, 340]; // HyperStake, LSU Pool, Simple Pools, Shape
+  // product row: Simple Pools · HyperStake · LSU Pool · Shape Liquidity
+  const PW = 210, PY = 120;
+  const PX = [40, 290, 540, 790];
+  const centers = PX.map((x) => x + PW / 2);
+  const BAR_Y = 192, BUS_Y = 244, PLUMB_Y = 272, CTRL_Y = 384, KEY_Y = 404;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[760px] w-full" role="img" aria-label="Dependency map: your wallet uses this website to reach HyperStake, the LSU Pool, Simple Pools and Shape Liquidity. HyperStake takes its price from the LSU Pool, which only accepts approved validators. One CaviarNine admin key controls fees and that list.">
+    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[820px] w-full" role="img" aria-label="Layered map: your wallet uses this website to reach Simple Pools, HyperStake, the LSU Pool and Shape Liquidity. Removing liquidity is always open on all four. HyperStake takes its price from the LSU Pool. Fees flow to fee vaults; the LSU Pool and Shape Liquidity depend on approved lists. One CaviarNine admin key controls fee rates and approved lists and can pause new deposits and swaps, but never withdrawals.">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#f6f2e8" fillOpacity={0.6} />
         </marker>
       </defs>
-      {box(20, 205, 180, 'Your wallet', 'you sign every step', 'ok')}
-      {line('M200 233 L250 233')}
-      {label(225, 223, 'uses')}
-      {box(250, 205, 200, 'This website', 'open source · no custody', 'ok')}
-      {/* fan-out to the four products */}
-      {rows.map((y) => line(`M450 233 C485 233 485 ${y + 28} ${PX} ${y + 28}`))}
-      {label(485, 58, 'reaches')}
-      {box(PX, rows[0], PW, 'HyperStake', 'instant stake & unstake · live', 'ok')}
-      {box(PX, rows[1], PW, 'LSU Pool', 'staking basket · sets LSULP value', oracle)}
-      {box(PX, rows[2], PW, 'Simple Pools', pools !== null ? `${pools} live pools · coming soon` : 'two-token pools · coming soon', 'ok')}
-      {box(PX, rows[3], PW, 'Shape Liquidity', shape !== null ? `${shape} pools · coming soon` : 'concentrated positions · coming soon', 'ok')}
-      {/* LSU Pool → HyperStake price */}
-      {line(`M${PX + PW / 2 + 60} ${rows[1]} L${PX + PW / 2 + 60} ${rows[0] + 56}`, oracle)}
-      {label(PX + PW / 2 + 60 + 22, rows[1] - 12, 'price')}
-      {/* LSU Pool → approved validators */}
-      {line(`M${PX + PW} ${rows[1] + 28} L790 ${rows[1] + 28}`, allow)}
-      {label(755, rows[1] + 18, 'gated by')}
-      {box(790, rows[1], 180, 'Approved validators', 'list kept by the admin key', allow)}
-      {/* admin key: one bus collecting all four products + validators */}
-      {rows.map((y) => line(`M${PX + PW} ${y + 44} L745 ${y + 44}`, 'watch', false))}
-      {line(`M745 ${rows[0] + 44} L745 ${rows[3] + 44}`, 'watch', false)}
-      {line(`M745 ${rows[3] + 44} L790 ${rows[3] + 44}`, 'watch')}
-      {label(767, rows[3] + 34, 'fees')}
-      {line(`M880 ${rows[1] + 56} L880 ${rows[3] + 16}`, 'watch')}
-      {label(905, (rows[1] + 56 + rows[3] + 16) / 2, 'maintains')}
-      {box(790, rows[3] + 16, 180, 'CaviarNine admin key', 'sets fees · approves validators', 'watch', true)}
+
+      {/* users */}
+      {box(300, 16, 190, 'Your wallet', 'you sign every step', 'ok')}
+      {line('M490 44 L550 44')}
+      {label(520, 34, 'uses')}
+      {box(550, 16, 190, 'This website', 'open source · no custody', 'ok')}
+      {centers.map((cx) => line(`M645 72 C645 100 ${cx} 92 ${cx} ${PY}`))}
+
+      {/* products */}
+      {box(PX[0], PY, PW, 'Simple Pools', pools !== null ? `${pools} live pools` : 'two-token pools', 'ok')}
+      {box(PX[1], PY, PW, 'HyperStake', 'instant stake & unstake', 'ok')}
+      {box(PX[2], PY, PW, 'LSU Pool', 'staking basket · sets LSULP value', oracle)}
+      {box(PX[3], PY, PW, 'Shape Liquidity', shape !== null ? `${shape} pools` : 'concentrated positions', 'ok')}
+      {line(`M${PX[2]} ${PY + 28} L${PX[1] + PW} ${PY + 28}`, oracle)}
+      {label((PX[2] + PX[1] + PW) / 2, PY + 18, 'price')}
+
+      {/* fee stubs (behind the bar) */}
+      {centers.map((cx) => line(`M${cx - 25} ${PY + 56} L${cx - 25} ${BUS_Y}`, 'muted', false))}
+      {line(`M${centers[0] - 25} ${BUS_Y} L${centers[3] - 25} ${BUS_Y}`, 'muted', false)}
+      {line(`M270 ${BUS_Y} L270 ${PLUMB_Y}`)}
+      {label(282, BUS_Y + 20, 'fees', 'start')}
+      {/* approved-list arrows from LSU Pool and Shape */}
+      {line(`M${centers[2] + 25} ${PY + 56} L${centers[2] + 25} ${PLUMB_Y}`, allow)}
+      {line(`M${centers[3] + 25} ${PY + 56} L${centers[3] + 25} ${PLUMB_Y}`, allow)}
+      {label(centers[3] + 37, BUS_Y + 20, 'gated by', 'start')}
+
+      {/* exit guarantee bar */}
+      <rect x={40} y={BAR_Y} width={960} height={26} rx={13} fill="#0b0b0b" stroke={stroke.ok} strokeWidth={1.5} />
+      <circle cx={62} cy={BAR_Y + 13} r={4} fill={stroke.ok} />
+      <text x={520} y={BAR_Y + 17} textAnchor="middle" fill="#f6f2e8" fontSize={12} fontWeight={600}>Removing liquidity is always open on all four — no key can block a withdrawal</text>
+
+      {/* shared plumbing */}
+      {box(145, PLUMB_Y, 250, 'Fee vaults', 'fees auctioned for FLOOP/CAVIAR and burned', 'ok')}
+      {box(620, PLUMB_Y, 300, 'Approved lists', 'validators for LSU Pool · tokens for Shape', allow)}
+
+      {/* control */}
+      {line(`M270 ${CTRL_Y} L270 ${PLUMB_Y + 56}`, 'watch')}
+      {line(`M770 ${CTRL_Y} L770 ${PLUMB_Y + 56}`, 'watch')}
+      {line(`M270 ${CTRL_Y} L770 ${CTRL_Y}`, 'watch', false)}
+      {line(`M520 ${KEY_Y} L520 ${CTRL_Y}`, 'watch', false)}
+      {box(390, KEY_Y, 260, 'CaviarNine admin key', 'one key · every contract above', 'watch', true)}
+      {label(520, KEY_Y + 72, 'controls fee rates and approved lists · can pause new deposits & swaps · cannot touch reserves or withdrawals')}
     </svg>
   );
 }
