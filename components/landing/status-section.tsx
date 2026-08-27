@@ -118,7 +118,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
 
         {/* Flow diagram */}
         <div className="mt-12 overflow-x-auto">
-          <Flow oracle={oracleTone} allow={allowTone} pools={livePools} shape={shape?.pools ?? null} />
+          <Flow allow={allowTone} pools={livePools} shape={shape?.pools ?? null} />
         </div>
 
         {/* Readouts */}
@@ -168,9 +168,10 @@ function Milestone({ when, what, tone }: { when: string; what: string; tone?: To
 
 /**
  * Layered dependency map: users → four products → shared plumbing → one admin key.
+ * Colours mean control (green = open to everyone, yellow = owner-controlled), never freshness.
  * Green bar: removing liquidity is a public method on every product — no key can block it.
  */
-function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pools: number | null; shape: number | null }) {
+function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shape: number | null }) {
   const W = 1040, H = 480;
   const box = (x: number, y: number, w: number, label: string, sub: string, tone: Tone, dashed = false) => (
     <g key={label}>
@@ -208,9 +209,9 @@ function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pool
       {/* products */}
       {box(PX[0], PY, PW, 'Simple Pools', pools !== null ? `${pools} live pools` : 'two-token pools', 'ok')}
       {box(PX[1], PY, PW, 'HyperStake', 'instant stake & unstake', 'ok')}
-      {box(PX[2], PY, PW, 'LSU Pool', 'staking basket · sets LSULP value', oracle)}
+      {box(PX[2], PY, PW, 'LSU Pool', 'staking basket · sets LSULP value', 'ok')}
       {box(PX[3], PY, PW, 'Shape Liquidity', shape !== null ? `${shape} pools` : 'concentrated positions', 'ok')}
-      {line(`M${PX[2]} ${PY + 28} L${PX[1] + PW} ${PY + 28}`, oracle)}
+      {line(`M${PX[2]} ${PY + 28} L${PX[1] + PW} ${PY + 28}`)}
       {label((PX[2] + PX[1] + PW) / 2, PY + 18, 'price')}
 
       {/* fee stubs (behind the bar) */}
