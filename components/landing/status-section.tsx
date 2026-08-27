@@ -17,7 +17,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
   const oracleTone: Tone = oracleMin === null ? 'muted' : oracleMin < 180 ? 'ok' : 'watch';
   const allowTone: Tone = s?.requireActiveSet ? 'watch' : 'ok';
   const drift = s?.heldNotAllowlisted ?? 0;
-  const watchCount = [oracleTone, allowTone, 'watch' /* owner key */].filter((t) => t === 'watch').length;
+  const watchCount = [oracleTone, allowTone, 'watch' /* owner key */, 'watch' /* fee vaults */].filter((t) => t === 'watch').length;
 
   const rows: {
     tone: Tone;
@@ -78,11 +78,11 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       href: dashboardUrl(SHAPE_FACTORY),
     },
     {
-      tone: 'ok',
-      title: 'Fees',
-      metric: '0.1%',
-      metricSub: '80% to LPs · 20% to CaviarNine',
-      text: 'The split is fixed in the contract. This website adds no fee and cannot change it.',
+      tone: 'watch',
+      title: 'Fee vaults',
+      metric: '20%',
+      metricSub: 'of each fee goes to CaviarNine',
+      text: 'LPs keep 80% of every swap fee. Of the rest, half is auctioned for FLOOP/CAVIAR and burned (anyone can trigger it) and half lands in a treasury the admin key can withdraw. The key can change these shares; it cannot touch the 80%. This website adds no fee.',
       href: dashboardUrl(ADDRESSES.feeVaults),
     },
     {
@@ -216,7 +216,7 @@ function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shap
       {/* fee stubs (behind the bar) */}
       {centers.map((cx) => line(`M${cx - 25} ${PY + 56} L${cx - 25} ${BUS_Y}`, 'muted', false))}
       {line(`M${centers[0] - 25} ${BUS_Y} L${centers[3] - 25} ${BUS_Y}`, 'muted', false)}
-      {line(`M270 ${BUS_Y} L270 ${PLUMB_Y}`)}
+      {line(`M270 ${BUS_Y} L270 ${PLUMB_Y}`, 'watch')}
       {label(282, BUS_Y + 20, 'fees', 'start')}
       {/* approved-list arrows from LSU Pool and Shape */}
       {line(`M${centers[2] + 25} ${PY + 56} L${centers[2] + 25} ${PLUMB_Y}`, allow)}
@@ -224,7 +224,7 @@ function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shap
       {label(centers[3] + 37, BUS_Y + 20, 'gated by', 'start')}
 
       {/* shared plumbing */}
-      {box(145, PLUMB_Y, 250, 'Fee vaults', 'fees auctioned for FLOOP/CAVIAR and burned', 'ok')}
+      {box(145, PLUMB_Y, 250, 'Fee vaults', 'burn share auctioned · treasury share withdrawable', 'watch')}
       {box(620, PLUMB_Y, 300, 'Approved lists', 'validators for LSU Pool · tokens for Shape', allow)}
 
       {/* control */}
