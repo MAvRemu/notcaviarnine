@@ -1,0 +1,6 @@
+# Not CaviarNine — security contact (RFC 9116)
+Contact: https://github.com/MAvRemu/notcaviarnine/security/advisories/new
+Preferred-Languages: en, nl
+Canonical: https://notcaviarnine.com/.well-known/security.txt
+Policy: https://github.com/MAvRemu/notcaviarnine/blob/main/SECURITY.md
+Expires: 2027-08-31T00:00:00.000Z
