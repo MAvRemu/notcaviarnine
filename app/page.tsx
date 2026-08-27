@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { SiteFooter } from '@/components/site-footer';
 import { Wordmark } from '@/components/wordmark';
 import { ConsoleStrip } from '@/components/landing/console-strip';
@@ -10,15 +11,52 @@ import { getShapeSummary } from '@/lib/shape/registry';
 import { getGovernanceLog } from '@/lib/governance/watch';
 import { LINKS } from '@/lib/radix/config';
 
-export const revalidate = 60;
 
-export default async function Home() {
+/** Live data is streamed in behind skeletons so the page shell (hero, products, quote) renders instantly. */
+async function LiveConsole() {
+  const [snap, pools, shape] = await Promise.all([
+    getPoolSnapshot().catch(() => null),
+    getSimplePoolSummaries().catch(() => null),
+    getShapeSummary().catch(() => null),
+  ]);
+  return <ConsoleStrip snap={snap} pools={pools} shape={shape} />;
+}
+
+async function LiveStatus() {
   const [snap, pools, shape, governance] = await Promise.all([
     getPoolSnapshot().catch(() => null),
     getSimplePoolSummaries().catch(() => null),
     getShapeSummary().catch(() => null),
     getGovernanceLog(12).catch(() => null),
   ]);
+  return <StatusSection snap={snap} pools={pools} shape={shape} governance={governance} />;
+}
+
+function ConsoleSkeleton() {
+  return (
+    <section className="hairline border-y">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="space-y-2"><div className="skeleton h-3 w-24" /><div className="skeleton h-7 w-36" /><div className="skeleton h-3 w-40" /></div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StatusSkeleton() {
+  return (
+    <section id="status" className="hairline border-y bg-bg-deep/60">
+      <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="label mb-3">Status · who keeps what running</div>
+        <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine</h2>
+        <div className="mt-12 space-y-4">{[...Array(6)].map((_, i) => <div key={i} className="skeleton h-14" />)}</div>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
   return (
     <>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -48,11 +86,15 @@ export default async function Home() {
           </div>
         </section>
 
-        <ConsoleStrip snap={snap} pools={pools} shape={shape} />
+        <Suspense fallback={<ConsoleSkeleton />}>
+          <LiveConsole />
+        </Suspense>
 
         <ProductsSection />
 
-        <StatusSection snap={snap} pools={pools} shape={shape} governance={governance} />
+        <Suspense fallback={<StatusSkeleton />}>
+          <LiveStatus />
+        </Suspense>
 
         <section>
           <div className="mx-auto max-w-6xl px-6 py-20">
