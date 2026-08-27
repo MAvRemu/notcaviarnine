@@ -39,7 +39,7 @@ export function HealthPanel() {
             <div className={`num mt-1 text-4xl leading-none ${prem < 0n ? 'text-ok' : 'text-warn'}`}>{s ? pct(s.premiumToNav) : <span className="skeleton">−0.00%</span>}</div>
             <div className="mt-1 text-xs text-muted">{s ? (prem < 0n ? 'Discount — instant staking is cheaper than NAV' : 'At or above NAV') : ''}</div>
           </div>
-          <div className="text-right">
+          <div className="sm:text-right">
             <div className="label">Pool · NAV</div>
             <div className="num mt-1 text-sm">{s ? `${fmt(s.price, { dp: 4 })} · ${fmt(s.nav, { dp: 4 })}` : '—'}</div>
             <div className="text-[11px] text-muted">XRD per LSULP</div>
@@ -78,7 +78,9 @@ export function HealthPanel() {
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Tile k="LP fee APR · 7d" v={stats ? (stats.aprLp ? pct(stats.aprLp, 2, false) : '—') : undefined} sub={stats ? `realised · ${stats.swaps} swaps` : undefined} accent />
         <Tile k="Fees to LPs · 7d" v={feesXrd ? `${feesXrd} XRD` : undefined} sub={stats ? `${fmt(stats.volumeXrd, { dp: 0, compact: true })} XRD volume` : undefined} />
-        <Tile k="HLP" v={s ? fmt(s.hlpSupply, { dp: 0, compact: true }) : undefined} sub={s ? `1 HLP ≈ ${fmt(s.hlpValueXrd, { dp: 3 })} XRD` : undefined} />
+        <div className="col-span-2 sm:col-span-1">
+          <Tile k="HLP" v={s ? fmt(s.hlpSupply, { dp: 0, compact: true }) : undefined} sub={s ? `1 HLP ≈ ${fmt(s.hlpValueXrd, { dp: 3 })} XRD` : undefined} />
+        </div>
       </div>
 
       {/* Dependencies — compact, collapsible */}
