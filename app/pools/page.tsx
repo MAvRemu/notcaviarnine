@@ -8,6 +8,7 @@ import { productById } from '@/lib/products';
 import { getSimplePoolSummaries } from '@/lib/simplepool/registry';
 import { getPrices } from '@/lib/prices/astrolescent';
 import { RESOURCES } from '@/lib/radix/config';
+import { fmtNum } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Simple Pools' };
 export const revalidate = 300;
@@ -34,7 +35,7 @@ async function Pools() {
   const tvl = live.reduce((a, p) => a + (p.tvlXrd ?? 0), 0);
   return (
     <>
-      <div className="text-sm text-muted"><span className="num text-ink">{pools.length}</span> pools · <span className="num text-ink">{live.length}</span> with liquidity{tvl > 0 && <> · total value ≈ <span className="num text-ink">{new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(tvl)} XRD</span></>}</div>
+      <div className="text-sm text-muted"><span className="num text-ink">{pools.length}</span> pools · <span className="num text-ink">{live.length}</span> with liquidity{tvl > 0 && <> · total value ≈ <span className="num text-ink">{fmtNum(tvl, { compact: true })} XRD</span></>}</div>
       <PoolTable pools={pools} xrdUsd={xrdUsd} />
     </>
   );
