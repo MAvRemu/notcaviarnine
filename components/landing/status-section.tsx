@@ -189,7 +189,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
         <ol className="mt-12 grid gap-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <Milestone when="2023–2025" what="CaviarNine deploys the LSU Pool, Shape Liquidity, Simple Pools and HyperStake on Radix" />
           <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix; its website goes withdraw-only" tone="watch" />
-          <Milestone when="Aug 2026" what="Not CaviarNine goes live with HyperStake" tone="ok" />
+          <Milestone when="Aug 2026" what="NotCaviarNine goes live with HyperStake" tone="ok" />
           <Milestone when="Next" what="Simple Pools, LSU Pool and Shape Liquidity open here, one by one" />
         </ol>
       </div>

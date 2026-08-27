@@ -64,7 +64,7 @@ export function SwapPanel() {
     }
     trackEvent('tx_wallet_opened', ev);
     setTx({ phase: 'signing' });
-    const res = await sendTransaction(manifest, `Not CaviarNine · swap ${fmt(input, { dp: 2 })} ${from} → ${to}`);
+    const res = await sendTransaction(manifest, `NotCaviarNine · swap ${fmt(input, { dp: 2 })} ${from} → ${to}`);
     if (res.ok) { trackEvent('tx_committed', ev); setTx({ phase: 'done', txId: res.txId }); setAmount(''); refresh(); refreshBalances(); }
     else { trackEvent('tx_rejected', { ...ev, reason: res.error.slice(0, 60) }); setTx({ phase: 'error', error: res.error }); }
   }

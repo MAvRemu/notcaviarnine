@@ -2,7 +2,7 @@
 
 > **Archived on 2026-08-27** from https://docs.caviarnine.com (the site's `llms-full.txt` export, plus the images it references).
 > Images could not be archived (the docs host returns 404 for them); text is complete. This is CaviarNine's own documentation, © CaviarNine Limited, preserved here unmodified for the users of their contracts after the
-> company announced it is leaving Radix and its websites may disappear. Not CaviarNine is not affiliated with CaviarNine.
+> company announced it is leaving Radix and its websites may disappear. NotCaviarNine is not affiliated with CaviarNine.
 > Where this archive and the ledger disagree, the ledger wins — see the protocol specs in `docs/` for verified, current behaviour.
 > Some addresses below are the ones published by CaviarNine; the ones this frontend uses are in `lib/radix/config.ts`.
 

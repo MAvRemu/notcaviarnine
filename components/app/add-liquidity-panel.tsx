@@ -44,7 +44,7 @@ export function AddLiquidityPanel() {
     } catch (e) { trackEvent('tx_preview_failed', { ...ev, reason: 'preview error' }); setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' }); return; }
     trackEvent('tx_wallet_opened', ev);
     setTx({ phase: 'signing' });
-    const res = await sendTransaction(manifest, 'Not CaviarNine · add HyperStake liquidity');
+    const res = await sendTransaction(manifest, 'NotCaviarNine · add HyperStake liquidity');
     if (res.ok) { trackEvent('tx_committed', ev); setTx({ phase: 'done', txId: res.txId }); setLsulp(''); setXrd(''); refresh(); refreshBalances(); }
     else { trackEvent('tx_rejected', { ...ev, reason: res.error.slice(0, 60) }); setTx({ phase: 'error', error: res.error }); }
   }

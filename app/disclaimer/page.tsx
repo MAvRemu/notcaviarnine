@@ -19,7 +19,7 @@ export default function Disclaimer() {
 
         <h2>Not affiliated with CaviarNine</h2>
         <p>
-          notcaviarnine.com (&ldquo;Not CaviarNine&rdquo;, &ldquo;we&rdquo;) is an independent project. We are not affiliated with, endorsed by,
+          notcaviarnine.com (&ldquo;NotCaviarNine&rdquo;, &ldquo;we&rdquo;) is an independent project. We are not affiliated with, endorsed by,
           or operated by CaviarNine or its team. &ldquo;CaviarNine&rdquo;, &ldquo;HyperStake&rdquo; and related names refer to the protocol and
           smart contracts that CaviarNine built and deployed on the Radix network; we use them descriptively.
         </p>

@@ -65,7 +65,7 @@ Two-column on desktop (action left, facts right), stacked on mobile — same ske
   Readout rows: "You receive (est.) N LP", "Minimum LP", "Pool ratio 1 X : n Y", "Your share after", "1 LP ≈ … XRD" (XRD pools).
   If one side is limited, the excess is stated: "n Y is returned to you in the same transaction". Tolerance control (0.1/0.5/1/custom)
   → `ASSERT_WORKTOP_CONTAINS LP ≥ min`. Preview via Gateway before opening the wallet; wallet message
-  `Not CaviarNine · add liquidity hUSDC/XRD`.
+  `NotCaviarNine · add liquidity hUSDC/XRD`.
 - *Remove*: LP input with 25/50/75/100 %. Readout: "You receive (est.) x X + y Y", "≈ value" (XRD pools), "Minimums".
   Asserts on both outputs. No fee.
 - Amount inputs respect each token's **divisibility** (6-dp tokens are common); the input sanitiser trims accordingly.

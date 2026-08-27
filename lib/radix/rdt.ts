@@ -20,7 +20,7 @@ export function getRdt(): Promise<Rdt> {
     const rdt = RadixDappToolkit({
       dAppDefinitionAddress: DAPP_DEFINITION_ADDRESS,
       networkId: NETWORK_ID,
-      applicationName: 'Not CaviarNine',
+      applicationName: 'NotCaviarNine',
       applicationVersion: '0.1.0',
     });
     rdt.walletApi.setRequestData(DataRequestBuilder.accounts().atLeast(1));

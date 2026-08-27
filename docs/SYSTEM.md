@@ -1,6 +1,6 @@
 # System overview
 
-Not CaviarNine is a **non-custodial web frontend** for the HyperStake LSULP/XRD pool on Radix mainnet. It reads public
+NotCaviarNine is a **non-custodial web frontend** for the HyperStake LSULP/XRD pool on Radix mainnet. It reads public
 ledger state, helps the user build a transaction, and hands it to the Radix Wallet to sign. It never holds keys or funds.
 
 ```

@@ -1,6 +1,6 @@
 # Design system — "control room"
 
-Not CaviarNine looks like the instrument panel of a protocol that keeps running after its operators left:
+NotCaviarNine looks like the instrument panel of a protocol that keeps running after its operators left:
 dark ground, precise type, one electric-blue accent, yellow reserved for things to watch, and numbers you can trust at a glance.
 It keeps CaviarNine's black-and-cream ground but replaces their yellow as the action colour, so the two sites are unmistakably different.
 

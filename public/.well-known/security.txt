@@ -1,4 +1,4 @@
-# Not CaviarNine — security contact (RFC 9116)
+# NotCaviarNine — security contact (RFC 9116)
 Contact: https://github.com/MAvRemu/notcaviarnine/security/advisories/new
 Contact: mailto:info@notcaviarnine.com
 Preferred-Languages: en, nl

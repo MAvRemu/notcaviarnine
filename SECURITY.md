@@ -1,6 +1,6 @@
 # Security policy
 
-Not CaviarNine is a non-custodial frontend: it never holds keys or funds. The worst-case impact of a frontend bug is a user
+NotCaviarNine is a non-custodial frontend: it never holds keys or funds. The worst-case impact of a frontend bug is a user
 signing a transaction that does not match what they intended, so anything that could alter a transaction manifest, a quote,
 or the minimum-output assertion is treated as critical.
 
