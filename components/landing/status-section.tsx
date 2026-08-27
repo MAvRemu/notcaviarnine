@@ -169,10 +169,9 @@ function Milestone({ when, what, tone }: { when: string; what: string; tone?: To
 /**
  * Layered dependency map: users → four products → shared plumbing → one admin key.
  * Colours mean control (green = open to everyone, yellow = owner-controlled), never freshness.
- * Green bar: removing liquidity is a public method on every product — no key can block it.
  */
 function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shape: number | null }) {
-  const W = 1040, H = 480;
+  const W = 1040, H = 460;
   const box = (x: number, y: number, w: number, label: string, sub: string, tone: Tone, dashed = false) => (
     <g key={label}>
       <rect x={x} y={y} width={w} height={56} rx={12} fill="none" stroke={stroke[tone]} strokeWidth={1.5} strokeDasharray={dashed ? '4 4' : undefined} />
@@ -190,9 +189,9 @@ function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shap
   const PW = 210, PY = 120;
   const PX = [40, 290, 540, 790];
   const centers = PX.map((x) => x + PW / 2);
-  const BAR_Y = 192, BUS_Y = 244, PLUMB_Y = 272, CTRL_Y = 384, KEY_Y = 404;
+  const BUS_Y = 216, PLUMB_Y = 248, CTRL_Y = 360, KEY_Y = 380;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[820px] w-full" role="img" aria-label="Layered map: your wallet uses this website to reach Simple Pools, HyperStake, the LSU Pool and Shape Liquidity. Removing liquidity is always open on all four. HyperStake takes its price from the LSU Pool. Fees flow to fee vaults; the LSU Pool and Shape Liquidity depend on approved lists. One CaviarNine admin key controls fee rates and approved lists and can pause new deposits and swaps, but never withdrawals.">
+    <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[820px] w-full" role="img" aria-label="Layered map: your wallet uses this website to reach Simple Pools, HyperStake, the LSU Pool and Shape Liquidity. HyperStake takes its price from the LSU Pool. Fees flow to fee vaults; the LSU Pool and Shape Liquidity depend on approved lists. One CaviarNine admin key controls fee rates and approved lists and can pause new deposits and swaps, but never withdrawals.">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#f6f2e8" fillOpacity={0.6} />
@@ -223,11 +222,6 @@ function Flow({ allow, pools, shape }: { allow: Tone; pools: number | null; shap
       {line(`M${centers[2] + 25} ${PY + 56} L${centers[2] + 25} ${PLUMB_Y}`, allow)}
       {line(`M${centers[3] + 25} ${PY + 56} L${centers[3] + 25} ${PLUMB_Y}`, allow)}
       {label(centers[3] + 37, BUS_Y + 20, 'gated by', 'start')}
-
-      {/* exit guarantee bar */}
-      <rect x={40} y={BAR_Y} width={960} height={26} rx={13} fill="#0b0b0b" stroke={stroke.ok} strokeWidth={1.5} />
-      <circle cx={62} cy={BAR_Y + 13} r={4} fill={stroke.ok} />
-      <text x={520} y={BAR_Y + 17} textAnchor="middle" fill="#f6f2e8" fontSize={12} fontWeight={600}>Removing liquidity is always open on all four — no key can block a withdrawal</text>
 
       {/* shared plumbing */}
       {box(145, PLUMB_Y, 250, 'Fee vaults', 'fees auctioned for FLOOP/CAVIAR and burned', 'ok')}
