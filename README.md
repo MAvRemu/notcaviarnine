@@ -45,7 +45,8 @@ scripts/             verify-math.mts (replays live swaps), index-once.mts (backf
 - [docs/DESIGN.md](docs/DESIGN.md) — visual identity and component system
 - [docs/SIMPLE_POOL.md](docs/SIMPLE_POOL.md) / [docs/SIMPLE_POOL_UX.md](docs/SIMPLE_POOL_UX.md) — Simple Pools (WeightedPool) protocol spec and product spec (planned)
 - [docs/PROTOCOL_MAP.md](docs/PROTOCOL_MAP.md) — how the four products, validators, fee controller, fee vaults and the admin key connect
-- [docs/SHAPE_LIQUIDITY.md](docs/SHAPE_LIQUIDITY.md), [docs/LSU_POOL.md](docs/LSU_POOL.md) — placeholders with description and research plan
+- [docs/SHAPE_LIQUIDITY.md](docs/SHAPE_LIQUIDITY.md) — Shape Liquidity (QuantaSwap) protocol spec: ticks/bins, receipts, swap math, fees, roles, risks
+- [docs/LSU_POOL.md](docs/LSU_POOL.md) — LSU Pool protocol spec: price cache, mint/redeem/swap algorithms, credit receipts, roles, risks
 
 ## Develop
 
