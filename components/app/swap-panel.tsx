@@ -102,9 +102,9 @@ export function SwapPanel() {
 
 function Row({ k, v, tone }: { k: string; v: string; tone?: 'ok' | 'warn' }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4">
       <span className="text-muted">{k}</span>
-      <span className={`num ${tone === 'ok' ? 'text-ok' : tone === 'warn' ? 'text-warn' : ''}`}>{v}</span>
+      <span className={`num text-right ${tone === 'ok' ? 'text-ok' : tone === 'warn' ? 'text-warn' : ''}`}>{v}</span>
     </div>
   );
 }

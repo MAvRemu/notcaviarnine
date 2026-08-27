@@ -27,7 +27,7 @@ export function Balances() {
 
   return (
     <div className="card p-5">
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="label">Your position</div>
         {accounts.length > 1 ? (
           <select className="rounded-full border border-line bg-bg px-2 py-1 text-xs" value={account.address} onChange={(e) => selectAccount(e.target.value)} aria-label="Account">

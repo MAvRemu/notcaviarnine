@@ -68,7 +68,7 @@ export function RemoveLiquidityPanel() {
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4">
       <span className="text-muted">{k}</span>
       <span className="num text-right">{v}</span>
     </div>

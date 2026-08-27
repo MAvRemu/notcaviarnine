@@ -26,8 +26,8 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
           </div>
           <a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink sm:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>
         </div>
-        <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-          <section className="space-y-6">
+        <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+          <section className="min-w-0 space-y-6">
             <div className="card p-5">
               <div className="mb-4 flex items-center gap-1">
                 <button className="tab" data-active={tab === 'swap'} onClick={() => setTab('swap')}>Swap</button>
@@ -40,7 +40,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
             </div>
             <Balances />
           </section>
-          <section className="space-y-6">
+          <section className="min-w-0 space-y-6">
             <HealthPanel />
             <History />
           </section>

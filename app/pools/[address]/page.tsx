@@ -31,7 +31,7 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
           )}
         </div>
         <ComingSoon product={productById('pools')} />
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <section className="card p-5">
             <div className="label mb-3">Pool facts</div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">

@@ -40,9 +40,9 @@ export function TokenInput({
           </button>
         )}
       </div>
-      <div className="mt-1 flex items-center gap-3">
+      <div className="mt-1 flex min-w-0 items-center gap-3">
         <input
-          className="input"
+          className="input min-w-0"
           inputMode="decimal"
           placeholder="0"
           value={value}
