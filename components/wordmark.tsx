@@ -5,7 +5,7 @@ export function Wordmark({ href = '/', size = 'md' }: { href?: string; size?: 'm
   return (
     <Link
       href={href}
-      className={`inline-flex items-baseline gap-1 ${text} font-bold leading-none tracking-tight`}
+      className={`inline-flex items-baseline gap-0 ${text} font-bold leading-none tracking-tight`}
       aria-label="NotCaviarNine"
     >
       <span className="text-accent-deep">NOT</span>
