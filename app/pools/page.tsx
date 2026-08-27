@@ -6,7 +6,6 @@ import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { PoolTable } from '@/components/pools/pool-table';
 import { productById } from '@/lib/products';
-import { getSimplePoolSummaries } from '@/lib/simplepool/registry';
 import { getPrices } from '@/lib/prices/astrolescent';
 import { RESOURCES } from '@/lib/radix/config';
 import { fmtNum } from '@/lib/format';

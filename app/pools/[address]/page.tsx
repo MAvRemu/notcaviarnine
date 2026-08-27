@@ -5,7 +5,7 @@ import { ProductShell } from '@/components/shell/product-shell';
 import { cachedSimplePools } from '@/lib/cached';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
-import { getSimplePoolSummaries, SIMPLE_POOL_FEE_VAULTS } from '@/lib/simplepool/registry';
+import { SIMPLE_POOL_FEE_VAULTS } from '@/lib/simplepool/registry';
 import { dashboardUrl } from '@/lib/radix/config';
 import { fmtNum } from '@/lib/format';
 

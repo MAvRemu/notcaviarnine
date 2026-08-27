@@ -5,7 +5,7 @@ import { cachedShape } from '@/lib/cached';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
-import { getShapeSummary } from '@/lib/shape/registry';
+
 
 export const metadata: Metadata = { title: 'Shape Liquidity' };
 export const revalidate = 600;
