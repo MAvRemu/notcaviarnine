@@ -58,3 +58,13 @@ export const indexerState = pgTable('hyperstake_indexer_state', {
   lastRunAt: timestamp('last_run_at', { withTimezone: true }).notNull(),
   lastError: text('last_error'),
 });
+
+/** Anonymous product analytics events (no addresses, no exact amounts). */
+export const analyticsEvents = pgTable('analytics_events', {
+  id: serial('id').primaryKey(),
+  timestamp: timestamp('timestamp', { withTimezone: true }).notNull().defaultNow(),
+  name: text('name').notNull(),
+  product: text('product'),
+  action: text('action'),
+  props: text('props'),
+});

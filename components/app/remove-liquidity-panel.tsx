@@ -11,6 +11,7 @@ import { applySlippage, dMul, fromAtto, quoteRemoveLiquidity, toAtto } from '@/l
 import { removeLiquidityManifest } from '@/lib/hyperstake/manifests';
 import { previewManifest } from '@/lib/radix/gateway';
 import { fmt } from '@/lib/format';
+import { sizeBucket, trackEvent } from '@/lib/analytics';
 
 export function RemoveLiquidityPanel() {
   const { params, hlpSupply, balances, slippageBps, refresh, refreshBalances } = usePool();
@@ -30,15 +31,18 @@ export function RemoveLiquidityPanel() {
   async function submit() {
     if (!account || !q) return;
     const manifest = removeLiquidityManifest({ account: account.address, amountHlp: amount, minLsulp: minX, minXrd: minY });
+    const ev = { product: 'hyperstake' as const, action: 'remove' as const, size: sizeBucket(Number(fromAtto(valueXrd))) };
+    trackEvent('tx_started', ev);
     setTx({ phase: 'previewing' });
     try {
       const p = await previewManifest(manifest);
-      if (p.receipt.status !== 'Succeeded') { setTx({ phase: 'error', error: humanizeError(p.receipt.error_message) }); return; }
-    } catch (e) { setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' }); return; }
+      if (p.receipt.status !== 'Succeeded') { trackEvent('tx_preview_failed', { ...ev, reason: humanizeError(p.receipt.error_message).slice(0, 60) }); setTx({ phase: 'error', error: humanizeError(p.receipt.error_message) }); return; }
+    } catch (e) { trackEvent('tx_preview_failed', { ...ev, reason: 'preview error' }); setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' }); return; }
+    trackEvent('tx_wallet_opened', ev);
     setTx({ phase: 'signing' });
     const res = await sendTransaction(manifest, 'Not CaviarNine · remove HyperStake liquidity');
-    if (res.ok) { setTx({ phase: 'done', txId: res.txId }); setHlp(''); refresh(); refreshBalances(); }
-    else setTx({ phase: 'error', error: res.error });
+    if (res.ok) { trackEvent('tx_committed', ev); setTx({ phase: 'done', txId: res.txId }); setHlp(''); refresh(); refreshBalances(); }
+    else { trackEvent('tx_rejected', { ...ev, reason: res.error.slice(0, 60) }); setTx({ phase: 'error', error: res.error }); }
   }
 
   return (

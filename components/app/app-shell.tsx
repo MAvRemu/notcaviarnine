@@ -12,11 +12,13 @@ import { Balances } from './balances';
 import { HealthPanel } from './health-panel';
 import { History } from './history';
 import { LINKS } from '@/lib/radix/config';
+import { trackEvent } from '@/lib/analytics';
 
 type Tab = 'swap' | 'add' | 'remove';
 
 export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
-  const [tab, setTab] = useState<Tab>('swap');
+  const [tab, setTabState] = useState<Tab>('swap');
+  const setTab = (t: Tab) => { setTabState(t); trackEvent('tab_selected', { product: 'hyperstake', action: t }); };
   return (
     <ProductShell>
       <PoolProvider initial={initial}>

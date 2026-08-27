@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://notcaviarnine.com'),
   title: { default: 'Not CaviarNine', template: '%s · Not CaviarNine' },
   description:
-    'CaviarNine is gone, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
+    'CaviarNine is leaving, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
   openGraph: {
     title: 'Not CaviarNine',
     description:
-      'CaviarNine is gone, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
+      'CaviarNine is leaving, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
     siteName: 'Not CaviarNine',
     type: 'website',
   },

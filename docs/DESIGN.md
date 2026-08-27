@@ -100,7 +100,7 @@ Credit CaviarNine where due; never imply affiliation. "Verify, don't trust" is t
 - **Wordmark**: `NOT` in accent blue + `CaviarNine` in cream, both Geist 700, same cap height, `gap-2`.
 - **Icon**: black rounded square, cream `N`, blue `9` (`public/icon.svg` → `app/icon.png`, `app/apple-icon.png`,
   `app/favicon.ico`, `public/dapp-icon.png`).
-- **Tagline**: "CaviarNine is gone. But contracts never die." — the second sentence in blue.
+- **Tagline**: "CaviarNine is leaving. But contracts never die." — the second sentence in blue.
 
 ## Communication rules (what we tell the customer)
 

@@ -11,6 +11,7 @@ import { applySlippage, fromAtto, matchRatio, quoteAddLiquidity, toAtto } from '
 import { addLiquidityManifest } from '@/lib/hyperstake/manifests';
 import { previewManifest } from '@/lib/radix/gateway';
 import { fmt } from '@/lib/format';
+import { sizeBucket, trackEvent } from '@/lib/analytics';
 
 export function AddLiquidityPanel() {
   const { params, hlpSupply, balances, slippageBps, refresh, refreshBalances, snapshot } = usePool();
@@ -34,15 +35,18 @@ export function AddLiquidityPanel() {
   async function submit() {
     if (!account || !q) return;
     const manifest = addLiquidityManifest({ account: account.address, amountLsulp: aX, amountXrd: aY, minHlp });
+    const ev = { product: 'hyperstake' as const, action: 'add' as const, size: sizeBucket(Number(fromAtto(aY)) * 2) };
+    trackEvent('tx_started', ev);
     setTx({ phase: 'previewing' });
     try {
       const p = await previewManifest(manifest);
-      if (p.receipt.status !== 'Succeeded') { setTx({ phase: 'error', error: humanizeError(p.receipt.error_message) }); return; }
-    } catch (e) { setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' }); return; }
+      if (p.receipt.status !== 'Succeeded') { trackEvent('tx_preview_failed', { ...ev, reason: humanizeError(p.receipt.error_message).slice(0, 60) }); setTx({ phase: 'error', error: humanizeError(p.receipt.error_message) }); return; }
+    } catch (e) { trackEvent('tx_preview_failed', { ...ev, reason: 'preview error' }); setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' }); return; }
+    trackEvent('tx_wallet_opened', ev);
     setTx({ phase: 'signing' });
     const res = await sendTransaction(manifest, 'Not CaviarNine · add HyperStake liquidity');
-    if (res.ok) { setTx({ phase: 'done', txId: res.txId }); setLsulp(''); setXrd(''); refresh(); refreshBalances(); }
-    else setTx({ phase: 'error', error: res.error });
+    if (res.ok) { trackEvent('tx_committed', ev); setTx({ phase: 'done', txId: res.txId }); setLsulp(''); setXrd(''); refresh(); refreshBalances(); }
+    else { trackEvent('tx_rejected', { ...ev, reason: res.error.slice(0, 60) }); setTx({ phase: 'error', error: res.error }); }
   }
 
   const share = q && hlpSupply > 0n ? Number(fromAtto((q.lpOut * 10n ** 18n) / (hlpSupply + q.lpOut))) * 100 : 0;

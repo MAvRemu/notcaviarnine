@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getRdt, type Rdt } from '@/lib/radix/rdt';
+import { trackEvent } from '@/lib/analytics';
 
 export type WalletAccount = { address: string; label: string; appearanceId: number };
 
@@ -26,8 +27,10 @@ export function RdtProvider({ children }: { children: ReactNode }) {
     getRdt().then((r) => {
       if (cancelled) return;
       setRdt(r);
+      let had = false;
       sub = r.walletApi.walletData$.subscribe((d) => {
         setAccounts(d.accounts.map((a) => ({ address: a.address, label: a.label, appearanceId: a.appearanceId })));
+        if (d.accounts.length && !had) { had = true; trackEvent('wallet_connected'); }
       });
     });
     return () => {

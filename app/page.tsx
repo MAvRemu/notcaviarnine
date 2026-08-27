@@ -49,7 +49,7 @@ export default function Home() {
         <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 md:pt-24">
           <p className="label mb-5">Independent frontend · Radix mainnet</p>
           <h1 className="display max-w-4xl text-[clamp(2.5rem,7vw,5.75rem)]">
-            CaviarNine is gone.<br />
+            CaviarNine is leaving.<br />
             <span className="hl">But contracts never die.</span>
           </h1>
           <p className="mt-8 max-w-2xl text-lg text-ink-soft">

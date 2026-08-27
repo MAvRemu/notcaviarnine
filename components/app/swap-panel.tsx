@@ -11,6 +11,7 @@ import { swapManifest } from '@/lib/hyperstake/manifests';
 import { RESOURCES, type ResourceSymbol } from '@/lib/radix/config';
 import { previewManifest } from '@/lib/radix/gateway';
 import { fmt, pct } from '@/lib/format';
+import { sizeBucket, trackEvent } from '@/lib/analytics';
 
 type Side = Extract<ResourceSymbol, 'XRD' | 'LSULP'>;
 
@@ -46,21 +47,26 @@ export function SwapPanel() {
       outputResource: RESOURCES[to],
       minOutput: minOut,
     });
+    const ev = { product: 'hyperstake' as const, action: 'swap' as const, direction: (from === 'XRD' ? 'XRD→LSULP' : 'LSULP→XRD') as 'XRD→LSULP' | 'LSULP→XRD', size: sizeBucket(Number(fromAtto(from === 'XRD' ? input : quote.output))) };
+    trackEvent('tx_started', ev);
     setTx({ phase: 'previewing' });
     try {
       const p = await previewManifest(manifest);
       if (p.receipt.status !== 'Succeeded') {
+        trackEvent('tx_preview_failed', { ...ev, reason: humanizeError(p.receipt.error_message).slice(0, 60) });
         setTx({ phase: 'error', error: humanizeError(p.receipt.error_message) });
         return;
       }
     } catch (e) {
+      trackEvent('tx_preview_failed', { ...ev, reason: 'preview error' });
       setTx({ phase: 'error', error: e instanceof Error ? e.message : 'Preview failed' });
       return;
     }
+    trackEvent('tx_wallet_opened', ev);
     setTx({ phase: 'signing' });
     const res = await sendTransaction(manifest, `Not CaviarNine · swap ${fmt(input, { dp: 2 })} ${from} → ${to}`);
-    if (res.ok) { setTx({ phase: 'done', txId: res.txId }); setAmount(''); refresh(); refreshBalances(); }
-    else setTx({ phase: 'error', error: res.error });
+    if (res.ok) { trackEvent('tx_committed', ev); setTx({ phase: 'done', txId: res.txId }); setAmount(''); refresh(); refreshBalances(); }
+    else { trackEvent('tx_rejected', { ...ev, reason: res.error.slice(0, 60) }); setTx({ phase: 'error', error: res.error }); }
   }
 
   return (
