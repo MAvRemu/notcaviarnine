@@ -57,7 +57,7 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       tone: 'watch',
       title: 'Admin key',
       metric: 'CaviarNine',
-      metricSub: 'held by CaviarNine',
+      metricSub: 'one key · four products',
       text: 'One key, held by CaviarNine, can change fee splits and the approved-validator list across all four products. It cannot touch your funds or block withdrawals.',
       href: dashboardUrl(ADDRESSES.c9AdminBadge),
     },
