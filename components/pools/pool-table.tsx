@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { SimplePoolSummary } from '@/lib/simplepool/registry';
 import { RESOURCES } from '@/lib/radix/config';
+import { fmtNum } from '@/lib/format';
 
 const STABLES = new Set(['xUSDC', 'xUSDT', 'hUSDC', 'hUSDT']);
-const nf0 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
-const nfc = (n: number) => (n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e4 ? (n / 1e3).toFixed(1) + 'K' : nf0.format(n));
+const nfc = (n: number) => fmtNum(n, { compact: true });
 
 export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUsd: number | null }) {
   const [q, setQ] = useState('');
@@ -35,7 +35,7 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
   }, [pools, q, showEmpty, xrdOnly, stables, sort]);
 
   const val = (p: SimplePoolSummary) => {
-    if (p.tvlXrd === null) return <span className="text-muted">{nfc(p.reserveX)} {p.symbolX}</span>;
+    if (p.tvlXrd === null) { const v = nfc(p.reserveX); return <span className="text-muted">{v === 'n/a' ? 'no price' : `${v} ${p.symbolX}`}</span>; }
     if (usd && xrdUsd) return <>${nfc(p.tvlXrd * xrdUsd)}</>;
     return <>{nfc(p.tvlXrd)} <span className="text-muted">XRD</span></>;
   };
@@ -58,10 +58,10 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
           <thead className="text-left">
             <tr className="label border-b border-line [&>th]:px-4 [&>th]:py-3 [&>th]:font-semibold">
               <th>Pool</th><th>Weights</th>
-              <th><button onClick={() => setSort('fee')} className={sort === 'fee' ? 'text-ink' : ''}>Fee</button></th>
-              <th className="text-right"><button onClick={() => setSort('tvl')} className={sort === 'tvl' ? 'text-ink' : ''}>TVL {sort === 'tvl' && '↓'}</button></th>
+              <th><button onClick={() => setSort('fee')} className={`uppercase tracking-[0.16em] ${sort === 'fee' ? 'text-ink' : ''}`}>Fee</button></th>
+              <th className="text-right"><button onClick={() => setSort('tvl')} className={`uppercase tracking-[0.16em] ${sort === 'tvl' ? 'text-ink' : ''}`}>TVL {sort === 'tvl' && '↓'}</button></th>
               <th className="text-right">7d volume</th><th className="text-right">Fee APR 7d</th>
-              <th className="text-right"><button onClick={() => setSort('created')} className={sort === 'created' ? 'text-ink' : ''}>Created</button></th>
+              <th className="text-right"><button onClick={() => setSort('created')} className={`uppercase tracking-[0.16em] ${sort === 'created' ? 'text-ink' : ''}`}>Created</button></th>
               <th />
             </tr>
           </thead>

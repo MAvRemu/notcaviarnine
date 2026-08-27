@@ -29,7 +29,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
               <div className="mb-4 flex items-center gap-1">
                 <button className="tab" data-active={tab === 'swap'} onClick={() => setTab('swap')}>Swap</button>
                 <button className="tab" data-active={tab === 'add'} onClick={() => setTab('add')}>Add liquidity</button>
-                <button className="tab" data-active={tab === 'remove'} onClick={() => setTab('remove')}>Remove</button>
+                <button className="tab" data-active={tab === 'remove'} onClick={() => setTab('remove')}>Remove liquidity</button>
               </div>
               {tab === 'swap' && <SwapPanel />}
               {tab === 'add' && <AddLiquidityPanel />}

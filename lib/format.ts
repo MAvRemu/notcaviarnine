@@ -47,3 +47,19 @@ export function minutesSince(iso: string | null | undefined): number | null {
   if (!iso) return null;
   return (Date.now() - new Date(iso).getTime()) / 60000;
 }
+
+/**
+ * Format a plain JS number by magnitude: ≥1e12 → "n/a" (dust/garbage), ≥1e6 compact, ≥1,000 no decimals,
+ * ≥1 two decimals, <1 four significant digits. Used for token amounts and prices from float sources.
+ */
+export function fmtNum(n: number | null | undefined, opts: { compact?: boolean } = {}): string {
+  if (n === null || n === undefined || !Number.isFinite(n)) return '—';
+  const a = Math.abs(n);
+  if (a >= 1e12) return 'n/a';
+  if (opts.compact && a >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (opts.compact && a >= 1e4) return (n / 1e3).toFixed(1) + 'K';
+  if (a >= 1000) return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (a >= 1) return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (a === 0) return '0';
+  return n.toLocaleString('en-US', { maximumSignificantDigits: 4 });
+}

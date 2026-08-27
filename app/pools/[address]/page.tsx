@@ -6,10 +6,10 @@ import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
 import { getSimplePoolSummaries, SIMPLE_POOL_FEE_VAULTS } from '@/lib/simplepool/registry';
 import { dashboardUrl } from '@/lib/radix/config';
+import { fmtNum } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Simple Pool' };
 export const revalidate = 120;
-const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
 
 export default async function PoolDetail({ params }: PageProps<'/pools/[address]'>) {
   const { address } = await params;
@@ -31,24 +31,20 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
           )}
         </div>
         <ComingSoon product={productById('pools')} />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:max-w-2xl">
           <section className="card p-5">
             <div className="label mb-3">Pool facts</div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-              <F k="Price" v={spot !== null ? `1 ${p.symbolX} = ${nf.format(spot)} ${p.symbolY}` : '—'} sub={spot ? `1 ${p.symbolY} = ${nf.format(1 / spot)} ${p.symbolX}` : undefined} />
-              <F k="TVL" v={p.tvlXrd !== null ? `${nf.format(p.tvlXrd)} XRD` : '—'} sub={p.priceSource === 'astrolescent' ? 'priced by Astrolescent' : p.priceSource === 'xrd-leg' ? 'priced via XRD pool' : 'no price available'} />
-              <F k={`${p.symbolX} reserve`} v={nf.format(p.reserveX)} />
-              <F k={`${p.symbolY} reserve`} v={nf.format(p.reserveY)} />
+              <F k="Price" v={spot !== null ? `1 ${p.symbolX} = ${fmtNum(spot)} ${p.symbolY}` : '—'} sub={spot ? `1 ${p.symbolY} = ${fmtNum(1 / spot)} ${p.symbolX}` : undefined} />
+              <F k="TVL" v={p.tvlXrd !== null ? `${fmtNum(p.tvlXrd)} XRD` : '—'} sub={p.priceSource === 'astrolescent' ? 'priced by Astrolescent' : p.priceSource === 'xrd-leg' ? 'priced via XRD pool' : 'no price available'} />
+              <F k={`${p.symbolX} reserve`} v={fmtNum(p.reserveX)} />
+              <F k={`${p.symbolY} reserve`} v={fmtNum(p.reserveY)} />
               <F k="Fee split" v={`${(p.fee * 100).toFixed(2)}%`} sub="80% to LPs · 10% protocol · 10% treasury" />
               <F k="Access" v="Open to everyone" sub="removing liquidity is always public" />
             </dl>
             <div className="mt-4 space-y-1 border-t border-line pt-3 text-xs">
               <A label="Swap component" a={p.swapComponent} /><A label="Native pool" a={p.poolComponent} /><A label="LP token" a={p.lpResource} /><A label="Fee vaults" a={SIMPLE_POOL_FEE_VAULTS} />
             </div>
-          </section>
-          <section className="card p-5">
-            <div className="label mb-3">Add / remove liquidity</div>
-            <p className="text-sm text-muted">Coming soon.</p>
           </section>
         </div>
       </main>
