@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { SiteFooter } from '@/components/site-footer';
 import { Wordmark } from '@/components/wordmark';
-import { ConsoleStrip } from '@/components/landing/console-strip';
+import { ConsoleStrip, HeroTotal } from '@/components/landing/console-strip';
 import { ProductsSection } from '@/components/landing/products-section';
 import { StatusSection } from '@/components/landing/status-section';
 import { cachedGovernance, cachedPoolSnapshot, cachedShape, cachedSimplePools } from '@/lib/cached';
@@ -46,7 +46,8 @@ export default function Home() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 md:pt-24">
+        <section className="mx-auto grid max-w-6xl items-end gap-12 px-6 pb-16 pt-14 md:pt-24 lg:grid-cols-[1fr_auto]">
+          <div>
           <p className="label mb-5">Independent frontend · Radix mainnet</p>
           <h1 className="display max-w-4xl text-[clamp(2.5rem,7vw,5.75rem)]">
             CaviarNine is leaving.<br />
@@ -59,6 +60,10 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link href="/hyperstake" className="btn btn-accent px-6">Open the app</Link>
             <a href="#products" className="btn btn-ghost">See all products</a>
+          </div>
+          </div>
+          <div className="lg:pb-2 lg:text-right">
+            <HeroTotal />
           </div>
         </section>
 

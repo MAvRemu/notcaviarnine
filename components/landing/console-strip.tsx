@@ -23,9 +23,6 @@ export function ConsoleStrip() {
           </Link>
         ))}
       </div>
-      <Suspense fallback={<div className="mx-auto max-w-6xl px-6 pb-4"><div className="skeleton h-3 w-72" /></div>}>
-        <TotalLine />
-      </Suspense>
     </section>
   );
 }
@@ -46,22 +43,21 @@ async function CardValue({ product }: { product: Product }) {
     const rate = await xrdUsd();
     if (product.id === 'hyperstake') {
       const snap = await cachedPoolSnapshot();
-      const s = snap.state;
-      v = `${fmt(s.tvlXrd, { dp: 0, compact: true })} XRD`;
-      sub = `${usd(Number(s.tvlXrd), rate)} TVL · LSULP ${pct(s.premiumToNav)} vs NAV${snap.stats?.aprLp ? ` · ${pct(snap.stats.aprLp, 1, false)} APR` : ''}`;
+      v = snap.stats?.aprLp ? `${pct(snap.stats.aprLp, 1, false)} APR` : `${fmt(snap.state.tvlXrd, { dp: 0, compact: true })} XRD`;
+      sub = `${usd(Number(snap.state.tvlXrd), rate)} in the pool`;
     } else if (product.id === 'lsu-pool') {
       const s = (await cachedPoolSnapshot()).state;
       v = `${fmt(s.lsuPoolValuationXrd, { dp: 0, compact: true })} XRD`;
-      sub = `${usd(Number(s.lsuPoolValuationXrd), rate)} staked · ${s.lsuPoolHeldCount} validators`;
+      sub = `${usd(Number(s.lsuPoolValuationXrd), rate)} staked`;
     } else if (product.id === 'pools') {
       const live = (await cachedSimplePools()).filter((x) => x.hasLiquidity);
       const tvl = live.reduce((a, x) => a + (x.tvlXrd ?? 0), 0);
       v = `${live.length} pools`;
-      sub = `${fmtNum(tvl, { compact: true })} XRD ${usd(tvl, rate)} TVL`;
+      sub = `${usd(tvl, rate)} in liquidity`;
     } else if (product.id === 'shape') {
       const s = await cachedShape();
       v = `${s.poolsWithLiquidity} pools`;
-      sub = `${fmtNum(s.tvlXrd, { compact: true })} XRD ${usd(s.tvlXrd, rate)} TVL`;
+      sub = `${usd(s.tvlXrd, rate)} in liquidity`;
     }
   } catch {
     /* leave dashes */
@@ -74,8 +70,16 @@ async function CardValue({ product }: { product: Product }) {
   );
 }
 
-/** Sum of the four products, in dollars — the number people actually read. */
-async function TotalLine() {
+/** Total value held in the four products, in dollars — shown big in the hero. */
+export function HeroTotal() {
+  return (
+    <Suspense fallback={<div className="space-y-2"><div className="skeleton h-3 w-40" /><div className="skeleton h-12 w-48" /><div className="skeleton h-3 w-32" /></div>}>
+      <HeroTotalValue />
+    </Suspense>
+  );
+}
+
+async function HeroTotalValue() {
   let total: number | null = null, rate: number | null = null;
   try {
     const [snap, pools, shape, r] = await Promise.all([cachedPoolSnapshot(), cachedSimplePools(), cachedShape(), xrdUsd()]);
@@ -87,12 +91,10 @@ async function TotalLine() {
   }
   if (total === null) return null;
   return (
-    <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-2 px-6 pb-4 text-xs text-muted">
-      <span>
-        Across the four products: <span className="num text-ink">{fmtNum(total, { compact: true })} XRD</span>
-        {rate && <> <span className="num text-ink">{usd(total, rate)}</span></>}
-      </span>
-      {rate && <span className="num">1 XRD = ${rate.toFixed(4)} · prices by Astrolescent</span>}
+    <div>
+      <div className="label">In CaviarNine&apos;s contracts right now</div>
+      <div className="num mt-2 text-5xl leading-none md:text-6xl">{rate ? `$${fmtNum(total * rate, { compact: true })}` : `${fmtNum(total, { compact: true })} XRD`}</div>
+      <div className="mt-2 text-xs text-muted">{rate ? `${fmtNum(total, { compact: true })} XRD · ` : ''}live on the ledger · four products</div>
     </div>
   );
 }
