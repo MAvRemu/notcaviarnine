@@ -130,6 +130,8 @@ export async function getGatewayStatus(): Promise<{ ledger_state: LedgerState }>
 export type StreamOpts = {
   affected?: string[];
   emitters?: string[];
+  /** transactions in which one of these badge resources was presented (e.g. an admin badge) */
+  badges?: string[];
   cursor?: string;
   limit?: number;
   order?: 'Asc' | 'Desc';
@@ -146,6 +148,7 @@ export async function streamTransactions(o: StreamOpts): Promise<{
   return gatewayPost('/stream/transactions', {
     ...(o.affected ? { affected_global_entities_filter: o.affected } : {}),
     ...(o.emitters ? { event_global_emitters_filter: o.emitters } : {}),
+    ...(o.badges ? { manifest_badges_presented_filter: o.badges } : {}),
     ...(o.cursor ? { cursor: o.cursor } : {}),
     ...(o.fromStateVersion
       ? { from_ledger_state: { state_version: o.fromStateVersion } }

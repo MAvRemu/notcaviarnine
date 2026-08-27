@@ -3,6 +3,7 @@ import type { SimplePoolSummary } from '@/lib/simplepool/registry';
 import type { ShapeSummary } from '@/lib/shape/registry';
 import { SHAPE_FACTORY } from '@/lib/shape/registry';
 import { SIMPLE_POOL_PACKAGE } from '@/lib/simplepool/registry';
+import type { GovernanceEntry } from '@/lib/governance/watch';
 import { minutesSince, timeAgo } from '@/lib/format';
 import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
 
@@ -10,7 +11,9 @@ type Tone = 'ok' | 'watch' | 'muted';
 const dot: Record<Tone, string> = { ok: 'dot-ok', watch: 'dot-warn', muted: 'dot-muted' };
 const stroke: Record<Tone, string> = { ok: '#3fae6a', watch: '#e9b400', muted: '#4a4844' };
 
-export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | null; pools: SimplePoolSummary[] | null; shape: ShapeSummary | null }) {
+export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSnapshot | null; pools: SimplePoolSummary[] | null; shape: ShapeSummary | null; governance: GovernanceEntry[] | null }) {
+  const lastAction = governance?.[0] ?? null;
+  const recentDays = lastAction ? (Date.now() - new Date(lastAction.timestamp).getTime()) / 86400_000 : null;
   const livePools = pools?.filter((p) => p.hasLiquidity).length ?? null;
   const s = snap?.state;
   const oracleMin = minutesSince(s?.lsuPoolLastTxAt);
@@ -57,8 +60,8 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       tone: 'watch',
       title: 'Admin key',
       metric: 'CaviarNine',
-      metricSub: 'one key · four products',
-      text: 'One key, held by CaviarNine, can change fee splits and the approved-validator list across all four products. It cannot touch your funds or block withdrawals.',
+      metricSub: lastAction ? `last used ${timeAgo(lastAction.timestamp)}` : 'one key · four products',
+      text: 'One key, held by CaviarNine, can change fee splits and the approved-validator list across all four products. It cannot touch your funds or block withdrawals. Every use of the key is listed below.',
       href: dashboardUrl(ADDRESSES.c9AdminBadge),
     },
     {
@@ -143,6 +146,42 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
               <span className="text-xs text-muted group-hover:text-accent">verify ↗</span>
             </a>
           ))}
+        </div>
+
+        {/* Admin key activity — every transaction that presented the C9 Admin Badge */}
+        <div className="mt-12">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <div className="label">Admin key activity</div>
+              <p className="mt-1 text-sm text-muted">Every action needs the CaviarNine admin key; the ledger records each use. Read live, newest first.</p>
+            </div>
+            {recentDays !== null && (
+              <span className={`pill ${recentDays < 7 ? 'border-warn/40 text-warn' : 'border-line text-muted'}`}>
+                <span className={`dot ${recentDays < 7 ? 'dot-warn' : 'dot-muted'}`} />
+                {recentDays < 7 ? 'used in the last 7 days' : `quiet for ${Math.round(recentDays)} days`}
+              </span>
+            )}
+          </div>
+          {governance && governance.length > 0 ? (
+            <ul className="mt-4 divide-y divide-line border-y border-line">
+              {governance.slice(0, 8).map((e) => (
+                <li key={e.intentHash} className="grid gap-2 py-3 text-sm md:grid-cols-[120px_1fr_auto] md:items-baseline">
+                  <span className="num text-xs text-muted">{e.timestamp.slice(0, 10)}</span>
+                  <div className="space-y-1">
+                    {e.actions.map((a, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className={`dot mt-1.5 shrink-0 ${a.severity === 'watch' ? 'dot-warn' : 'dot-muted'}`} />
+                        <span><span className="text-muted">{a.target} · </span>{a.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <a className="text-xs text-muted hover:text-accent" href={dashboardUrl(e.intentHash)} target="_blank" rel="noreferrer">tx ↗</a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-sm text-muted">Activity log unavailable right now.</p>
+          )}
         </div>
 
         {/* Timeline */}

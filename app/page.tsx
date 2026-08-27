@@ -7,15 +7,17 @@ import { StatusSection } from '@/components/landing/status-section';
 import { getPoolSnapshot } from '@/lib/pool-data';
 import { getSimplePoolSummaries } from '@/lib/simplepool/registry';
 import { getShapeSummary } from '@/lib/shape/registry';
+import { getGovernanceLog } from '@/lib/governance/watch';
 import { LINKS } from '@/lib/radix/config';
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const [snap, pools, shape] = await Promise.all([
+  const [snap, pools, shape, governance] = await Promise.all([
     getPoolSnapshot().catch(() => null),
     getSimplePoolSummaries().catch(() => null),
     getShapeSummary().catch(() => null),
+    getGovernanceLog(12).catch(() => null),
   ]);
   return (
     <>
@@ -50,7 +52,7 @@ export default async function Home() {
 
         <ProductsSection />
 
-        <StatusSection snap={snap} pools={pools} shape={shape} />
+        <StatusSection snap={snap} pools={pools} shape={shape} governance={governance} />
 
         <section>
           <div className="mx-auto max-w-6xl px-6 py-20">
