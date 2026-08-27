@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductShell } from '@/components/shell/product-shell';
+import { cachedSimplePools } from '@/lib/cached';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { PoolTable } from '@/components/pools/pool-table';
@@ -29,7 +30,7 @@ export default function PoolsPage() {
 }
 
 async function Pools() {
-  const [pools, prices] = await Promise.all([getSimplePoolSummaries().catch(() => []), getPrices().catch(() => null)]);
+  const [pools, prices] = await Promise.all([cachedSimplePools().catch(() => []), getPrices().catch(() => null)]);
   const xrdUsd = prices?.get(RESOURCES.XRD)?.priceUsd ?? null;
   const live = pools.filter((p) => p.hasLiquidity);
   const tvl = live.reduce((a, p) => a + (p.tvlXrd ?? 0), 0);

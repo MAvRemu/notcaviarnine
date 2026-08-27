@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductShell } from '@/components/shell/product-shell';
+import { cachedShape } from '@/lib/cached';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
@@ -26,7 +27,7 @@ export default function ShapePage() {
 function T({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div className="card p-5"><div className="label">{k}</div><div className="num mt-1 text-2xl">{v}</div>{sub && <div className="mt-1 text-xs text-muted">{sub}</div>}</div>); }
 
 async function ShapeStats() {
-  const s = await getShapeSummary().catch(() => null);
+  const s = await cachedShape().catch(() => null);
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <T k="Pools created" v={s ? nf0.format(s.pools) : '—'} sub="via the CaviarNine factory" />

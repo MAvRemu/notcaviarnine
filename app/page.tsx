@@ -5,43 +5,19 @@ import { Wordmark } from '@/components/wordmark';
 import { ConsoleStrip } from '@/components/landing/console-strip';
 import { ProductsSection } from '@/components/landing/products-section';
 import { StatusSection } from '@/components/landing/status-section';
-import { getPoolSnapshot } from '@/lib/pool-data';
-import { getSimplePoolSummaries } from '@/lib/simplepool/registry';
-import { getShapeSummary } from '@/lib/shape/registry';
-import { getGovernanceLog } from '@/lib/governance/watch';
+import { cachedGovernance, cachedPoolSnapshot, cachedShape, cachedSimplePools } from '@/lib/cached';
 import { LINKS } from '@/lib/radix/config';
 
 
 /** Live data is streamed in behind skeletons so the page shell (hero, products, quote) renders instantly. */
-async function LiveConsole() {
-  const [snap, pools, shape] = await Promise.all([
-    getPoolSnapshot().catch(() => null),
-    getSimplePoolSummaries().catch(() => null),
-    getShapeSummary().catch(() => null),
-  ]);
-  return <ConsoleStrip snap={snap} pools={pools} shape={shape} />;
-}
-
 async function LiveStatus() {
   const [snap, pools, shape, governance] = await Promise.all([
-    getPoolSnapshot().catch(() => null),
-    getSimplePoolSummaries().catch(() => null),
-    getShapeSummary().catch(() => null),
-    getGovernanceLog(12).catch(() => null),
+    cachedPoolSnapshot().catch(() => null),
+    cachedSimplePools().catch(() => null),
+    cachedShape().catch(() => null),
+    cachedGovernance(12).catch(() => null),
   ]);
   return <StatusSection snap={snap} pools={pools} shape={shape} governance={governance} />;
-}
-
-function ConsoleSkeleton() {
-  return (
-    <section className="hairline border-y">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 py-7 sm:grid-cols-2 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="space-y-2"><div className="skeleton h-3 w-24" /><div className="skeleton h-7 w-36" /><div className="skeleton h-3 w-40" /></div>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 function StatusSkeleton() {
@@ -86,9 +62,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Suspense fallback={<ConsoleSkeleton />}>
-          <LiveConsole />
-        </Suspense>
+        <ConsoleStrip />
 
         <ProductsSection />
 

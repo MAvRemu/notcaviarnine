@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProductShell } from '@/components/shell/product-shell';
+import { cachedSimplePools } from '@/lib/cached';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { productById } from '@/lib/products';
 import { getSimplePoolSummaries, SIMPLE_POOL_FEE_VAULTS } from '@/lib/simplepool/registry';
@@ -13,7 +14,7 @@ export const revalidate = 120;
 
 export default async function PoolDetail({ params }: PageProps<'/pools/[address]'>) {
   const { address } = await params;
-  const pools = await getSimplePoolSummaries().catch(() => []);
+  const pools = await cachedSimplePools().catch(() => []);
   const p = pools.find((x) => x.swapComponent === address || x.poolComponent === address || x.lpResource === address);
   if (!p) notFound();
   const spot = p.reserveX > 0 && p.reserveY > 0 ? (p.reserveY / p.weightY) / (p.reserveX / p.weightX) : null;
