@@ -1,11 +1,6 @@
-'use client';
-
-import Link from 'next/link';
 import { useState } from 'react';
 import type { PoolSnapshot } from '@/lib/pool-data';
-import { RdtProvider } from '@/components/radix/rdt-provider';
-import { ConnectButton } from '@/components/radix/connect-button';
-import { Wordmark } from '@/components/wordmark';
+import { ProductShell } from '@/components/shell/product-shell';
 import { PoolProvider } from './pool-context';
 import { SwapPanel } from './swap-panel';
 import { AddLiquidityPanel } from './add-liquidity-panel';
@@ -20,23 +15,16 @@ type Tab = 'swap' | 'add' | 'remove';
 export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
   const [tab, setTab] = useState<Tab>('swap');
   return (
-    <RdtProvider>
+    <ProductShell>
       <PoolProvider initial={initial}>
-        <header className="hairline sticky top-0 z-20 border-b bg-bg/85 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-3">
-            <div className="flex items-center gap-3 sm:gap-6">
-              <Wordmark />
-              <span className="pill hidden sm:inline-flex">HyperStake</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link href="/#status" className="hidden text-sm text-muted hover:text-ink md:inline">Status</Link>
-              <a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink md:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>
-              <ConnectButton />
-            </div>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 pt-6 sm:px-6">
+          <div>
+            <div className="label">HyperStake · LSULP / XRD</div>
+            <h1 className="display mt-1 text-2xl">Instant stake & unstake</h1>
           </div>
-        </header>
-
-        <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+          <a href={LINKS.c9LsuPool} target="_blank" rel="noreferrer" className="hidden text-sm text-muted hover:text-ink sm:inline" title="Deposit validator LSUs to mint LSULP (CaviarNine LSU Pool)">Get LSULP ↗</a>
+        </div>
+        <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
           <section className="space-y-6">
             <div className="card p-5">
               <div className="mb-4 flex items-center gap-1">
@@ -55,12 +43,7 @@ export function AppShell({ initial }: { initial: PoolSnapshot | null }) {
             <History />
           </section>
         </main>
-
-        <footer className="mx-auto max-w-6xl px-6 pb-10 text-xs text-muted">
-          Non-custodial: every action is a transaction you review and sign in your Radix Wallet. Contracts by CaviarNine; this site is independent.{' '}
-          <Link href="/disclaimer" className="underline underline-offset-2">Disclaimer</Link> · <Link href="/terms" className="underline underline-offset-2">Terms</Link>
-        </footer>
       </PoolProvider>
-    </RdtProvider>
+    </ProductShell>
   );
 }

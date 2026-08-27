@@ -11,7 +11,7 @@ export default function Terms() {
     <>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Wordmark />
-        <Link href="/app" className="btn h-10">Launch App</Link>
+        <Link href="/hyperstake" className="btn h-10">Launch App</Link>
       </header>
       <main className="prose mx-auto max-w-3xl px-6 py-12">
         <h1 className="display text-5xl">Terms of Use</h1>

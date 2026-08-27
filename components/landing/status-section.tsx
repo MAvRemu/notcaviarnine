@@ -1,4 +1,8 @@
 import type { PoolSnapshot } from '@/lib/pool-data';
+import type { SimplePoolSummary } from '@/lib/simplepool/registry';
+import type { ShapeSummary } from '@/lib/shape/registry';
+import { SHAPE_FACTORY } from '@/lib/shape/registry';
+import { SIMPLE_POOL_PACKAGE } from '@/lib/simplepool/registry';
 import { minutesSince, timeAgo } from '@/lib/format';
 import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
 
@@ -6,7 +10,8 @@ type Tone = 'ok' | 'watch' | 'muted';
 const dot: Record<Tone, string> = { ok: 'dot-ok', watch: 'dot-warn', muted: 'dot-muted' };
 const stroke: Record<Tone, string> = { ok: '#3fae6a', watch: '#e9b400', muted: '#4a4844' };
 
-export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
+export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | null; pools: SimplePoolSummary[] | null; shape: ShapeSummary | null }) {
+  const livePools = pools?.filter((p) => p.hasLiquidity).length ?? null;
   const s = snap?.state;
   const oracleMin = minutesSince(s?.lsuPoolLastTxAt);
   const oracleTone: Tone = oracleMin === null ? 'muted' : oracleMin < 180 ? 'ok' : 'watch';
@@ -24,14 +29,14 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
   }[] = [
     {
       tone: 'ok',
-      title: 'Trading & liquidity',
+      title: 'HyperStake',
       metric: 'Open to everyone',
       text: 'The pool is public on the ledger. No one — not CaviarNine, not us — can switch it off for you or gate who uses it.',
       href: dashboardUrl(ADDRESSES.hyperStake),
     },
     {
       tone: oracleTone,
-      title: 'Price feed',
+      title: 'HyperStake price feed',
       metric: s ? timeAgo(s.lsuPoolLastTxAt) : '—',
       metricSub: 'last refresh',
       text: 'The LSULP value is refreshed every time someone uses CaviarNine’s staking pool. Anyone can trigger a refresh, so we can automate it if activity drops.',
@@ -39,7 +44,7 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
     },
     {
       tone: allowTone,
-      title: 'Validator list',
+      title: 'LSU Pool validator list',
       metric: s?.allowlistCount != null ? `${s.allowlistCount} of ${s.lsuPoolHeldCount}` : '—',
       metricSub: s?.allowlistLastUpdatedAt ? `validators approved · last updated ${new Date(s.allowlistLastUpdatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}` : 'validators approved',
       text:
@@ -55,6 +60,22 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
       metricSub: 'handover pending',
       text: 'The admin key sets fee splits and maintains the validator list. A transfer to the Radix Accountability Council was requested on 21 Aug 2026; CaviarNine is considering it.',
       href: dashboardUrl(ADDRESSES.c9AdminBadge),
+    },
+    {
+      tone: 'ok',
+      title: 'Simple Pools',
+      metric: livePools !== null ? `${livePools} live pools` : '—',
+      metricSub: 'browse now · actions coming',
+      text: 'Anyone can create one; adding and swapping are open, and removing liquidity is a public method that no one can switch off. Fee split (80/10/10) is owner-controlled.',
+      href: dashboardUrl(SIMPLE_POOL_PACKAGE),
+    },
+    {
+      tone: 'muted',
+      title: 'Shape Liquidity',
+      metric: shape ? `${shape.pools} pools` : '—',
+      metricSub: 'coming soon',
+      text: 'Concentrated-liquidity positions held as NFTs in your wallet. We are researching the contracts; the first goal is a withdraw-safe path (see, claim, remove).',
+      href: dashboardUrl(SHAPE_FACTORY),
     },
     {
       tone: 'ok',
@@ -82,7 +103,7 @@ export function StatusSection({ snap }: { snap: PoolSnapshot | null }) {
             <div className="label mb-3">Status · who keeps what running</div>
             <h2 className="display text-4xl md:text-5xl">What still depends on CaviarNine</h2>
             <p className="mt-4 max-w-2xl text-ink-soft">
-              The website was the easy part. This is the whole chain behind a swap, what&apos;s healthy, and what we&apos;re watching.
+              The website was the easy part. This is the chain behind a HyperStake swap, what&apos;s healthy across all four products, and what we&apos;re watching.
             </p>
           </div>
           <div className="flex items-center gap-3 rounded-full border border-line px-4 py-2 text-sm">

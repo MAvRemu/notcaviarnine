@@ -23,7 +23,7 @@ export function SiteFooter() {
         </div>
         <div className="space-y-2 text-sm">
           <div className="label mb-3">Site</div>
-          <Link className="block hover:underline" href="/app">Launch app</Link>
+          <Link className="block hover:underline" href="/hyperstake">Launch app</Link>
           <Link className="block hover:underline" href="/#status">Status</Link>
           <Link className="block hover:underline" href="/disclaimer">Disclaimer</Link>
           <Link className="block hover:underline" href="/terms">Terms of Use</Link>

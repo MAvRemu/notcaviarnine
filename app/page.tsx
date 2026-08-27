@@ -1,63 +1,56 @@
 import Link from 'next/link';
 import { SiteFooter } from '@/components/site-footer';
 import { Wordmark } from '@/components/wordmark';
-import { StatsStrip } from '@/components/landing/stats-strip';
+import { ConsoleStrip } from '@/components/landing/console-strip';
+import { ProductsSection } from '@/components/landing/products-section';
 import { StatusSection } from '@/components/landing/status-section';
 import { getPoolSnapshot } from '@/lib/pool-data';
+import { getSimplePoolSummaries } from '@/lib/simplepool/registry';
+import { getShapeSummary } from '@/lib/shape/registry';
 import { LINKS } from '@/lib/radix/config';
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const snap = await getPoolSnapshot().catch(() => null);
+  const [snap, pools, shape] = await Promise.all([
+    getPoolSnapshot().catch(() => null),
+    getSimplePoolSummaries().catch(() => null),
+    getShapeSummary().catch(() => null),
+  ]);
   return (
     <>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Wordmark />
         <nav className="flex items-center gap-5 text-sm">
-          <a href="#how" className="hidden text-muted hover:text-ink sm:inline">How it works</a>
+          <a href="#products" className="hidden text-muted hover:text-ink sm:inline">Products</a>
           <a href="#status" className="hidden text-muted hover:text-ink sm:inline">Status</a>
-          <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer" className="hidden text-muted hover:text-ink sm:inline">Source ↗</a>
-          <Link href="/app" className="btn h-10">Launch App</Link>
+          <a href={`${LINKS.frontendRepo}/tree/main/docs`} target="_blank" rel="noreferrer" className="hidden text-muted hover:text-ink sm:inline">Docs ↗</a>
+          <Link href="/hyperstake" className="btn h-10">Open app</Link>
         </nav>
       </header>
 
       <main>
         <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 md:pt-24">
-          <p className="label mb-5">HyperStake · LSULP / XRD · Radix mainnet</p>
+          <p className="label mb-5">Independent frontend · Radix mainnet</p>
           <h1 className="display max-w-4xl text-[clamp(2.5rem,7vw,5.75rem)]">
             CaviarNine is gone.<br />
             <span className="hl">But contracts never die.</span>
           </h1>
           <p className="mt-8 max-w-2xl text-lg text-ink-soft">
-            CaviarNine is leaving Radix and its website is going withdraw-only. The HyperStake contracts stay live on ledger.
-            This independent frontend keeps them usable: instant stake and unstake XRD, or provide LSULP/XRD liquidity and earn the fees.
+            CaviarNine is leaving Radix and its website is going withdraw-only. The contracts stay live on ledger — HyperStake,
+            Simple Pools, Shape Liquidity and the LSU Pool. This independent console keeps them usable, starting with HyperStake.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/app" className="btn btn-accent h-12 px-6 text-base">Launch App</Link>
-            <a href="#how" className="btn btn-ghost h-12">How it works</a>
+            <Link href="/hyperstake" className="btn btn-accent h-12 px-6 text-base">Open the app</Link>
+            <a href="#products" className="btn btn-ghost h-12">See all products</a>
           </div>
         </section>
 
-        <StatsStrip snap={snap} />
+        <ConsoleStrip snap={snap} pools={pools} shape={shape} />
 
-        <section id="how" className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="display text-4xl md:text-5xl">How HyperStake works</h2>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
-            <Step n="01" title="One pool, two tokens">
-              A native Radix pool holds LSULP (a basket of validator stake) and XRD. LPs hold HLP, a pro-rata claim on both.
-            </Step>
-            <Step n="02" title="A curve that follows NAV">
-              Every swap reads the live LSULP value and rebuilds a concentrated curve between 98.5% and 100% of NAV. Nothing to rebalance.
-            </Step>
-            <Step n="03" title="Fees from impatience">
-              Unstakers who won&apos;t wait 7 days sell LSULP below NAV; stakers buy the discount. Each swap pays 0.1%: 80% to LPs, 20% to
-              CaviarNine&apos;s vaults — set on-ledger.
-            </Step>
-          </div>
-        </section>
+        <ProductsSection />
 
-        <StatusSection snap={snap} />
+        <StatusSection snap={snap} pools={pools} shape={shape} />
 
         <section>
           <div className="mx-auto max-w-6xl px-6 py-20">
@@ -83,15 +76,5 @@ export default async function Home() {
       </main>
       <SiteFooter />
     </>
-  );
-}
-
-function Step({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="num text-sm text-accent-deep">{n}</div>
-      <h3 className="mt-2 text-xl font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-ink-soft">{children}</p>
-    </div>
   );
 }
