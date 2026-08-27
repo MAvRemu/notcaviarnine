@@ -86,10 +86,10 @@ export function HealthPanel() {
       {/* Dependencies — compact, collapsible */}
       <details className="mt-4 border-t border-line pt-3 text-xs">
         <summary className="flex items-center justify-between text-muted hover:text-ink">
-          <span className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5"><span className={`dot dot-${oracleTone}`} />price feed {s ? timeAgo(s.lsuPoolLastTxAt) : ''}</span>
-            <span className="flex items-center gap-1.5"><span className={`dot ${s?.requireActiveSet ? 'dot-warn' : 'dot-ok'}`} />validators {s?.allowlistCount != null ? `${s.allowlistCount}/${s.lsuPoolHeldCount}` : ''}</span>
-            <span className="flex items-center gap-1.5"><span className="dot dot-ok" />open access</span>
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1.5 whitespace-nowrap"><span className={`dot dot-${oracleTone}`} />price feed {s ? timeAgo(s.lsuPoolLastTxAt) : ''}</span>
+            <span className="flex items-center gap-1.5 whitespace-nowrap"><span className={`dot ${s?.requireActiveSet ? 'dot-warn' : 'dot-ok'}`} />validators {s?.allowlistCount != null ? `${s.allowlistCount}/${s.lsuPoolHeldCount}` : ''}</span>
+            <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="dot dot-ok" />open access</span>
           </span>
           <span className="label !text-[10px]">details</span>
         </summary>
