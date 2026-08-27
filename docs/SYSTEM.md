@@ -121,6 +121,7 @@ items every 30 s.
 | `NEXT_PUBLIC_DAPP_DEFINITION_ADDRESS` | Vercel + `.env.local` | our dApp-definition account |
 | `DATABASE_URL` | Vercel (Neon integration) | optional; enables indexer/stats |
 | `CRON_SECRET` | Vercel | protects `/api/index` |
+| `ASTROLESCENT_API_KEY` | Vercel + `.env.local` | token prices for Simple Pools TVL/USD (partner key "dot") |
 | `DAPP_DEFINITION_ADMIN_PRIVATE_KEY_HEX` | `.env.admin.local` only | one-off metadata script; never on Vercel |
 
 `vercel env pull` **overwrites** `.env.local` — keep anything local-only in `.env.admin.local`.

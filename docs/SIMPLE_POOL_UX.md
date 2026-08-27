@@ -136,8 +136,21 @@ Screenshot: `docs/reference/caviarnine-simple-pool-2026-08-27.png`. What their U
   liquidity" placeholder, two amount inputs, a 0–100 % slider, and a full-width yellow **Add liquidity** button.
 - APY is labelled "APY 7d" (they likely compound); we deliberately show **realised fee APR** instead.
 
-### Pricing follow-up (needs a decision before build)
-The biggest Simple Pools are non-XRD pairs. To show their TVL/volume in XRD **without an external price feed**, derive each
-token's XRD price from the deepest XRD-leg pool that contains it (hUSDC/XRD, hWBTC via xwBTC? — no; hWBTC has no XRD pool,
-so price it via hUSDC: hWBTC→hUSDC→XRD, one hop). Rule: allow at most **one hop through an XRD pool with > 10k XRD TVL**;
-otherwise fall back to token amounts as decided. This keeps everything on-ledger and explainable ("priced via hUSDC/XRD").
+### Pricing decision (2026-08-27) — Astrolescent + on-ledger fallback
+
+**Decision 16.** Token prices come from the **Astrolescent price API** (`GET https://api.astrolescent.com/partner/<key>/prices`),
+a liquidity-weighted average across DefiPlaza, Ociswap and CaviarNine, refreshed every 10 minutes, with `tokenPriceXRD` and
+`tokenPriceUSD` per token. Marius holds a dev key (project name "dot", granted by Timan/Astrolescent on 2025-05-27; free, no
+plans to charge; they earn from swaps routed via their `/swap` API). Key lives in `ASTROLESCENT_API_KEY` (Vercel + `.env.local`).
+Coverage against the census: 35 of 52 tokens with liquidity, 53 fully-priced pools, **21.1 M XRD** of TVL shown vs 3.35 M with
+XRD-leg-only pricing (hWBTC/hUSDC 10.6 M, hUSDC/hWBTC 2.9 M, hUSDC/hETH 2.8 M).
+
+Rules:
+- Fetched **server-side only**, cached 10 min (`s-maxage=600`), attribution "Prices by Astrolescent" in the list footer.
+- **Fail open**: if the feed errors or is >1 h stale, derive prices on-ledger from the deepest XRD-leg pool holding the token
+  (one hop, pool TVL > 10k XRD); pools still unpriced show token amounts only (decision 4).
+- **Sanity bound**: when a pool's own spot price differs >5 % from the feed price, show a warn dot on the row and, on the detail
+  page, "Pool price is X % away from market — adding liquidity here means selling at the pool's price." (Example today: MSXRD/XRD
+  spot values the pool at 121k XRD vs 768k at market — a 6× gap.)
+- **USD toggle** (XRD / USD, like CaviarNine) uses `tokenPriceUSD`; greys out when the feed is unavailable.
+- Courtesy: tell Timan the "dot" key is now also used by notcaviarnine.com.

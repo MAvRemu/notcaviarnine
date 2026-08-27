@@ -189,6 +189,7 @@ need only one assertion (out of scope for launch).
 | Unequal weights | math limits | swap > ~60 % of a reserve panics | not relevant for LP-only launch |
 | C9-hosted assets | CaviarNine | LP icon / info_url may vanish | host own LP icon |
 | Aggregator routing | CaviarNine | their aggregator supplied most volume; volume may fall after shutdown | show honest realised APR |
+| Token prices for TVL | Astrolescent API (off-ledger) | feed down or stale → no XRD/USD values | 10-min cache, fail open to on-ledger pool-spot derivation, sanity bound vs pool price |
 
 ## References
 
