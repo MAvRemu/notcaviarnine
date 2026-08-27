@@ -19,9 +19,9 @@ export default function PoolsPage() {
         <div>
           <div className="label">Simple Pools · two-token pools</div>
           <h1 className="display mt-1 text-2xl">Two-token pools</h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted">Weighted pools anyone can create. Provide both sides at the pool ratio and earn the swap fee.</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted">Weighted pools anyone can create. Provide both sides, earn the swap fee.</p>
         </div>
-        <ComingSoon product={product} what="Browsing works today; adding and removing liquidity ships next." />
+        <ComingSoon product={product} />
         <Suspense fallback={<div className="space-y-3"><div className="skeleton h-10" />{[...Array(8)].map((_, i) => <div key={i} className="skeleton h-12" />)}</div>}>
           <Pools />
         </Suspense>

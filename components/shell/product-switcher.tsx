@@ -13,7 +13,7 @@ export function ProductSwitcher() {
         return (
           <Link key={p.id} href={p.href} className="tab flex shrink-0 items-center gap-1.5 !py-1.5 !text-[13px]" data-active={active} title={p.subtitle}>
             {p.name}
-            {p.status !== 'live' && <span className={`dot !h-1.5 !w-1.5 ${p.status === 'soon' ? 'dot-muted' : 'dot-warn'}`} aria-label={p.statusLabel} />}
+            {p.status !== 'live' && <span className="dot dot-warn !h-1.5 !w-1.5" aria-label={p.statusLabel} />}
           </Link>
         );
       })}

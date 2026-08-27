@@ -88,3 +88,17 @@ Credit CaviarNine where due; never imply affiliation. "Verify, don't trust" is t
 - **Icon**: black rounded square, cream `N`, blue `9` (`public/icon.svg` → `app/icon.png`, `app/apple-icon.png`,
   `app/favicon.ico`, `public/dapp-icon.png`).
 - **Tagline**: "CaviarNine is gone. But contracts never die." — the second sentence in blue.
+
+## Communication rules (what we tell the customer)
+
+- **Two product states only**: `Live` (green) and `Coming soon` (yellow). No "read-only", "preview", "beta".
+- **A coming-soon page shows**: eyebrow · title · one plain sentence · the live numbers · one line "Coming soon · figures are read live
+  from the ledger" · at most one outbound link (the original CaviarNine page while it lasts). No roadmap prose, no "what we know so
+  far", no research notes, no links to specs or docs — those live in the repo for developers.
+- **Reassurance once, not everywhere**: the non-custodial / your-funds-are-in-the-contracts message appears in the landing status
+  section and the footer, not repeated on every page.
+- **Never name internals**: no "spec", "oracle", "role", "manifest", "ledger state version" in customer-facing copy. Say "price
+  feed", "approved validators", "transaction", "live".
+- **Numbers over narrative**: if a fact can be a live number (pools, TVL, last refresh), show the number instead of describing it.
+- **Product-neutral chrome**: browser titles, meta descriptions, the landing timeline and the status header describe the console,
+  not HyperStake; product-specific words only inside that product's page.

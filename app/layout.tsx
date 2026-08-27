@@ -7,13 +7,13 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://notcaviarnine.com'),
-  title: { default: 'Not CaviarNine — HyperStake', template: '%s · Not CaviarNine' },
+  title: { default: 'Not CaviarNine', template: '%s · Not CaviarNine' },
   description:
-    'CaviarNine is gone, but contracts never die. An independent, non-custodial frontend for the HyperStake LSULP/XRD pool on Radix.',
+    'CaviarNine is gone, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
   openGraph: {
-    title: 'Not CaviarNine — HyperStake',
+    title: 'Not CaviarNine',
     description:
-      'CaviarNine is gone, but contracts never die. An independent, non-custodial frontend for the HyperStake LSULP/XRD pool on Radix.',
+      'CaviarNine is gone, but contracts never die. An independent, non-custodial console for CaviarNine\'s contracts on Radix: HyperStake, Simple Pools, Shape Liquidity and the LSU Pool.',
     siteName: 'Not CaviarNine',
     type: 'website',
   },

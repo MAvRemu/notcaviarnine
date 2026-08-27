@@ -25,20 +25,16 @@ export function ConsoleStrip({ snap, pools, shape }: { snap: PoolSnapshot | null
         {PRODUCTS.map((p) => {
           const d = data[p.id];
           return (
-            <Link key={p.id} href={p.href} className="group flex flex-col gap-1 py-6 pr-6 sm:[&:nth-child(2n)]:pl-6 lg:[&:not(:first-child)]:pl-6">
+            <Link key={p.id} href={p.href} className="group flex flex-col gap-1 py-7 pr-6 sm:[&:nth-child(2n)]:pl-6 lg:[&:not(:first-child)]:pl-6">
               <div className="flex items-center justify-between">
                 <span className="label">{p.name}</span>
-                <span className={`dot ${p.status === 'live' ? 'dot-ok' : p.status === 'read-only' ? 'dot-warn' : 'dot-muted'}`} title={p.statusLabel} />
+                <span className={`dot ${p.status === 'live' ? 'dot-ok' : 'dot-warn'}`} title={p.statusLabel} />
               </div>
               <div className="num text-2xl leading-none group-hover:text-accent">{d.v}</div>
               <div className="text-[11px] text-muted">{d.sub}</div>
             </Link>
           );
         })}
-      </div>
-      <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-6 pb-3 text-[11px] text-muted">
-        <span>Live from the Radix Gateway{s ? ` · ledger state ${s.ledgerStateVersion.toLocaleString()}` : ''}</span>
-        <span><span className="dot dot-ok mr-1" />live · <span className="dot dot-warn mx-1" />read-only · <span className="dot dot-muted mx-1" />coming soon</span>
       </div>
     </section>
   );

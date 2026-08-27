@@ -30,7 +30,7 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
             <div className="pill border-warn/40 text-warn"><span className="dot dot-warn" />pool price {(p.divergence * 100).toFixed(0)}% from market</div>
           )}
         </div>
-        <ComingSoon product={productById('pools')} what="Add and remove liquidity for this pool ship next." />
+        <ComingSoon product={productById('pools')} />
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="card p-5">
             <div className="label mb-3">Pool facts</div>
@@ -48,7 +48,7 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
           </section>
           <section className="card p-5">
             <div className="label mb-3">Add / remove liquidity</div>
-            <p className="text-sm text-muted">Coming next. It will work exactly like HyperStake: enter one side, the other follows the pool ratio, minimum LP is enforced on-ledger, and any excess is returned in the same transaction. Until then your LP tokens remain redeemable from any interface — removal is a public method on the contract.</p>
+            <p className="text-sm text-muted">Coming soon.</p>
           </section>
         </div>
       </main>

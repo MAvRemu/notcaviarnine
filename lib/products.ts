@@ -1,6 +1,6 @@
 /** The four CaviarNine products this site covers. Single source of truth for nav, landing and status. */
 export type ProductId = 'hyperstake' | 'pools' | 'shape' | 'lsu-pool';
-export type ProductStatus = 'live' | 'read-only' | 'soon';
+export type ProductStatus = 'live' | 'soon';
 
 export type Product = {
   id: ProductId;
@@ -31,9 +31,9 @@ export const PRODUCTS: Product[] = [
     name: 'Simple Pools',
     subtitle: 'Two-token pools',
     href: '/pools',
-    status: 'read-only',
-    statusLabel: 'Read-only · actions coming',
-    blurb: 'Weighted two-token pools anyone created. Browse every pool and its live reserves today; add and remove liquidity soon.',
+    status: 'soon',
+    statusLabel: 'Coming soon',
+    blurb: 'Weighted two-token pools anyone can create. Provide both sides, earn the swap fee.',
     spec: 'docs/SIMPLE_POOL.md',
     c9Path: '/earn/simple-pool',
   },
@@ -44,7 +44,7 @@ export const PRODUCTS: Product[] = [
     href: '/shape',
     status: 'soon',
     statusLabel: 'Coming soon',
-    blurb: 'Concentrated-liquidity pools with NFT positions. First goal: let you see, claim and withdraw your positions.',
+    blurb: 'Concentrated-liquidity pools. Your positions are NFTs in your wallet; fees accrue per position.',
     spec: 'docs/SHAPE_LIQUIDITY.md',
     c9Path: '/earn/shape-liquidity',
   },
@@ -53,9 +53,9 @@ export const PRODUCTS: Product[] = [
     name: 'LSU Pool',
     subtitle: 'Liquid staking basket',
     href: '/lsu-pool',
-    status: 'read-only',
-    statusLabel: 'Read-only · actions coming',
-    blurb: 'The validator basket behind LSULP. See its composition, value and price-feed health now; mint and redeem soon.',
+    status: 'soon',
+    statusLabel: 'Coming soon',
+    blurb: 'The validator basket behind LSULP. Deposit stake units, receive one token for the whole basket.',
     spec: 'docs/LSU_POOL.md',
     c9Path: '/earn/lsu-pool',
   },

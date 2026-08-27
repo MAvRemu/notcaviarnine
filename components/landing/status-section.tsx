@@ -65,16 +65,16 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
       tone: 'ok',
       title: 'Simple Pools',
       metric: livePools !== null ? `${livePools} live pools` : '—',
-      metricSub: 'browse now · actions coming',
+      metricSub: 'coming soon',
       text: 'Anyone can create one; adding and swapping are open, and removing liquidity is a public method that no one can switch off. Fee split (80/10/10) is owner-controlled.',
       href: dashboardUrl(SIMPLE_POOL_PACKAGE),
     },
     {
-      tone: 'muted',
+      tone: 'watch',
       title: 'Shape Liquidity',
       metric: shape ? `${shape.pools} pools` : '—',
       metricSub: 'coming soon',
-      text: 'Concentrated-liquidity positions held as NFTs in your wallet. We are working through the contracts; seeing, claiming and removing positions comes first.',
+      text: 'Concentrated-liquidity positions held as NFTs in your wallet. Nothing on the ledger changes while we build the interface.',
       href: dashboardUrl(SHAPE_FACTORY),
     },
     {
@@ -147,10 +147,10 @@ export function StatusSection({ snap, pools, shape }: { snap: PoolSnapshot | nul
 
         {/* Timeline */}
         <ol className="mt-12 grid gap-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
-          <Milestone when="Apr 2025" what="HyperStake launched by CaviarNine" />
-          <Milestone when={s?.allowlistLastUpdatedAt ? new Date(s.allowlistLastUpdatedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Oct 2025'} what="Validator list last updated" tone="watch" />
-          <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix" />
-          <Milestone when="Aug 2026" what="Not CaviarNine goes live" tone="ok" />
+          <Milestone when="2023–2025" what="CaviarNine deploys the LSU Pool, Shape Liquidity, Simple Pools and HyperStake on Radix" />
+          <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix; its website goes withdraw-only" tone="watch" />
+          <Milestone when="Aug 2026" what="Not CaviarNine goes live with HyperStake" tone="ok" />
+          <Milestone when="Next" what="Simple Pools, LSU Pool and Shape Liquidity open here, one by one" />
         </ol>
       </div>
     </section>
@@ -205,8 +205,8 @@ function Flow({ oracle, allow, pools, shape }: { oracle: Tone; allow: Tone; pool
       {label(485, 58, 'reaches')}
       {box(PX, rows[0], PW, 'HyperStake', 'instant stake & unstake · live', 'ok')}
       {box(PX, rows[1], PW, 'LSU Pool', 'staking basket · sets LSULP value', oracle)}
-      {box(PX, rows[2], PW, 'Simple Pools', pools !== null ? `${pools} live pools · read-only` : 'two-token pools · read-only', 'ok')}
-      {box(PX, rows[3], PW, 'Shape Liquidity', shape !== null ? `${shape} pools · coming soon` : 'concentrated positions · coming soon', 'muted')}
+      {box(PX, rows[2], PW, 'Simple Pools', pools !== null ? `${pools} live pools · coming soon` : 'two-token pools · coming soon', 'ok')}
+      {box(PX, rows[3], PW, 'Shape Liquidity', shape !== null ? `${shape} pools · coming soon` : 'concentrated positions · coming soon', 'ok')}
       {/* LSU Pool → HyperStake price */}
       {line(`M${PX + PW / 2 + 60} ${rows[1]} L${PX + PW / 2 + 60} ${rows[0] + 56}`, oracle)}
       {label(PX + PW / 2 + 60 + 22, rows[1] - 12, 'price')}
