@@ -109,9 +109,12 @@ export default function Terms() {
           We may update these terms; the date above shows the current version. Continued use of the Site after a change means you accept it.
         </p>
 
-        <h2>14. Contact</h2>
+        <h2>14. Who operates this site</h2>
         <p>
-          Questions and reports: open an issue at <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">the GitHub repository</a>.
+          The Site is operated by an independent developer based in the Netherlands, on a non-commercial basis and without any fee,
+          and is not affiliated with CaviarNine. Contact: <a href="mailto:info@notcaviarnine.com">info@notcaviarnine.com</a>, or open an
+          issue at <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">the GitHub repository</a>. Security reports:
+          see our <a href="/.well-known/security.txt">security.txt</a>.
         </p>
       </main>
       <SiteFooter />

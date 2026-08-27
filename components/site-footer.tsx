@@ -28,6 +28,7 @@ export function SiteFooter() {
           <Link className="block hover:underline" href="/disclaimer">Disclaimer</Link>
           <Link className="block hover:underline" href="/terms">Terms of Use</Link>
           <a className="block hover:underline" href={LINKS.frontendRepo} target="_blank" rel="noreferrer">Frontend source ↗</a>
+          <a className="block hover:underline" href="mailto:info@notcaviarnine.com">info@notcaviarnine.com</a>
         </div>
       </div>
       <div className="mx-auto max-w-6xl space-y-1 px-6 pb-10 text-xs text-muted">

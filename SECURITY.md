@@ -6,8 +6,8 @@ or the minimum-output assertion is treated as critical.
 
 ## Reporting a vulnerability
 
-Please report privately via **GitHub private vulnerability reporting**:
-https://github.com/MAvRemu/notcaviarnine/security/advisories/new
+Please report privately via **GitHub private vulnerability reporting**
+(https://github.com/MAvRemu/notcaviarnine/security/advisories/new) or by email to **info@notcaviarnine.com**.
 
 Do not open a public issue for security problems. You should get an acknowledgement within 72 hours. There is no bug bounty;
 credit is given in the fix release if you want it.

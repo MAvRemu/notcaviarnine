@@ -91,7 +91,8 @@ export default function Disclaimer() {
         </p>
 
         <p className="text-muted">
-          See also our <Link href="/terms">Terms of Use</Link>. We may update this disclaimer; the date above shows the current version.
+          See also our <Link href="/terms">Terms of Use</Link>. Contact: <a href="mailto:info@notcaviarnine.com">info@notcaviarnine.com</a>.
+          We may update this disclaimer; the date above shows the current version.
         </p>
       </main>
       <SiteFooter />
