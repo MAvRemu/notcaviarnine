@@ -13,18 +13,21 @@ let memo: { at: number; p: Promise<ShapeSummary> } | null = null;
 export function getShapeSummary(): Promise<ShapeSummary> {
   if (memo && Date.now() - memo.at < TTL) return memo.p;
   const p = (async () => {
-    const pools: ShapePool[] = [];
+    const byComponent = new Map<string, ShapePool>();
     let cursor: string | undefined;
     for (let i = 0; i < 20; i++) {
       const res = await streamTransactions({ emitters: [SHAPE_FACTORY], limit: 100, cursor, receiptEvents: true });
       for (const t of res.items) for (const e of t.receipt?.events ?? []) {
-        if (e.name !== 'NewPoolEvent') continue;
+        // NewPoolEvent is emitted by both the factory and the new pool; keep one per component.
+        if (e.name !== 'NewPoolEvent' || e.emitter.entity?.entity_address !== SHAPE_FACTORY) continue;
         const g = (k: string) => field(e.data.fields, k)!;
-        pools.push({ component: g('component_address'), receiptResource: g('liquidity_receipt_address'), tokenX: g('token_x_address'), tokenY: g('token_y_address'), binSpan: Number(g('bin_span')), createdAt: t.round_timestamp });
+        const component = g('component_address');
+        if (!byComponent.has(component)) byComponent.set(component, { component, receiptResource: g('liquidity_receipt_address'), tokenX: g('token_x_address'), tokenY: g('token_y_address'), binSpan: Number(g('bin_span')), createdAt: t.round_timestamp });
       }
       if (!res.next_cursor) break;
       cursor = res.next_cursor;
     }
+    const pools = [...byComponent.values()];
     let xrd = 0, withXrd = 0;
     const addrs = pools.map((x) => x.component);
     for (let i = 0; i < addrs.length; i += 20) {
