@@ -107,13 +107,37 @@ API: `/api/pools` (list with live TVL + cached stats), `/api/pools/<address>` (d
 - Preview failure messages mapped to plain language (insufficient balance, price moved, pool empty).
 - Gateway rate limits: batch reads, memoise per instance, back off on 429.
 
-## Open questions for you
+## Decisions, round 2 (2026-08-27)
 
-1. **List density**: table (dense, sortable) vs cards (friendlier)? I lean table on desktop, cards on mobile.
-2. **Default filter**: hide empty pools by default (159 of 229 are empty) — agreed?
-3. **Stablecoin tag**: hard-code a small list (xUSDC, xUSDT, hUSDC, hUSDT) for the filter, or skip the filter?
-4. **Duplicate pairs**: group rows under a pair header, or flat list with a "×3" tag (my lean)?
-5. **Indexing threshold**: pools with > 1,000 XRD TVL indexed continuously (22 today); others indexed on first visit — OK?
-6. **APR window default**: 7d (matches HyperStake) with a 30d toggle?
-7. **Unknown-token warning**: soft (warn dot + tooltip) or hard (require a click to reveal address before adding)?
-8. **Deep links**: keep CaviarNine's URL pattern `/earn/simple-pool/<address>` as a redirect to `/pools/<address>`?
+| # | Question | Decision |
+|---|---|---|
+| 8 | List density | Dense sortable table on desktop, cards on mobile |
+| 9 | Default filter | Hide empty pools (159 of 229) by default; "Show empty pools" chip |
+| 10 | Stablecoin filter | Hard-coded list: xUSDC, xUSDT, hUSDC, hUSDT |
+| 11 | Duplicate pairs | Flat list, one row per pool, "×N pools" tag on the pair |
+| 12 | Indexing | Continuous for pools > 1,000 XRD TVL (22 today); others indexed on first visit |
+| 13 | APR window | 7d default, 30d toggle |
+| 14 | Unknown token | Soft warning: warn dot + tooltip, address tail always visible |
+| 15 | Deep links | Redirect `/earn/simple-pool/<address>` → `/pools/<address>` |
+
+## Reference: CaviarNine's Simple Pool page (archived 2026-08-27)
+
+Screenshot: `docs/reference/caviarnine-simple-pool-2026-08-27.png`. What their UI does, for parity checks:
+
+- **Header**: title, one-line tagline, an **XRD / USD** denomination toggle, a search box ("filter by token"), and a
+  **Create a pool** button.
+- **Table columns**: Pool composition (two overlapping token icons + `A / B`), Pool (a two-colour weight bar, purple/blue),
+  Pool fees, Total Value Locked, Vol 7d (default sort, descending), APY 7d, Your liquidity.
+- **Values are shown for every pool, including non-XRD pairs** (hWBTC/hUSDC 10.67 M, hUSDC/hWBTC 2.94 M, hUSDC/hETH 2.82 M)
+  — they price tokens through their aggregator. Note: under our decision 4 these would show *no* value, yet they are the
+  three largest pools on the list. See "Pricing follow-up" below.
+- **Detail panel** docked to the right (not a separate page): pair header with fee badge and copyable address, the weight bar
+  with both reserves and their USD value, "Current price", *Add Liquidity* section with a "Connect wallet to view your
+  liquidity" placeholder, two amount inputs, a 0–100 % slider, and a full-width yellow **Add liquidity** button.
+- APY is labelled "APY 7d" (they likely compound); we deliberately show **realised fee APR** instead.
+
+### Pricing follow-up (needs a decision before build)
+The biggest Simple Pools are non-XRD pairs. To show their TVL/volume in XRD **without an external price feed**, derive each
+token's XRD price from the deepest XRD-leg pool that contains it (hUSDC/XRD, hWBTC via xwBTC? — no; hWBTC has no XRD pool,
+so price it via hUSDC: hWBTC→hUSDC→XRD, one hop). Rule: allow at most **one hop through an XRD pool with > 10k XRD TVL**;
+otherwise fall back to token amounts as decided. This keeps everything on-ledger and explainable ("priced via hUSDC/XRD").
