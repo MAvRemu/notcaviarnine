@@ -30,8 +30,9 @@ export function SiteFooter() {
           <a className="block hover:underline" href={LINKS.frontendRepo} target="_blank" rel="noreferrer">Frontend source ↗</a>
         </div>
       </div>
-      <div className="mx-auto max-w-6xl px-6 pb-10 text-xs text-muted">
-        CaviarNine is gone, but contracts never die. · Use at your own risk · notcaviarnine.com
+      <div className="mx-auto max-w-6xl space-y-1 px-6 pb-10 text-xs text-muted">
+        <p>CaviarNine is gone, but contracts never die. · Use at your own risk · notcaviarnine.com</p>
+        <p>CaviarNine, HyperStake, Shape Liquidity and the token names are trademarks of their respective owners, used only to identify the contracts this site interacts with. Not available in sanctioned jurisdictions.</p>
       </div>
     </footer>
   );

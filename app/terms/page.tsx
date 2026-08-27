@@ -39,7 +39,9 @@ export default function Terms() {
         <p>
           You may use the Site only if you are at least 18 years old (or the age of majority where you live), are legally permitted to
           use decentralised-finance software in your jurisdiction, and are not subject to sanctions or located in a sanctioned territory.
-          You are solely responsible for compliance with the laws that apply to you, including tax obligations.
+          The Site is not offered to persons in Cuba, Iran, North Korea, Syria, or the Crimea, Donetsk, Luhansk, Kherson and Zaporizhzhia
+          regions of Ukraine, and we block access from those places. You are solely responsible for compliance with the laws that apply to
+          you, including tax obligations.
         </p>
 
         <h2>4. Your responsibilities</h2>
@@ -72,8 +74,9 @@ export default function Terms() {
         <p>
           The Site&apos;s source code is published at{' '}
           <a href={LINKS.frontendRepo} target="_blank" rel="noreferrer">github.com/MAvRemu/notcaviarnine</a> under the MIT licence.
-          Names and marks of CaviarNine, HyperStake and Radix belong to their respective owners and are used only to describe the
-          Protocol the Site interacts with.
+          &ldquo;CaviarNine&rdquo;, &ldquo;HyperStake&rdquo;, &ldquo;Shape Liquidity&rdquo; and related names and logos are trademarks of CaviarNine
+          Limited; &ldquo;Radix&rdquo; is a trademark of its owner. We use them only to identify the contracts and network the Site interacts
+          with (nominative use). We claim no rights in them and are not endorsed by their owners.
         </p>
 
         <h2>9. No warranty</h2>
