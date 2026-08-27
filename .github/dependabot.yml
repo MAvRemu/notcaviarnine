@@ -1,0 +1,16 @@
+# Weekly dependency PRs (security updates are on separately). Grouped so review stays cheap.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Radix toolkit: review release notes by hand before bumping (wallet protocol).
+      - dependency-name: "@radixdlt/radix-dapp-toolkit"
+        update-types: ["version-update:semver-major"]
