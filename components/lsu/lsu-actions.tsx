@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LsuRow } from '@/lib/lsupool/composition';
 import { fetchCreditReceipt, fetchLsuLive, quoteAddLsu, quoteRemoveLsu, quoteSwapLsu, type LsuLive } from '@/lib/lsupool/live';
 import { lsuAddLiquidityManifest, lsuRefreshPricesManifest, lsuRemoveLiquidityManifest, lsuSwapManifest } from '@/lib/lsupool/manifests';
@@ -213,24 +213,76 @@ export function RefreshPricesButton() {
   );
 }
 
+/** Searchable validator picker: name + approval dot, your balance or the pool's vault on the right. */
 function LsuSelect({ label, value, onChange, options, balances, nameOf, showVault }: {
   label: string; value: string; onChange: (v: string) => void; options: LsuRow[];
   balances: Record<string, Atto> | null; nameOf: (r: string) => string; showVault?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
+  const boxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    const onDown = (e: MouseEvent) => { if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('mousedown', onDown); window.removeEventListener('keydown', onKey); };
+  }, [open]);
+
+  const rows = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    const list = options.filter((o) => !s || o.validatorName.toLowerCase().includes(s));
+    // holders first when we know the wallet, otherwise keep the pool's value order
+    if (balances) return [...list].sort((a, b) => Number((balances[b.lsuResource] ?? 0n) - (balances[a.lsuResource] ?? 0n)));
+    return list;
+  }, [options, q, balances]);
+
+  const current = options.find((o) => o.lsuResource === value);
+  const detail = (o: LsuRow) =>
+    balances
+      ? `${fmt(balances[o.lsuResource] ?? 0n, { dp: 2 })} LSU`
+      : showVault
+        ? `${o.balance.toLocaleString('en-US', { maximumFractionDigits: 0 })} in pool`
+        : '';
+
   return (
-    <label className="field block px-4 py-3">
-      <span className="label">{label}</span>
-      <select className="num mt-1 w-full bg-transparent text-sm outline-none" value={value} onChange={(e) => onChange(e.target.value)}>
-        {!options.some((o) => o.lsuResource === value) && value && <option value={value}>{nameOf(value)}</option>}
-        {options.map((o) => (
-          <option key={o.lsuResource} value={o.lsuResource}>
-            {o.validatorName}
-            {balances ? ` — you hold ${fmt(balances[o.lsuResource] ?? 0n, { dp: 2 })}` : showVault ? ` — pool holds ${o.balance.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : ''}
-            {!o.approved ? ' (not approved)' : ''}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div ref={boxRef} className="relative">
+      <button type="button" onClick={() => { setOpen(!open); setQ(''); }} className="field block w-full px-4 py-3 text-left" aria-haspopup="listbox" aria-expanded={open}>
+        <span className="label">{label}</span>
+        <span className="mt-1 flex items-baseline justify-between gap-3">
+          <span className="num flex min-w-0 items-center gap-2 truncate text-sm">
+            {current && <span className={`dot ${current.approved ? 'dot-ok' : 'dot-warn'} shrink-0`} />}
+            <span className="truncate">{current ? current.validatorName : value ? nameOf(value) : 'Choose validator'}</span>
+          </span>
+          <span className="num shrink-0 text-xs text-muted">{current ? detail(current) : ''} ▾</span>
+        </span>
+      </button>
+      {open && (
+        <div className="card absolute inset-x-0 top-full z-30 mt-1 overflow-hidden p-0 shadow-xl" role="listbox">
+          <div className="border-b border-line p-2">
+            <input ref={inputRef} className="field h-9 w-full px-3 text-sm outline-none" placeholder={`Search ${options.length} validators…`} value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search validators" />
+          </div>
+          <ul className="max-h-64 overflow-y-auto">
+            {rows.map((o) => (
+              <li key={o.lsuResource}>
+                <button type="button" onClick={() => { onChange(o.lsuResource); setOpen(false); }} className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-bg-deep/60 ${o.lsuResource === value ? 'bg-bg-deep/40' : ''}`}>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className={`dot ${o.approved ? 'dot-ok' : 'dot-warn'} shrink-0`} title={o.approved ? 'On the approved list' : 'Not approved — deposits rejected'} />
+                    <span className="truncate">{o.validatorName}</span>
+                  </span>
+                  <span className="num shrink-0 text-xs text-muted">{detail(o)}</span>
+                </button>
+              </li>
+            ))}
+            {rows.length === 0 && <li className="px-3 py-4 text-sm text-muted">No validator matches.</li>}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 
