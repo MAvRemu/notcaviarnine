@@ -2,11 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import type { ShapePoolRow } from '@/lib/shape/registry';
 import { fmtNum } from '@/lib/format';
 
 export function ShapeTable({ pools }: { pools: ShapePoolRow[] }) {
+  const router = useRouter();
   const [q, setQ] = useState('');
   const [showEmpty, setShowEmpty] = useState(false);
   const rows = useMemo(() => {
@@ -30,7 +32,7 @@ export function ShapeTable({ pools }: { pools: ShapePoolRow[] }) {
           </thead>
           <tbody className="divide-y divide-line">
             {rows.map((p) => (
-              <tr key={p.component} className="hover:bg-bg-deep/60 [&>td]:px-4 [&>td]:py-3">
+              <tr key={p.component} onClick={() => router.push(`/shape/${p.component}`)} className="cursor-pointer hover:bg-bg-deep/60 [&>td]:px-4 [&>td]:py-3">
                 <td>
                   <Link href={`/shape/${p.component}`} className="flex items-center gap-2">
                     <Pair a={p.iconX} b={p.iconY} />
