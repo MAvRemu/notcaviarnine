@@ -7,6 +7,7 @@
  */
 import { unstable_cache } from 'next/cache';
 import { ASTROLESCENT_FEE_COMPONENT } from '@/lib/radix/config';
+import { fixIconUrl } from '@/lib/token-icons';
 
 /** Our fee on aggregator swaps (0.1%). Astrolescent adds its own 0.1% — total user cost ~0.2%. */
 export const SITE_SWAP_FEE = 0.001;
@@ -30,7 +31,7 @@ async function fetchSwapTokens(): Promise<SwapToken[]> {
   const raw = (await res.json()) as SwapToken[];
   return raw
     .filter((t) => t?.address?.startsWith('resource_rdx1') && t.symbol)
-    .map((t) => ({ address: t.address, symbol: t.symbol, name: t.name ?? t.symbol, iconUrl: t.iconUrl || undefined, divisibility: t.divisibility ?? 18 }));
+    .map((t) => ({ address: t.address, symbol: t.symbol, name: t.name ?? t.symbol, iconUrl: fixIconUrl(t.address, t.iconUrl || undefined), divisibility: t.divisibility ?? 18 }));
 }
 
 type RawSwap = {

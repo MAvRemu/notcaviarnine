@@ -16,6 +16,7 @@ export type TokenPrice = {
 type Raw = Record<string, { address: string; symbol: string; name: string; iconUrl?: string; divisibility: number; tokenPriceXRD: number; tokenPriceUSD: number; updatedAt?: string }>;
 
 import { unstable_cache } from 'next/cache';
+import { fixIconUrl } from '@/lib/token-icons';
 
 /** Persistent (cross-instance) cache of the price table as a plain record; 10-minute window, tag `prices`. */
 export const getPricesRecord = unstable_cache(fetchPricesRecord, ['astrolescent-prices'], { revalidate: 600, tags: ['prices'] });
@@ -34,7 +35,7 @@ async function fetchPricesRecord(): Promise<Record<string, TokenPrice>> {
   const out: Record<string, TokenPrice> = {};
   for (const t of Object.values(raw)) {
     if (!t?.address || typeof t.tokenPriceXRD !== 'number') continue;
-    out[t.address] = { address: t.address, symbol: t.symbol, name: t.name, iconUrl: t.iconUrl, divisibility: t.divisibility, priceXrd: t.tokenPriceXRD, priceUsd: t.tokenPriceUSD, updatedAt: t.updatedAt };
+    out[t.address] = { address: t.address, symbol: t.symbol, name: t.name, iconUrl: fixIconUrl(t.address, t.iconUrl), divisibility: t.divisibility, priceXrd: t.tokenPriceXRD, priceUsd: t.tokenPriceUSD, updatedAt: t.updatedAt };
   }
   return out;
 }
