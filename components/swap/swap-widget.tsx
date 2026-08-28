@@ -73,7 +73,7 @@ export function SwapWidget() {
         const res = await fetch('/api/swap/quote', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ inputToken: from.address, outputToken: to.address, inputAmount: amount, fromAddress: account?.address, slippageBps }),
+          body: JSON.stringify({ inputToken: from.address, outputToken: to.address, inputAmount: amount, fromAddress: account?.address, slippageBps, outputDivisibility: to.divisibility }),
         });
         const j = await res.json();
         if (n !== seq.current) return;
@@ -84,7 +84,7 @@ export function SwapWidget() {
       } finally {
         if (n === seq.current) setQuoting(false);
       }
-    }, 450);
+    }, 250);
     return () => clearTimeout(t);
   }, [from, to, amount, slippageBps, account?.address, tick]);
 
