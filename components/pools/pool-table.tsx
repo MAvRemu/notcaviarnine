@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import type { SimplePoolSummary } from '@/lib/simplepool/registry';
 import { RESOURCES } from '@/lib/radix/config';
@@ -11,6 +12,7 @@ const STABLES = new Set(['xUSDC', 'xUSDT', 'hUSDC', 'hUSDT']);
 const nfc = (n: number) => fmtNum(n, { compact: true });
 
 export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUsd: number | null }) {
+  const router = useRouter();
   const [q, setQ] = useState('');
   const [showEmpty, setShowEmpty] = useState(false);
   const [xrdOnly, setXrdOnly] = useState(false);
@@ -69,7 +71,7 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
             {rows.map((p) => {
               const dup = pairCount.get([p.resourceX, p.resourceY].sort().join('|')) ?? 1;
               return (
-                <tr key={p.swapComponent} className="hover:bg-bg-deep/60 [&>td]:px-4 [&>td]:py-3">
+                <tr key={p.swapComponent} onClick={() => router.push(`/pools/${p.swapComponent}`)} className="cursor-pointer hover:bg-bg-deep/60 [&>td]:px-4 [&>td]:py-3">
                   <td>
                     <Link href={`/pools/${p.swapComponent}`} className="flex items-center gap-2">
                       <Pair a={p.iconX} b={p.iconY} />
