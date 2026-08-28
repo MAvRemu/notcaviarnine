@@ -1,4 +1,4 @@
-import { fetchSwapQuote, getSwapTokens } from '@/lib/swap/astrolescent';
+import { fetchSwapQuote } from '@/lib/swap/astrolescent';
 import { DAPP_DEFINITION_ADDRESS } from '@/lib/radix/config';
 import { isLive } from '@/lib/products';
 
@@ -16,7 +16,7 @@ const AMOUNT = /^\d{1,15}(\.\d{1,18})?$/;
  */
 export async function POST(req: Request) {
   if (!isLive('swap')) return new Response(null, { status: 404 });
-  let body: { inputToken?: string; outputToken?: string; inputAmount?: string; fromAddress?: string; slippageBps?: number };
+  let body: { inputToken?: string; outputToken?: string; inputAmount?: string; fromAddress?: string; slippageBps?: number; outputDivisibility?: number };
   try {
     body = await req.json();
   } catch {
@@ -33,17 +33,18 @@ export async function POST(req: Request) {
   ) {
     return Response.json({ error: 'Bad request' }, { status: 400 });
   }
+  // Divisibility comes from the client (which has the token list); the server only clamps it.
+  // A wrong value can't hurt: the min-output decimal just gets a different precision, and the
+  // ledger rejects over-precise decimals outright.
+  const outputDivisibility = Math.min(18, Math.max(0, Math.round(Number(body.outputDivisibility ?? 18)) || 18));
   try {
-    const tokens = await getSwapTokens();
-    const out = tokens.find((t) => t.address === outputToken);
-    if (!out || !tokens.some((t) => t.address === inputToken)) return Response.json({ error: 'Unknown token' }, { status: 400 });
     const quote = await fetchSwapQuote({
       inputToken,
       outputToken,
       inputAmount,
       fromAddress: fromAddress ?? DAPP_DEFINITION_ADDRESS,
       slippageBps,
-      outputDivisibility: out.divisibility,
+      outputDivisibility,
     });
     return Response.json(quote);
   } catch (e) {
