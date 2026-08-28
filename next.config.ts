@@ -7,6 +7,9 @@ import type { NextConfig } from 'next';
  */
 const CONNECT = [
   "'self'",
+  // Vercel's preview-deployment feedback toolbar (not injected on production)
+  'https://vercel.live',
+  'wss://*.pusher.com',
   'https://mainnet.radixdlt.com',
   'https://radix-connect-relay.radixdlt.com',
   'https://api.astrolescent.com',
@@ -19,9 +22,9 @@ const CSP = [
   "form-action 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  "frame-src 'none'",
+  "frame-src https://vercel.live",
   `connect-src ${CONNECT}`,
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vercel.live",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' https: data: blob:",
   "font-src 'self' data:",
@@ -31,7 +34,7 @@ const CSP = [
 ].join('; ');
 const CSP_REPORT_ONLY = [
   "default-src 'self'",
-  "script-src 'self' https://va.vercel-scripts.com",
+  "script-src 'self' https://va.vercel-scripts.com https://vercel.live",
   `connect-src ${CONNECT}`,
   "img-src 'self' https: data: blob:",
   "style-src 'self' 'unsafe-inline'",
