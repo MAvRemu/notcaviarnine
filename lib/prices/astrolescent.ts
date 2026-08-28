@@ -19,7 +19,7 @@ import { unstable_cache } from 'next/cache';
 import { fixIconUrl } from '@/lib/token-icons';
 
 /** Persistent (cross-instance) cache of the price table as a plain record; 10-minute window, tag `prices`. */
-export const getPricesRecord = unstable_cache(fetchPricesRecord, ['astrolescent-prices'], { revalidate: 600, tags: ['prices'] });
+export const getPricesRecord = unstable_cache(fetchPricesRecord, ['astrolescent-prices-v2'], { revalidate: 600, tags: ['prices'] });
 
 export async function getPrices(): Promise<Map<string, TokenPrice>> {
   const rec = await getPricesRecord();

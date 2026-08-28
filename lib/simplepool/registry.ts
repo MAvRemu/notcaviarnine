@@ -95,7 +95,7 @@ const getTokenMeta = unstable_cache(
     }
     return out;
   },
-  ['token-meta'],
+  ['token-meta-v2'],
   { revalidate: 86_400, tags: ['tokens'] },
 );
 

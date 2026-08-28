@@ -16,7 +16,7 @@ import { fixIconUrl } from '@/lib/token-icons';
 export type SwapToken = { address: string; symbol: string; name: string; iconUrl?: string; divisibility: number; priceUsd?: number };
 
 /** All tokens tradeable on Astrolescent (~740), cached for an hour. */
-export const getSwapTokens = unstable_cache(fetchSwapTokens, ['astrolescent-tokens'], { revalidate: 3600, tags: ['swap-tokens'] });
+export const getSwapTokens = unstable_cache(fetchSwapTokens, ['astrolescent-tokens-v2'], { revalidate: 3600, tags: ['swap-tokens'] });
 
 async function fetchSwapTokens(): Promise<SwapToken[]> {
   const res = await fetch(partnerUrl('tokens'), { headers: { 'user-agent': 'notcaviarnine.com' }, cache: 'no-store' });
