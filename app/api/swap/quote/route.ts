@@ -1,8 +1,11 @@
-import { fetchSwapQuote } from '@/lib/swap/astrolescent';
+import { fetchSwapQuote } from '@/lib/swap/quote';
 import { DAPP_DEFINITION_ADDRESS } from '@/lib/radix/config';
 import { isLive } from '@/lib/products';
 
 export const dynamic = 'force-dynamic';
+// Edge: near-zero cold start, runs close to the user and to Astrolescent's EU-fronted API —
+// the Node functions sit in iad1 (pinned by the us-east Neon DB) and were adding seconds per quote.
+export const runtime = 'edge';
 
 const RESOURCE = /^resource_rdx1[a-z0-9]{10,80}$/;
 const ACCOUNT = /^account_rdx1[a-z0-9]{10,80}$/;
@@ -37,6 +40,7 @@ export async function POST(req: Request) {
   // A wrong value can't hurt: the min-output decimal just gets a different precision, and the
   // ledger rejects over-precise decimals outright.
   const outputDivisibility = Math.min(18, Math.max(0, Math.round(Number(body.outputDivisibility ?? 18)) || 18));
+  const t0 = Date.now();
   try {
     const quote = await fetchSwapQuote({
       inputToken,
@@ -46,7 +50,8 @@ export async function POST(req: Request) {
       slippageBps,
       outputDivisibility,
     });
-    return Response.json(quote);
+    // visible in devtools → Timing, so slow quotes can be attributed (us vs the aggregator)
+    return Response.json(quote, { headers: { 'server-timing': `aggregator;dur=${Date.now() - t0}` } });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Quote failed';
     const friendly = /no route/i.test(msg) ? msg : /astrolescent swap/.test(msg) ? 'The aggregator could not quote this swap right now.' : msg;
