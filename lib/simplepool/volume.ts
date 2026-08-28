@@ -1,9 +1,12 @@
 /**
- * 7-day swap volume per Simple Pool, read straight from the Gateway transaction stream —
- * no DB. The stream can only be filtered per entity (max 10 per query incl. kind_filter,
- * so we omit that one), so pools are scanned in batches of 10 emitters; SwapEvents are
- * attributed to their emitting pool and the input side is valued in XRD via the price table.
- * Wrapped in a 1 h Data Cache entry (lib/cached.ts), so the Gateway cost is paid once an hour.
+ * 7-day swap volume per Simple Pool, read straight from the Gateway transaction stream — no DB.
+ *
+ * One query per pool: `event_global_emitters_filter` with multiple addresses is AND, not OR
+ * (verified 2026-08-28 — a batch of two returns only txs where BOTH emitted), so batching is
+ * impossible. Note also that `affected_global_entities` does NOT include the swap component on a
+ * swap (its vaults live in the native pool, so its own state never changes) — the emitter filter
+ * is the only reliable handle. SwapEvent input sides are valued in XRD via the price table.
+ * Wrapped in a 1 h Data Cache entry (lib/cached.ts), so the ~80-query cost is paid once an hour.
  */
 import { streamTransactions, field, type ProgrammaticField } from '@/lib/radix/gateway';
 import { getPrices } from '@/lib/prices/astrolescent';
@@ -15,38 +18,46 @@ export type PoolVolume = {
   capped: boolean;
 };
 
-const BATCH = 10;
-const MAX_PAGES = 6; // 600 swap txs per 10 pools per week before we call it "+"
-const CONCURRENCY = 4;
+const MAX_PAGES = 5; // 500 swap txs per pool per week before we call it "+"
+const CONCURRENCY = 2;
+const SPACING_MS = 250; // stay well under the public Gateway's burst limit
+
+/** The public Gateway rate-limits bursts (429). Back off and retry a few times. */
+async function withBackoff<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      const status = (e as { status?: number }).status;
+      if (status !== 429 || attempt >= 3) throw e;
+      await new Promise((r) => setTimeout(r, 800 * 2 ** attempt));
+    }
+  }
+}
 
 export async function getSimplePoolVolumes(components: string[]): Promise<Record<string, PoolVolume>> {
   const since = new Date(Date.now() - 7 * 864e5).toISOString();
   const prices = await getPrices().catch(() => null);
-  const inSet = new Set(components);
   const out: Record<string, PoolVolume> = {};
   for (const c of components) out[c] = { volume7dXrd: 0, swaps7d: 0, capped: false };
 
-  const batches: string[][] = [];
-  for (let i = 0; i < components.length; i += BATCH) batches.push(components.slice(i, i + BATCH));
-
-  const run = async (batch: string[]) => {
+  const run = async (component: string) => {
     let cursor: string | undefined;
     let pages = 0;
     do {
-      const res = await streamTransactions({
-        emitters: batch,
-        fromTimestamp: since,
-        order: 'Asc',
-        receiptEvents: true,
-        omitKindFilter: true,
-        cursor,
-      });
+      const res = await withBackoff(() =>
+        streamTransactions({
+          emitters: [component],
+          fromTimestamp: since,
+          order: 'Asc',
+          receiptEvents: true,
+          cursor,
+        }),
+      );
       for (const it of res.items) {
         if (it.transaction_status !== 'CommittedSuccess') continue;
         for (const e of it.receipt?.events ?? []) {
-          if (e.name !== 'SwapEvent') continue;
-          const emitter = e.emitter?.entity?.entity_address;
-          if (!emitter || !inSet.has(emitter)) continue;
+          if (e.name !== 'SwapEvent' || e.emitter?.entity?.entity_address !== component) continue;
           const f = e.data?.fields as ProgrammaticField[] | undefined;
           const inRes = field(f, 'input_resource');
           const outRes = field(f, 'output_resource');
@@ -55,21 +66,22 @@ export async function getSimplePoolVolumes(components: string[]): Promise<Record
           const pIn = inRes ? prices?.get(inRes)?.priceXrd : undefined;
           const pOut = outRes ? prices?.get(outRes)?.priceXrd : undefined;
           const xrd = pIn ? inAmt * pIn : pOut ? outAmt * pOut : 0;
-          out[emitter].volume7dXrd += xrd;
-          out[emitter].swaps7d += 1;
+          out[component].volume7dXrd += xrd;
+          out[component].swaps7d += 1;
         }
       }
       cursor = res.next_cursor;
       pages += 1;
+      await new Promise((r) => setTimeout(r, SPACING_MS));
     } while (cursor && pages < MAX_PAGES);
-    if (cursor) for (const c of batch) out[c].capped = true;
+    if (cursor) out[component].capped = true;
   };
 
-  // limited-concurrency worker pool over the batches
+  // limited-concurrency worker pool over the pools
   let i = 0;
   await Promise.all(
-    [...Array(Math.min(CONCURRENCY, batches.length))].map(async () => {
-      while (i < batches.length) await run(batches[i++]);
+    [...Array(Math.min(CONCURRENCY, components.length))].map(async () => {
+      while (i < components.length) await run(components[i++]);
     }),
   );
   return out;

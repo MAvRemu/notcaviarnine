@@ -198,9 +198,16 @@ need only one assertion (out of scope for launch).
 - CaviarNine docs: https://docs.caviarnine.com (Simple Pools, Create a Pool)
 
 ### 7d volume / fee APR (implemented 2026-08-28, DB-less)
-`lib/simplepool/volume.ts` scans the Gateway stream per pool (`event_global_emitters_filter`,
-max 10 filters/query and `kind_filter` counts — omitted; batches of 10, `from_ledger_state.timestamp`
-= 7 days ago), attributes `SwapEvent`s by emitter, values the input side in XRD via the price table.
-Cached 1 h (`cachedSimplePoolVolumes`, tag `volumes`); fee APR = volume × fee / TVL × 365/7,
-computed in `app/pools/page.tsx` for pools with liquidity. Note: as of 2026-08-28 every Simple Pool
-shows 0 — even the top-TVL pools have had no swaps since creation (checked all-time via the stream).
+`lib/simplepool/volume.ts` scans the Gateway stream per pool for `SwapEvent`s from the last 7 days
+and values the input side in XRD via the price table. Fee APR = volume × fee / TVL × 365/7
+(`app/pools/page.tsx`), computed for the top 40 pools by TVL; the long tail shows "—".
+Cached 1 h (`cachedSimplePoolVolumes`, tag `volumes`). Hard-won Gateway facts:
+- `event_global_emitters_filter` with multiple addresses is **AND**, not OR — batching pools into
+  one query silently returns nothing. One query per pool.
+- A swap does **not** list the swap component in `affected_global_entities` (its vaults live in the
+  native pool, so its own state never changes) — only the emitter filter finds swaps.
+- The public Gateway 429s bursts: ≤2 concurrent, 250 ms spacing, exponential backoff.
+- The filter cap is 10 **including** `kind_filter`.
+- All C9 swap fees also emit `SwapVaultDepositEvent` from the shared fee-vault component
+  `component_rdx1crmhkatyjrw0070nsusdm4adwr5s3eaysmevxlvaxx6fspxkwdhlua` — one stream for all C9
+  activity, but too many pages/week to be the primary source.
