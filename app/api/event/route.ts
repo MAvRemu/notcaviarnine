@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as { name?: string; props?: Record<string, string> };
     if (!body.name || !ALLOWED.has(body.name)) return new Response(null, { status: 204 });
-    const props = Object.fromEntries(Object.entries(body.props ?? {}).filter(([k, v]) => typeof v === 'string' && v.length <= 80 && ['product', 'action', 'direction', 'size', 'reason'].includes(k)));
+    const props = Object.fromEntries(Object.entries(body.props ?? {}).filter(([k, v]) => typeof v === 'string' && v.length <= 80 && ['product', 'action', 'direction', 'size', 'reason', 'pair'].includes(k)));
     await d.insert(analyticsEvents).values({ name: body.name, product: props.product ?? null, action: props.action ?? null, props: JSON.stringify(props).slice(0, 500) });
   } catch {
     /* never fail the client */

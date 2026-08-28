@@ -16,9 +16,11 @@ export type EventName =
   | 'tx_committed';       // wallet returned a transaction id
 
 export type EventProps = {
-  product?: 'hyperstake' | 'pools' | 'shape' | 'lsu-pool';
+  product?: 'hyperstake' | 'pools' | 'shape' | 'lsu-pool' | 'swap';
   action?: 'swap' | 'add' | 'remove';
   direction?: 'XRD→LSULP' | 'LSULP→XRD';
+  /** token pair for aggregator swaps, e.g. "XRD→ASTRL" */
+  pair?: string;
   /** order of magnitude of the XRD-equivalent size, e.g. "1k-10k" */
   size?: string;
   reason?: string;
