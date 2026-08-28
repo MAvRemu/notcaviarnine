@@ -13,6 +13,8 @@ import { fmtNum } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Simple Pools' };
 export const revalidate = 300;
+// the hourly volume scan (≈40 sequential-ish Gateway queries) can exceed the default budget
+export const maxDuration = 60;
 
 export default function PoolsPage() {
   const product = productById('pools');
@@ -33,8 +35,10 @@ async function Pools() {
   const [pools, prices] = await Promise.all([cachedSimplePools().catch(() => []), getPrices().catch(() => null)]);
   const xrdUsd = prices?.get(RESOURCES.XRD)?.priceUsd ?? null;
   const live = pools.filter((p) => p.hasLiquidity);
-  // 7d volume + fee APR for pools that hold liquidity (Gateway scan, cached 1 h)
-  const volumes = await cachedSimplePoolVolumes(live.map((p) => p.swapComponent).sort()).catch(() => null);
+  // 7d volume + fee APR for the top pools by TVL (one Gateway stream query per pool — the public
+  // rate limit rules out scanning all ~230 — cached 1 h). The long tail shows "—".
+  const top = [...live].sort((a, b) => (b.tvlXrd ?? 0) - (a.tvlXrd ?? 0)).slice(0, 40);
+  const volumes = await cachedSimplePoolVolumes(top.map((p) => p.swapComponent).sort()).catch(() => null);
   if (volumes) {
     for (const p of pools) {
       const v = volumes[p.swapComponent];
