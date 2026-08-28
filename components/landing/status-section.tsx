@@ -4,6 +4,7 @@ import type { ShapeSummary } from '@/lib/shape/registry';
 import { SHAPE_FACTORY } from '@/lib/shape/registry';
 import { SIMPLE_POOL_PACKAGE } from '@/lib/simplepool/registry';
 import type { GovernanceEntry } from '@/lib/governance/watch';
+import { isLive } from '@/lib/products';
 import { minutesSince, timeAgo } from '@/lib/format';
 import { ADDRESSES, LINKS, dashboardUrl } from '@/lib/radix/config';
 
@@ -69,7 +70,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
       tone: 'ok',
       title: 'Simple Pools',
       metric: livePools !== null ? `${livePools} live pools` : '—',
-      metricSub: 'coming soon',
+      metricSub: isLive('pools') ? 'browse and provide liquidity' : 'coming soon',
       text: 'Anyone can create one; adding and swapping are open, and removing liquidity is a public method that no one can switch off. Fee split (80/10/10) is owner-controlled.',
       href: dashboardUrl(SIMPLE_POOL_PACKAGE),
     },
@@ -77,7 +78,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
       tone: 'watch',
       title: 'Shape Liquidity',
       metric: shape ? `${shape.pools} pools` : '—',
-      metricSub: 'coming soon',
+      metricSub: isLive('shape') ? 'live' : 'coming soon',
       text: 'Concentrated-liquidity positions held as NFTs in your wallet. Nothing on the ledger changes while we build the interface.',
       href: dashboardUrl(SHAPE_FACTORY),
     },
@@ -190,7 +191,7 @@ export function StatusSection({ snap, pools, shape, governance }: { snap: PoolSn
           <Milestone when="2023–2025" what="CaviarNine deploys the LSU Pool, Shape Liquidity, Simple Pools and HyperStake on Radix" />
           <Milestone when="21 Aug 2026" what="CaviarNine announces it is leaving Radix; its website goes withdraw-only" tone="watch" />
           <Milestone when="Aug 2026" what="NotCaviarNine goes live with HyperStake" tone="ok" />
-          <Milestone when="Next" what="Simple Pools, LSU Pool and Shape Liquidity open here, one by one" />
+          <Milestone when="Next" what={[!isLive('pools') && 'Simple Pools', !isLive('lsu-pool') && 'LSU Pool', !isLive('shape') && 'Shape Liquidity'].filter(Boolean).join(', ') ? `${[!isLive('pools') && 'Simple Pools', !isLive('lsu-pool') && 'LSU Pool', !isLive('shape') && 'Shape Liquidity'].filter(Boolean).join(', ')} open here, one by one` : 'All four products live here'} />
         </ol>
       </div>
     </section>
