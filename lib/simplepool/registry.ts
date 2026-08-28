@@ -1,6 +1,7 @@
 import { RESOURCES } from '@/lib/radix/config';
 import { field, getEntityDetails, streamTransactions } from '@/lib/radix/gateway';
 import { getPrices, type TokenPrice } from '@/lib/prices/astrolescent';
+import { fixIconUrl } from '@/lib/token-icons';
 import { unstable_cache } from 'next/cache';
 
 /** WeightedPool package — every Simple Pool is created by its `new` function, which emits NewPoolEvent. */
@@ -89,7 +90,7 @@ const getTokenMeta = unstable_cache(
       const d = await getEntityDetails(addresses.slice(i, i + 20), { explicitMetadata: ['symbol', 'name', 'icon_url'] });
       for (const it of d.items) {
         const m = Object.fromEntries((it.metadata?.items ?? []).map((x) => [x.key, x.value.typed.value]));
-        out[it.address] = { symbol: m.symbol ?? m.name ?? it.address.slice(-6), icon: m.icon_url };
+        out[it.address] = { symbol: m.symbol ?? m.name ?? it.address.slice(-6), icon: fixIconUrl(it.address, m.icon_url) };
       }
     }
     return out;
