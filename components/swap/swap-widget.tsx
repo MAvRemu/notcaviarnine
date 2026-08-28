@@ -222,7 +222,7 @@ export function SwapWidget() {
         </div>
 
         <p className="pt-1 text-center text-xs text-muted">
-          Best route by <a href="https://astrolescent.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">Astrolescent</a> · 0.1% aggregator fee + 0.1% supports this site
+          Best route by <a href="https://astrolescent.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">Astrolescent</a>
         </p>
       </div>
 
