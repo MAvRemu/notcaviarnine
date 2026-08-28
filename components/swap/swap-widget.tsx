@@ -176,8 +176,13 @@ export function SwapWidget() {
             {rate !== null && from && to && <span className="num text-xs text-muted">1 {from.symbol} = {fmtNum(rate)} {to.symbol}</span>}
           </div>
           <div className="mt-1.5 flex items-center gap-3">
-            <div className={`num min-w-0 flex-1 truncate text-3xl font-semibold ${quote ? '' : 'text-muted/40'} ${quoting ? 'opacity-50' : ''}`}>
-              {quote ? fmtNum(quote.outputTokens) : '0'}
+            <div className={`num flex min-w-0 flex-1 items-center gap-3 truncate text-3xl font-semibold ${quote ? '' : 'text-muted/40'} ${quoting ? 'opacity-50' : ''}`}>
+              {quoting && !quote ? (
+                <span aria-label="Fetching quote" className="inline-block h-6 w-6 shrink-0 animate-spin rounded-full border-2 border-line border-t-accent" />
+              ) : (
+                quote ? fmtNum(quote.outputTokens) : '0'
+              )}
+              {quoting && quote && <span aria-label="Updating quote" className="inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-line border-t-accent" />}
             </div>
             <TokenSelect tokens={tokens} balances={heldBalances} value={to} excluded={from?.address} onSelect={setTo} label="To" />
           </div>
