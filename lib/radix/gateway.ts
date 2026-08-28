@@ -136,6 +136,10 @@ export type StreamOpts = {
   limit?: number;
   order?: 'Asc' | 'Desc';
   fromStateVersion?: number;
+  /** ISO timestamp lower bound (alternative to fromStateVersion) */
+  fromTimestamp?: string;
+  /** the Gateway caps filters at 10 total and kind_filter counts — set true to spend all 10 on emitters */
+  omitKindFilter?: boolean;
   receiptEvents?: boolean;
   balanceChanges?: boolean;
 };
@@ -152,10 +156,12 @@ export async function streamTransactions(o: StreamOpts): Promise<{
     ...(o.cursor ? { cursor: o.cursor } : {}),
     ...(o.fromStateVersion
       ? { from_ledger_state: { state_version: o.fromStateVersion } }
-      : {}),
+      : o.fromTimestamp
+        ? { from_ledger_state: { timestamp: o.fromTimestamp } }
+        : {}),
     limit_per_page: o.limit ?? 100,
     order: o.order ?? 'Desc',
-    kind_filter: 'User',
+    ...(o.omitKindFilter ? {} : { kind_filter: 'User' }),
     opt_ins: {
       receipt_events: o.receiptEvents ?? false,
       balance_changes: o.balanceChanges ?? false,

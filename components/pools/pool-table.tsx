@@ -84,8 +84,12 @@ export function PoolTable({ pools, xrdUsd }: { pools: SimplePoolSummary[]; xrdUs
                   <td className="num text-muted">{Math.round(p.weightX * 100)} / {Math.round(p.weightY * 100)}</td>
                   <td className="num">{(p.fee * 100).toFixed(2)}%</td>
                   <td className="num text-right">{p.hasLiquidity ? val(p) : <span className="text-muted">no liquidity</span>}</td>
-                  <td className="num text-right text-muted" title="Indexing starts when liquidity actions launch">—</td>
-                  <td className="num text-right text-muted" title="Indexing starts when liquidity actions launch">—</td>
+                  <td className="num text-right" title="Swaps in the last 7 days, from any frontend or aggregator">
+                    {p.volume7dXrd == null ? <span className="text-muted">—</span> : p.volume7dXrd === 0 ? <span className="text-muted">0</span> : <>{usd && xrdUsd ? `$${nfc(p.volume7dXrd * xrdUsd)}` : <>{nfc(p.volume7dXrd)} <span className="text-muted">XRD</span></>}{p.volumeCapped && '+'}</>}
+                  </td>
+                  <td className="num text-right" title="Annualized from 7-day fees vs pool value">
+                    {p.feeApr7d == null ? <span className="text-muted">—</span> : p.feeApr7d === 0 ? <span className="text-muted">0.00%</span> : `${(p.feeApr7d * 100).toFixed(2)}%`}
+                  </td>
                   <td className="num text-right text-muted">{p.createdAt.slice(0, 10)}</td>
                   <td className="text-right text-muted">→</td>
                 </tr>
