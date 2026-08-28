@@ -20,7 +20,9 @@ export type Product = {
  * e.g. NEXT_PUBLIC_LIVE_PRODUCTS=hyperstake,pools,shape,lsu-pool
  */
 const LIVE = new Set((process.env.NEXT_PUBLIC_LIVE_PRODUCTS ?? 'hyperstake').split(',').map((s) => s.trim()));
-export const isLive = (id: ProductId) => LIVE.has(id);
+/** Switchable feature ids: the four products plus the aggregator swap. */
+export type SwitchId = ProductId | 'swap';
+export const isLive = (id: SwitchId) => LIVE.has(id);
 
 export const PRODUCTS: Product[] = [
   {

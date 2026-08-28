@@ -2,12 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PRODUCTS } from '@/lib/products';
+import { PRODUCTS, isLive } from '@/lib/products';
 
 export function ProductSwitcher() {
   const path = usePathname();
   return (
     <nav className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Products">
+      {isLive('swap') && (
+        <Link href="/swap" className="tab flex shrink-0 items-center gap-1.5 !py-1.5 !text-sm" data-active={path === '/swap'} title="Any token, best route">
+          Swap
+        </Link>
+      )}
       {PRODUCTS.map((p) => {
         const active = path === p.href || path.startsWith(p.href + '/');
         return (

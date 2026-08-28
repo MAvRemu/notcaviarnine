@@ -14,6 +14,14 @@ export const DAPP_DEFINITION_ADDRESS =
   process.env.NEXT_PUBLIC_DAPP_DEFINITION_ADDRESS ??
   'account_rdx128uzjf2yykk23z0yvenydh32k8svkxuzqaecvhmz4czyu9h7leqr0q';
 
+/**
+ * Our instance of Astrolescent's fee component (set up by Astrolescent, 2025-08-27; owner badge on the
+ * operator's personal account). Passed with every aggregator swap quote so 0.1% of the output accrues
+ * here; claimable at astrolescent.com/fees?component=<address>.
+ */
+export const ASTROLESCENT_FEE_COMPONENT =
+  'component_rdx1cr48rvu657lxnzc0tqwqpdx4y25h78vsqrrrecv67v0x6je36d6x9v';
+
 export const ADDRESSES = {
   /** HyperStake swap component (blueprint HyperStake). */
   hyperStake:
