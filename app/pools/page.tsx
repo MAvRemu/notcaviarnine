@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductShell } from '@/components/shell/product-shell';
-import { cachedSimplePools } from '@/lib/cached';
+import { cachedSimplePools, cachedSimplePoolVolumes } from '@/lib/cached';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { PoolTable } from '@/components/pools/pool-table';
@@ -33,6 +33,17 @@ async function Pools() {
   const [pools, prices] = await Promise.all([cachedSimplePools().catch(() => []), getPrices().catch(() => null)]);
   const xrdUsd = prices?.get(RESOURCES.XRD)?.priceUsd ?? null;
   const live = pools.filter((p) => p.hasLiquidity);
+  // 7d volume + fee APR for pools that hold liquidity (Gateway scan, cached 1 h)
+  const volumes = await cachedSimplePoolVolumes(live.map((p) => p.swapComponent).sort()).catch(() => null);
+  if (volumes) {
+    for (const p of pools) {
+      const v = volumes[p.swapComponent];
+      if (!v) continue;
+      p.volume7dXrd = v.volume7dXrd;
+      p.volumeCapped = v.capped;
+      p.feeApr7d = p.tvlXrd ? (v.volume7dXrd * p.fee * (365 / 7)) / p.tvlXrd : null;
+    }
+  }
   const tvl = live.reduce((a, p) => a + (p.tvlXrd ?? 0), 0);
   return (
     <>

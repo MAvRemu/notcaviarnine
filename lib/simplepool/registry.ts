@@ -34,6 +34,12 @@ export type SimplePoolSummary = SimplePool & {
   /** pool spot vs market price divergence (fraction), when computable */
   divergence: number | null;
   hasLiquidity: boolean;
+  /** 7d swap volume in XRD (merged in by the pools page; null = not computed) */
+  volume7dXrd?: number | null;
+  /** annualized fee APR from 7d volume (volume × fee / TVL × 365/7) */
+  feeApr7d?: number | null;
+  /** volume page cap hit — the figures are lower bounds */
+  volumeCapped?: boolean;
 };
 
 const REG_TTL = 30 * 60_000;

@@ -196,3 +196,11 @@ need only one assertion (out of scope for launch).
 - Source: https://github.com/caviarnine/caviarnine-scrypto/tree/main/weighted_pool/weighted_pool/src
 - Native pools: `radixdlt-scrypto/radix-engine/src/blueprints/pool/v1/v1_1/two_resource_pool_blueprint.rs`
 - CaviarNine docs: https://docs.caviarnine.com (Simple Pools, Create a Pool)
+
+### 7d volume / fee APR (implemented 2026-08-28, DB-less)
+`lib/simplepool/volume.ts` scans the Gateway stream per pool (`event_global_emitters_filter`,
+max 10 filters/query and `kind_filter` counts — omitted; batches of 10, `from_ledger_state.timestamp`
+= 7 days ago), attributes `SwapEvent`s by emitter, values the input side in XRD via the price table.
+Cached 1 h (`cachedSimplePoolVolumes`, tag `volumes`); fee APR = volume × fee / TVL × 365/7,
+computed in `app/pools/page.tsx` for pools with liquidity. Note: as of 2026-08-28 every Simple Pool
+shows 0 — even the top-TVL pools have had no swaps since creation (checked all-time via the stream).
