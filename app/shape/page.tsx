@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductShell } from '@/components/shell/product-shell';
-import { cachedShape } from '@/lib/cached';
+import { cachedShape, cachedShapePools } from '@/lib/cached';
+import { ShapeTable } from '@/components/shape/shape-table';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
-import { productById } from '@/lib/products';
+import { isLive, productById } from '@/lib/products';
 
 
 export const metadata: Metadata = { title: 'Shape Liquidity' };
@@ -16,15 +17,25 @@ export default function ShapePage() {
     <ProductShell>
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         <PageHeader eyebrow="Shape Liquidity · concentrated positions" title="Concentrated liquidity positions" lede={<>Concentrated-liquidity pools. Your positions are NFTs in your wallet and earn fees per position.</>} />
-        <ComingSoon product={productById('shape')} />
+        {!isLive('shape') && <ComingSoon product={productById('shape')} />}
         <Suspense fallback={<div className="grid gap-4 sm:grid-cols-3">{[0, 1, 2].map((i) => <div key={i} className="card p-5"><div className="skeleton h-3 w-24" /><div className="skeleton mt-3 h-7 w-32" /></div>)}</div>}>
           <ShapeStats />
         </Suspense>
+        {isLive('shape') && (
+          <Suspense fallback={<div className="space-y-3"><div className="skeleton h-10" />{[...Array(8)].map((_, i) => <div key={i} className="skeleton h-12" />)}</div>}>
+            <ShapePools />
+          </Suspense>
+        )}
       </main>
     </ProductShell>
   );
 }
 function T({ k, v, sub }: { k: string; v: string; sub?: string }) { return (<div className="card p-5"><div className="label">{k}</div><div className="num mt-1 text-2xl">{v}</div>{sub && <div className="mt-1 text-xs text-muted">{sub}</div>}</div>); }
+
+async function ShapePools() {
+  const pools = await cachedShapePools().catch(() => []);
+  return <ShapeTable pools={pools} />;
+}
 
 async function ShapeStats() {
   const s = await cachedShape().catch(() => null);
