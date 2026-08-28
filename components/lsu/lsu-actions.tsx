@@ -107,9 +107,9 @@ export function LsuActions({ rows, requireActive, nav }: { rows: LsuRow[]; requi
   return (
     <section className="card p-5">
       <div className="mb-4 flex items-center gap-1">
-        <button className="tab" data-active={tab === 'add'} onClick={() => setTab('add')}><span className="sm:hidden">Add</span><span className="hidden sm:inline">Add stake</span></button>
-        <button className="tab" data-active={tab === 'remove'} onClick={() => setTab('remove')}><span className="sm:hidden">Redeem</span><span className="hidden sm:inline">Redeem LSULP</span></button>
-        <button className="tab" data-active={tab === 'swap'} onClick={() => setTab('swap')}><span className="sm:hidden">Move</span><span className="hidden sm:inline">Move stake</span></button>
+        <button className="tab" data-active={tab === 'add'} onClick={() => setTab('add')}>Add</button>
+        <button className="tab" data-active={tab === 'remove'} onClick={() => setTab('remove')}>Remove</button>
+        <button className="tab" data-active={tab === 'swap'} onClick={() => setTab('swap')}>Swap</button>
       </div>
 
       {tab === 'add' && (
@@ -133,7 +133,7 @@ export function LsuActions({ rows, requireActive, nav }: { rows: LsuRow[]; requi
               lsuAddLiquidityManifest({ account: account.address, lsuResource: addLsu, amount: addA, minLsulp: applySlippage(addOut, slippageBps), creditReceiptId: credit?.id }),
               `NotCaviarNine · deposit ${nameOf(addLsu)} stake`, 'add', Number(fromAtto(addA)) * 1.22, () => setAddAmt(''),
             )}>
-            {!account ? 'Connect wallet to deposit' : busy ? 'Working…' : 'Deposit stake'}
+            {!account ? 'Connect wallet to add' : busy ? 'Working…' : 'Add liquidity'}
           </button>
         </div>
       )}
@@ -160,7 +160,7 @@ export function LsuActions({ rows, requireActive, nav }: { rows: LsuRow[]; requi
               lsuRemoveLiquidityManifest({ account: account.address, amountLsulp: remA, lsuResource: remLsu, minLsu: applySlippage(remQ.lsuOut, slippageBps), creditReceiptId: credit?.id }),
               `NotCaviarNine · redeem LSULP for ${nameOf(remLsu)} stake`, 'remove', Number(fromAtto(remA)) * 1.22, () => setRemAmt(''),
             )}>
-            {!account ? 'Connect wallet to redeem' : busy ? 'Working…' : 'Redeem LSULP'}
+            {!account ? 'Connect wallet to remove' : busy ? 'Working…' : 'Remove liquidity'}
           </button>
           <p className="text-xs text-muted">You receive validator stake units, not XRD. For XRD right now, sell LSULP on HyperStake instead; unstaking these units the normal way takes ~7 days.</p>
         </div>
@@ -181,9 +181,9 @@ export function LsuActions({ rows, requireActive, nav }: { rows: LsuRow[]; requi
           <button className="btn w-full" disabled={!account || !swQ || swQ.out <= 0n || busy || swA > (balances?.[swapFrom] ?? 0n)} onClick={() =>
             account && swQ && run(
               lsuSwapManifest({ account: account.address, fromLsu: swapFrom, amount: swA, toLsu: swapTo, minOut: applySlippage(swQ.out, slippageBps) }),
-              `NotCaviarNine · move stake to ${nameOf(swapTo)}`, 'swap', Number(fromAtto(swA)) * 1.22, () => setSwapAmt(''),
+              `NotCaviarNine · swap stake to ${nameOf(swapTo)}`, 'swap', Number(fromAtto(swA)) * 1.22, () => setSwapAmt(''),
             )}>
-            {!account ? 'Connect wallet to move stake' : busy ? 'Working…' : 'Move stake'}
+            {!account ? 'Connect wallet to swap' : busy ? 'Working…' : 'Swap'}
           </button>
           <p className="text-xs text-muted">Switch validators instantly instead of waiting ~7 days to unstake and restake. Fee 0.07%.</p>
         </div>
