@@ -14,6 +14,14 @@ export type Product = {
   c9Path: string; // original CaviarNine route (for redirects / reference)
 };
 
+/**
+ * Feature switch: comma-separated product ids in NEXT_PUBLIC_LIVE_PRODUCTS are fully enabled.
+ * Default: only HyperStake. Inlined at build time — flipping requires a redeploy with the env var set,
+ * e.g. NEXT_PUBLIC_LIVE_PRODUCTS=hyperstake,pools,shape,lsu-pool
+ */
+const LIVE = new Set((process.env.NEXT_PUBLIC_LIVE_PRODUCTS ?? 'hyperstake').split(',').map((s) => s.trim()));
+export const isLive = (id: ProductId) => LIVE.has(id);
+
 export const PRODUCTS: Product[] = [
   {
     id: 'hyperstake',
@@ -31,8 +39,8 @@ export const PRODUCTS: Product[] = [
     name: 'Simple Pools',
     subtitle: 'Two-token pools',
     href: '/pools',
-    status: 'soon',
-    statusLabel: 'Coming soon',
+    status: LIVE.has('pools') ? 'live' : 'soon',
+    statusLabel: LIVE.has('pools') ? 'Live' : 'Coming soon',
     blurb: 'Weighted two-token pools anyone can create. Provide both sides, earn the swap fee.',
     spec: 'docs/SIMPLE_POOL.md',
     c9Path: '/earn/simple-pool',
@@ -42,8 +50,8 @@ export const PRODUCTS: Product[] = [
     name: 'Shape Liquidity',
     subtitle: 'Concentrated positions',
     href: '/shape',
-    status: 'soon',
-    statusLabel: 'Coming soon',
+    status: LIVE.has('shape') ? 'live' : 'soon',
+    statusLabel: LIVE.has('shape') ? 'Live' : 'Coming soon',
     blurb: 'Concentrated-liquidity pools. Your positions are NFTs in your wallet; fees accrue per position.',
     spec: 'docs/SHAPE_LIQUIDITY.md',
     c9Path: '/earn/shape-liquidity',
@@ -53,8 +61,8 @@ export const PRODUCTS: Product[] = [
     name: 'LSU Pool',
     subtitle: 'Liquid staking basket',
     href: '/lsu-pool',
-    status: 'soon',
-    statusLabel: 'Coming soon',
+    status: LIVE.has('lsu-pool') ? 'live' : 'soon',
+    statusLabel: LIVE.has('lsu-pool') ? 'Live' : 'Coming soon',
     blurb: 'The validator basket behind LSULP. Deposit stake units, receive one token for the whole basket.',
     spec: 'docs/LSU_POOL.md',
     c9Path: '/earn/lsu-pool',

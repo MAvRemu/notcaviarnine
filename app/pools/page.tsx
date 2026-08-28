@@ -5,7 +5,8 @@ import { cachedSimplePools } from '@/lib/cached';
 import { PageHeader } from '@/components/ui';
 import { ComingSoon } from '@/components/shell/coming-soon';
 import { PoolTable } from '@/components/pools/pool-table';
-import { productById } from '@/lib/products';
+import { YourPools } from '@/components/pools/your-pools';
+import { isLive, productById } from '@/lib/products';
 import { getPrices } from '@/lib/prices/astrolescent';
 import { RESOURCES } from '@/lib/radix/config';
 import { fmtNum } from '@/lib/format';
@@ -19,7 +20,7 @@ export default function PoolsPage() {
     <ProductShell>
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         <PageHeader eyebrow="Simple Pools · two-token pools" title="Two-token pools" lede={<>Weighted pools anyone can create. Provide both sides, earn the swap fee.</>} />
-        <ComingSoon product={product} />
+        {!isLive('pools') && <ComingSoon product={product} />}
         <Suspense fallback={<div className="space-y-3"><div className="skeleton h-10" />{[...Array(8)].map((_, i) => <div key={i} className="skeleton h-12" />)}</div>}>
           <Pools />
         </Suspense>
@@ -36,6 +37,7 @@ async function Pools() {
   return (
     <>
       <div className="text-sm text-muted"><span className="num text-ink">{pools.length}</span> pools · <span className="num text-ink">{live.length}</span> with liquidity{tvl > 0 && <> · total value ≈ <span className="num text-ink">{fmtNum(tvl, { compact: true })} XRD</span></>}</div>
+      {isLive('pools') && <YourPools pools={pools} />}
       <PoolTable pools={pools} xrdUsd={xrdUsd} />
     </>
   );

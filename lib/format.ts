@@ -35,11 +35,11 @@ export function timeAgo(iso: string | null | undefined): string {
 }
 
 /** Clamp user input to ≤18 dp and strip junk; returns '' if not parseable. */
-export function sanitizeDecimalInput(s: string): string {
+export function sanitizeDecimalInput(s: string, maxDp = 18): string {
   const cleaned = s.replace(/,/g, '.').replace(/[^\d.]/g, '');
   const [i, ...rest] = cleaned.split('.');
-  const f = rest.join('').slice(0, 18);
-  return rest.length ? `${i || '0'}.${f}` : i;
+  const f = rest.join('').slice(0, Math.max(0, maxDp));
+  return rest.length && maxDp > 0 ? `${i || '0'}.${f}` : i;
 }
 
 /** Minutes elapsed since an ISO timestamp (null if missing). Kept out of render bodies for purity lint. */

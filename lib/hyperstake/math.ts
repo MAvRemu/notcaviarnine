@@ -293,3 +293,9 @@ export function quoteRemoveLiquidity(
 /** Apply a tolerance (basis points) downward: floor(a × (1 − bps/10000)). */
 export const applySlippage = (a: Atto, bps: number): Atto =>
   (a * BigInt(10000 - Math.round(bps))) / 10000n;
+
+/** Truncate an atto amount to a token's divisibility (floor), so withdraws/deposits respect the resource's decimals. */
+export function truncToDivisibility(a: Atto, divisibility: number): Atto {
+  const drop = BigInt(10) ** BigInt(18 - Math.min(18, Math.max(0, divisibility)));
+  return (a / drop) * drop;
+}

@@ -4,10 +4,11 @@ import { notFound } from 'next/navigation';
 import { ProductShell } from '@/components/shell/product-shell';
 import { cachedSimplePools } from '@/lib/cached';
 import { ComingSoon } from '@/components/shell/coming-soon';
-import { productById } from '@/lib/products';
+import { isLive, productById } from '@/lib/products';
 import { SIMPLE_POOL_FEE_VAULTS } from '@/lib/simplepool/registry';
 import { dashboardUrl } from '@/lib/radix/config';
 import { fmtNum } from '@/lib/format';
+import { PoolActions } from '@/components/pools/pool-actions';
 
 export const metadata: Metadata = { title: 'Simple Pool' };
 export const revalidate = 120;
@@ -31,8 +32,9 @@ export default async function PoolDetail({ params }: PageProps<'/pools/[address]
             <div className="pill border-warn/40 text-warn"><span className="dot dot-warn" />pool price {(p.divergence * 100).toFixed(0)}% from market</div>
           )}
         </div>
-        <ComingSoon product={productById('pools')} />
-        <div className="grid grid-cols-1 gap-6 lg:max-w-2xl">
+        {!isLive('pools') && <ComingSoon product={productById('pools')} />}
+        <div className={`grid grid-cols-1 gap-6 ${isLive('pools') ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]' : 'lg:max-w-2xl'}`}>
+          {isLive('pools') && <PoolActions pool={p} />}
           <section className="card p-5">
             <div className="label mb-3">Pool facts</div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
